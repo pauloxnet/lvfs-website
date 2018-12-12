@@ -9,7 +9,7 @@ from flask_login import login_required
 
 from app import app, db
 
-from .models import Requirement, Component, Keyword, Firmware, Checksum
+from .models import Requirement, Component, Keyword, Firmware, Checksum, Protocol
 from .util import _error_internal, _error_permission_denied
 
 def _validate_guid(guid):
@@ -105,6 +105,8 @@ def firmware_component_modify(component_id):
     page = 'overview'
     if 'screenshot_url' in request.form:
         md.screenshot_url = request.form['screenshot_url']
+    if 'protocol_id' in request.form:
+        md.protocol_id = request.form['protocol_id']
     if 'screenshot_caption' in request.form:
         md.screenshot_caption = _sanitize_markdown_text(request.form['screenshot_caption'])
     if 'install_duration' in request.form:
@@ -146,8 +148,9 @@ def firmware_component_show(component_id, page='overview'):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Unable to view other vendor firmware')
 
+    protocols = db.session.query(Protocol).order_by(Protocol.protocol_id.asc()).all()
     return render_template('component-' + page + '.html',
-                           md=md, page=page)
+                           protocols=protocols, md=md, page=page)
 
 @app.route('/lvfs/component/<int:component_id>/requirement/delete/<requirement_id>')
 @login_required

@@ -39,6 +39,8 @@ class Problem(object):
             return 'No update description'
         if self.kind == 'invalid-release-description':
             return 'No valid update description'
+        if self.kind == 'no-protocol':
+            return 'No update protocol set'
         return 'Unknown problem %s' % self.kind
 
     @property
@@ -131,6 +133,8 @@ class User(db.Model):
 
         # decide based on the action
         if action == '@admin':
+            return False
+        if action == '@view-protocols':
             return False
         elif action == '@view-profile':
             return self.auth_type == 'local'
@@ -544,6 +548,7 @@ class Component(db.Model):
 
     component_id = Column(Integer, primary_key=True, unique=True, nullable=False, index=True)
     firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
+    protocol_id = Column(Integer, ForeignKey('protocol.protocol_id'))
     checksum_contents = Column(String(40), nullable=False)
     appstream_id = Column(Text, nullable=False)
     name = Column(Unicode, default=None)
@@ -584,6 +589,7 @@ class Component(db.Model):
     keywords = relationship("Keyword",
                             back_populates="md",
                             cascade='all,delete-orphan')
+    protocol = relationship('Protocol', foreign_keys=[protocol_id])
 
     def __init__(self):
         """ Constructor for object """
@@ -665,8 +671,26 @@ class Component(db.Model):
             problems.append(Problem('no-release-urgency',
                                     'Release urgency has not been set'))
 
+        # we are going to be making policy decision on this soon
+        if not self.protocol or self.protocol.value == 'unknown':
+            problem = Problem('no-protocol',
+                              'Update protocol has not been set')
+            problem.url = url_for('.firmware_component_show',
+                                  component_id=self.component_id)
+            problems.append(problem)
+
+        # firmware can't be pushed to public with a private protocol
+        if self.protocol and not self.protocol.is_public:
+            problem = Problem('no-protocol',
+                              'Update protocol is not public')
+            problem.url = url_for('.firmware_component_show',
+                                  component_id=self.component_id)
+            problems.append(problem)
+
         # set the URL for the component
         for problem in problems:
+            if problem.url:
+                continue
             problem.url = url_for('.firmware_component_show',
                                   component_id=self.component_id,
                                   page='update')
@@ -1315,6 +1339,46 @@ class Useragent(db.Model):
     def __repr__(self):
         return "Useragent object %i:%s" % (self.kind, self.datestr)
 
+class Protocol(db.Model):
+
+    # sqlalchemy metadata
+    __tablename__ = 'protocol'
+    __table_args__ = {'mysql_character_set': 'utf8mb4'}
+
+    protocol_id = Column(Integer, primary_key=True, nullable=False, unique=True)
+    value = Column(Text, nullable=False)
+    name = Column(Text, default=None)
+    is_signed = Column(Boolean, default=False)
+    is_public = Column(Boolean, default=False)
+    can_verify = Column(Boolean, default=False)
+
+    def check_acl(self, action, user=None):
+
+        # fall back
+        if not user:
+            user = g.user
+        if user.is_admin:
+            return True
+
+        # depends on the action requested
+        if action == '@view':
+            return False
+        if action == '@create':
+            return False
+        if action == '@modify':
+            return False
+        raise NotImplementedError('unknown security check action: %s:%s' % (self, action))
+
+    def __init__(self, value, name=None, is_signed=False, can_verify=False, is_public=True):
+        """ Constructor for object """
+        self.value = value
+        self.name = name
+        self.is_signed = is_signed
+        self.is_public = is_public
+        self.can_verify = can_verify
+
+    def __repr__(self):
+        return "Protocol object %i:%s" % (self.protocol_id, self.value)
 
 class SearchEvent(db.Model):
 
