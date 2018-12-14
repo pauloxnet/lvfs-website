@@ -9,7 +9,7 @@ from flask_login import login_required
 
 from app import app, db
 
-from .models import Requirement, Component, Keyword, Firmware
+from .models import Requirement, Component, Keyword, Firmware, Checksum
 from .util import _error_internal, _error_permission_denied
 
 def _validate_guid(guid):
@@ -78,7 +78,7 @@ def firmware_component_all(component_id):
             break
     return render_template('device.html', fws=fws)
 
-def is_sha1(text):
+def _is_sha1(text):
     if len(text) != 40:
         return False
     try:
@@ -105,13 +105,6 @@ def firmware_component_modify(component_id):
     page = 'overview'
     if 'screenshot_url' in request.form:
         md.screenshot_url = request.form['screenshot_url']
-    if 'checksum_device' in request.form:
-        checksum_device = request.form['checksum_device'].lower()
-        if not is_sha1(checksum_device):
-            flash('Invalid SHA1 hash: %s' % checksum_device, 'warning')
-            return redirect(url_for('.firmware_component_show',
-                                    component_id=md.component_id))
-        md.checksum_device = checksum_device
     if 'screenshot_caption' in request.form:
         md.screenshot_caption = _sanitize_markdown_text(request.form['screenshot_caption'])
     if 'install_duration' in request.form:
@@ -310,3 +303,86 @@ def firmware_keyword_add(component_id):
     return redirect(url_for('.firmware_component_show',
                             component_id=md.component_id,
                             page='keywords'))
+@app.route('/lvfs/component/<int:component_id>/checksum/delete/<checksum_id>')
+@login_required
+def firmware_checksum_delete(component_id, checksum_id):
+
+    # get firmware component
+    csum = db.session.query(Checksum).filter(Checksum.checksum_id == checksum_id).first()
+    if not csum:
+        return _error_internal('No checksum matched!')
+
+    # get the component for the checksum
+    md = csum.md
+    if md.component_id != component_id:
+        return _error_internal('Wrong component ID for checksum!')
+    if not md:
+        return _error_internal('No metadata matched!')
+
+    # security check
+    if not md.check_acl('@modify-checksums'):
+        return _error_permission_denied('Unable to modify other vendor firmware')
+
+    # remove chid
+    md.fw.mark_dirty()
+    db.session.delete(csum)
+    db.session.commit()
+
+    # log
+    flash('Removed checksum %s' % csum.value, 'info')
+    return redirect(url_for('.firmware_component_show',
+                            component_id=md.component_id,
+                            page='checksums'))
+
+@app.route('/lvfs/component/<int:component_id>/checksum/add', methods=['POST'])
+@login_required
+def firmware_checksum_add(component_id):
+    """ Adds a checksum to a component """
+
+    # check we have data
+    for key in ['kind', 'value']:
+        if key not in request.form or not request.form[key]:
+            return _error_internal('No %s specified!' % key)
+    if request.form['kind'] not in ['SHA1', 'SHA256']:
+        return _error_internal('No valid hash kind specified!')
+
+    # get firmware component
+    md = db.session.query(Component).\
+            filter(Component.component_id == component_id).first()
+    if not md:
+        return _error_internal('No component matched!')
+
+    # security check
+    if not md.check_acl('@modify-checksums'):
+        return _error_permission_denied('Unable to modify other vendor firmware')
+
+    # validate is a valid hash
+    if request.form['kind'] == 'SHA1':
+        if not _is_sha1(request.form['value']):
+            flash('%s is not a valid SHA1 hash' % request.form['value'], 'warning')
+            return redirect(url_for('.firmware_component_show',
+                                    component_id=md.component_id,
+                                    page='checksums'))
+    else:
+        flash('%s is not a recognised hash' % request.form['value'], 'warning')
+        return redirect(url_for('.firmware_component_show',
+                                component_id=md.component_id,
+                                page='checksums'))
+
+    # check it's not already been added
+    for csum in md.device_checksums:
+        if csum.value == request.form['value']:
+            flash('%s has already been added' % request.form['value'], 'warning')
+            return redirect(url_for('.firmware_component_show',
+                                    component_id=md.component_id,
+                                    page='checksums'))
+
+    # add checksum
+    csum = Checksum(kind=request.form['kind'], value=request.form['value'])
+    md.device_checksums.append(csum)
+    md.fw.mark_dirty()
+    db.session.commit()
+    flash('Added device checksum', 'info')
+    return redirect(url_for('.firmware_component_show',
+                            component_id=md.component_id,
+                            page='checksums'))

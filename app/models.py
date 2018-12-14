@@ -506,6 +506,28 @@ def _split_search_string(value):
         keywords.append(keyword)
     return keywords
 
+class Checksum(db.Model):
+
+    # sqlalchemy metadata
+    __tablename__ = 'checksums'
+    __table_args__ = {'mysql_character_set': 'utf8mb4'}
+
+    checksum_id = Column(Integer, primary_key=True, unique=True)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    kind = Column(Text, nullable=False, default=None)
+    value = Column(Text, nullable=False, default=None)
+
+    # link back to parent
+    md = relationship("Component")
+
+    def __init__(self, value, kind='SHA1'):
+        """ Constructor for object """
+        self.kind = kind        # e.g. 'SHA1' or 'SHA256'
+        self.value = value
+
+    def __repr__(self):
+        return "Checksum object %s(%s)" % (self.kind, self.value)
+
 class Component(db.Model):
 
     # sqlalchemy metadata
@@ -515,7 +537,6 @@ class Component(db.Model):
     component_id = Column(Integer, primary_key=True, unique=True, nullable=False, index=True)
     firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
     checksum_contents = Column(String(40), nullable=False)
-    checksum_device = Column(String(40), default=None)
     appstream_id = Column(Text, nullable=False)
     name = Column(Unicode, default=None)
     summary = Column(Unicode, default=None)
@@ -545,6 +566,9 @@ class Component(db.Model):
     requirements = relationship("Requirement",
                                 back_populates="md",
                                 cascade='all,delete-orphan')
+    device_checksums = relationship("Checksum",
+                                    back_populates="md",
+                                    cascade='all,delete-orphan')
     guids = relationship("Guid",
                          back_populates="md",
                          lazy='joined',
@@ -561,7 +585,6 @@ class Component(db.Model):
         self.name = None
         self.summary = None
         self.checksum_contents = None       # SHA1 of the firmware.bin
-        self.checksum_device = None         # SHA1 of the firmware on-device
         self.release_description = None
         self.release_timestamp = 0
         self.developer_name = None
@@ -676,7 +699,7 @@ class Component(db.Model):
                 if self.fw._is_owner(user):
                     return True
             return False
-        elif action in ('@modify-keywords', '@modify-requirements'):
+        elif action in ('@modify-keywords', '@modify-requirements', '@modify-checksums'):
             if user.is_qa and self.fw._is_vendor(user):
                 return True
             if self.fw._is_owner(user) and not self.fw.remote.is_public:

@@ -14,6 +14,7 @@ import hashlib
 
 from gi.repository import AppStreamGlib
 from gi.repository import Gio
+from gi.repository import GLib
 
 from flask import request, flash, url_for, redirect, render_template, g
 from flask_login import login_required
@@ -21,7 +22,7 @@ from flask_login import login_required
 from app import app, db, ploader
 
 from .models import Firmware, Component, Requirement, Guid, FirmwareEvent
-from .models import Vendor, Remote, Agreement, Affiliation
+from .models import Vendor, Remote, Agreement, Affiliation, Checksum
 from .uploadedfile import UploadedFile, FileTooLarge, FileTooSmall, FileNotSupported, MetadataInvalid
 from .util import _get_client_address, _get_settings, _markdown_from_xml
 from .util import _error_internal, _error_permission_denied
@@ -135,9 +136,12 @@ def _create_fw_from_uploaded_file(ufile):
 
         # from the device checksum
         if hasattr(AppStreamGlib.ChecksumTarget, 'DEVICE'):
-            csum = rel.get_checksum_by_target(AppStreamGlib.ChecksumTarget.DEVICE) # pylint: disable=no-member
-            if csum:
-                md.checksum_device = csum.get_value()
+            for csum in rel.get_checksums():
+                if csum.get_target() == AppStreamGlib.ChecksumTarget.DEVICE: # pylint: disable=no-member
+                    if csum.get_kind() == GLib.ChecksumType.SHA1:
+                        md.device_checksums.append(Checksum(csum.get_value(), 'SHA1'))
+                    elif csum.get_kind() == GLib.ChecksumType.SHA256:
+                        md.device_checksums.append(Checksum(csum.get_value(), 'SHA256'))
 
         # allows OEM to hide the direct download link on the LVFS
         metadata = component.get_metadata()

@@ -1,0 +1,52 @@
+{% extends "default.html" %}
+{% block title %}Device Checksums{% endblock %}
+
+{% block nav %}{% include 'component-nav.html' %}{% endblock %}
+
+{% block content %}
+<p>All valid verification checksums should be added here.</p>
+<table class="table">
+{% if md.device_checksums|length > 0 %}
+  <tr class="row">
+    <th class="col-sm-1">Type</th>
+    <th class="col-sm-9">Value</th>
+    <th class="col-sm-2"></th>
+  </tr>
+{% for csum in md.device_checksums %}
+  <tr class="row">
+    <td class="col-sm-1">
+      <code>{{csum.kind}}</code>
+    </td>
+    <td class="col-sm-9">
+      <code>{{csum.value}}</code>
+    </td>
+    <td class="col-sm-2 text-right">
+      <a class="btn btn-warning btn-block" href="/lvfs/component/{{csum.md.component_id}}/checksum/delete/{{csum.checksum_id}}" role="button">Delete</a>
+    </td>
+  </tr>
+{% endfor %}
+{% else %}
+  <p class="text-secondary">
+    No checksums set.
+  </p>
+{% endif %}
+{% if md.check_acl('@modify-checksums') %}
+  <tr class="row table-borderless">
+    <form class="form-inline" action="/lvfs/component/{{md.component_id}}/checksum/add" method="POST" >
+      <td class="col-sm-10">
+        <input type="hidden" name="kind" value="SHA1">
+        <input type="text" class="form-control fixed-width" name="value" placeholder="12d9c307380c4410fddfdb613b5dfba8b336cf49"/>
+        <p class="text-secondary">
+          Add hashes here to define a device checksum for a specific machine.
+        </p>
+      </td>
+      <td class="col-sm-2">
+        <input type="submit" class="btn btn-primary btn-block" value="Add"/>
+      </td>
+    </form>
+  </tr>
+{% endif %}
+</table>
+{% endblock %}
+
+{% block breadcrumb %}{% include 'component-breadcrumb.html' %}{% endblock %}
