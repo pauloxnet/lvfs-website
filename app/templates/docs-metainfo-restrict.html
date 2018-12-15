@@ -1,0 +1,75 @@
+{% extends "default.html" %}
+
+{% block title %}MetaInfo Files : Restrictions{% endblock %}
+
+{% block nav %}{% include 'docs-metainfo-nav.html' %}{% endblock %}
+
+{% block content %}
+<h2>Restricting using CHID</h2>
+<p>
+  Newer versions of fwupd can restrict updates to a specific
+  <a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/using-chids">
+  Computer Hardware ID</a>, much like Microsoft update:
+</p>
+<pre>
+  &lt;!-- only newer versions of fwupd understand 'hardware' requirements --&gt;
+  &lt;requires&gt;
+    &lt;id compare="ge" version="1.0.1"&gt;org.freedesktop.fwupd&lt;/id&gt;
+    &lt;hardware&gt;6de5d951-d755-576b-bd09-c5cf66b27234&lt;/hardware&gt;
+  &lt;/requires&gt;
+</pre>
+<p>
+  If multiple <code>&lt;hardware&gt;</code> entries are specified then all must
+  be present.
+  Newer versions of fwupd can understand an OR requirement using a <code>|</code>
+  separator between the listed GUIDs.
+</p>
+<pre>
+  &lt;!-- only newer versions of fwupd understand OR requirements --&gt;
+  &lt;requires&gt;
+    &lt;id compare="ge" version="1.0.8"&gt;org.freedesktop.fwupd&lt;/id&gt;
+    &lt;hardware&gt;6de5d951-d755-576b-bd09-c5cf66b27234|27234951-d755-576b-bd09-c5cf66b27234&lt;/hardware&gt;
+  &lt;/requires&gt;
+</pre>
+
+<p>
+  CHIDs can also be added or removed in the LVFS web UI, but only before
+  the firmware is published to stable channel.
+</p>
+<figure class="text-center">
+  <img src="/img/component-requirements.png" class="p-3 border border-info rounded figure-img img-fluid" alt="component requirements">
+  <figcaption class="figure-caption">Modifying requirements of an uploaded firmware.</figcaption>
+</figure>
+
+<hr/>
+<h2><a id="requires-fw-versions"></a>Restricting using other firmware version</h2>
+<p>
+  Newer versions of fwupd can restrict updates on one device depending on
+  the version of firmware on another device.
+  This is most useful when requiring a minimum EC controller version before
+  updating a system firmware, or when a modem firmware needs a specific fix
+  for the baseband firmware:
+</p>
+<pre>
+  &lt;!-- only newer versions of fwupd understand 'other firmware' requirements --&gt;
+  &lt;requires&gt;
+    &lt;id compare="ge" version="1.1.3"&gt;org.freedesktop.fwupd&lt;/id&gt;
+    &lt;firmware compare="ge" version="0.1.2"&gt;6de5d951-d755-576b-bd09-c5cf66b27234&lt;/firmware&gt;
+  &lt;/requires&gt;
+</pre>
+
+<hr/>
+<h2><a id="custom-direct-downloads"></a>Restricting direct downloads</h2>
+<p>
+  If you'd rather not have users downloading the .cab archive directly you
+  can opt to hide the direct download links in the LVFS search results.
+  To do this, add this to the metainfo file:
+</p>
+<pre>
+  &lt;!-- most OEMs do not need to do this... --&gt;
+  &lt;custom&gt;
+    &lt;value key="LVFS::InhibitDownload"/&gt;
+  &lt;/custom&gt;
+</pre>
+
+{% endblock %}

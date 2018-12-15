@@ -251,9 +251,14 @@ def docs_vendors():
 
 @app.route('/metainfo') # deprecated
 @app.route('/lvfs/docs/metainfo')
-def docs_metainfo():
+@app.route('/lvfs/docs/metainfo/<page>')
+def docs_metainfo(page='intro'):
+    if page not in ['intro', 'style', 'restrict', 'protocol', 'version']:
+        return _error_internal('No metainfo page name %s' % page)
     protocols = db.session.query(Protocol).order_by(Protocol.protocol_id.asc()).all()
-    return render_template('docs-metainfo.html', protocols=protocols)
+    return render_template('docs-metainfo-%s.html' % page,
+                           protocols=protocols,
+                           page=page)
 
 @app.route('/lvfs/docs/composite')
 def docs_composite():
