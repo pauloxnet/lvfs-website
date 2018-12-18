@@ -671,13 +671,13 @@ class Component(db.Model):
             problems.append(Problem('no-release-urgency',
                                     'Release urgency has not been set'))
 
-        # we are going to be making policy decision on this soon
-        if not self.protocol or self.protocol.value == 'unknown':
-            problem = Problem('no-protocol',
-                              'Update protocol has not been set')
-            problem.url = url_for('.firmware_component_show',
-                                  component_id=self.component_id)
-            problems.append(problem)
+        # revert in 2019 when vendor scripts have been updated
+#        if not self.protocol or self.protocol.value == 'unknown':
+#            problem = Problem('no-protocol',
+#                              'Update protocol has not been set')
+#            problem.url = url_for('.firmware_component_show',
+#                                  component_id=self.component_id)
+#            problems.append(problem)
 
         # firmware can't be pushed to public with a private protocol
         if self.protocol and not self.protocol.is_public:
