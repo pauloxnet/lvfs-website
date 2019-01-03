@@ -657,17 +657,18 @@ class Component(db.Model):
         if self.release_description:
             root = _xml_from_markdown(self.release_description)
             problems = _get_update_description_problems(root)
+            # check for OEMs just pasting in the XML like before
+            for element_name in ['p', 'li', 'ul', 'ol']:
+                if self.release_description.find('<' + element_name + '>') != -1:
+                    problems.append(Problem('invalid-release-description',
+                                            'Release description cannot contain XML markup'))
+                    break
         else:
             problems = []
             problems.append(Problem('invalid-release-description',
                                     'Release description is missing'))
 
-        # check for OEMs just pasting in the XML like before
-        for element_name in ['p', 'li', 'ul', 'ol']:
-            if self.release_description.find('<' + element_name + '>') != -1:
-                problems.append(Problem('invalid-release-description',
-                                        'Release description cannot contain XML markup'))
-                break
+        # urgency is now a hard requirement
         if self.release_urgency == 'unknown':
             problems.append(Problem('no-release-urgency',
                                     'Release urgency has not been set'))
