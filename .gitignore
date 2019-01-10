@@ -2,3 +2,6 @@
 *.pyo
 downloads
 gnupg
+app/custom.cfg
+hwinfo
+lvfs_*.sql
