@@ -65,16 +65,19 @@ class Plugin(PluginBase):
         remote_path = '/' + fw.vendor.group_id + '/' + str(fw.firmware_id) + '/' + fw.filename[41:]
 
         # upload the file
-        with open(fn, 'rb') as file_obj:
-            headers = {}
-            headers['X-Apikey'] = settings['virustotal_api_key']
-            headers['User-Agent'] = settings['virustotal_user_agent']
-            files = {'file': ('filepath', file_obj, 'application/octet-stream')}
-            args = {'path': remote_path}
-            r = requests.post(settings['virustotal_uri'], files=files, data=args, headers=headers)
-            if r.status_code != 200:
-                test.add_fail('Uploading', r.text)
-                return
+        try:
+            with open(fn, 'rb') as file_obj:
+                headers = {}
+                headers['X-Apikey'] = settings['virustotal_api_key']
+                headers['User-Agent'] = settings['virustotal_user_agent']
+                files = {'file': ('filepath', file_obj, 'application/octet-stream')}
+                args = {'path': remote_path}
+                r = requests.post(settings['virustotal_uri'], files=files, data=args, headers=headers)
+                if r.status_code != 200:
+                    test.add_fail('Uploading', r.text)
+                    return
+        except IOError as e:
+            raise PluginError(e)
 
         # success
         test.add_pass('Uploaded', 'All OK')
