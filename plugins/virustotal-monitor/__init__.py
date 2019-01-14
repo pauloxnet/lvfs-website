@@ -62,7 +62,7 @@ class Plugin(PluginBase):
         # build the remote name
         from app import app
         fn = os.path.join(app.config['DOWNLOAD_DIR'], fw.filename)
-        remote_path = fw.vendor.group_id + '/' + str(fw.firmware_id) + '/' + fw.filename[41:]
+        remote_path = '/' + fw.vendor.group_id + '/' + str(fw.firmware_id) + '/' + fw.filename[41:]
 
         # upload the file
         with open(fn, 'rb') as file_obj:
