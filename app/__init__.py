@@ -98,3 +98,4 @@ from app import views_issue
 from app import views_search
 from app import views_agreement
 from app import views_protocol
+from app import views_test

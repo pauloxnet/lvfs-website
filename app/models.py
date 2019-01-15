@@ -626,6 +626,17 @@ class Test(db.Model):
     def add_fail(self, title, message):
         self.attributes.append(TestAttribute(title=title, message=message, success=False))
 
+    def waive(self):
+        self.waived_ts = datetime.datetime.utcnow()
+        self.waived_user_id = g.user.user_id
+
+    def retry(self):
+        self.started_ts = None
+        self.ended_ts = None
+        self.waived_ts = None
+        for attr in self.attributes:
+            db.session.delete(attr)
+
     def check_acl(self, action, user=None):
 
         # fall back
@@ -665,6 +676,18 @@ class Test(db.Model):
 
         # not ever started
         return True
+
+    @property
+    def is_pending(self):
+        if not self.started_ts:
+            return True
+        return False
+
+    @property
+    def is_running(self):
+        if self.started_ts and not self.ended_ts:
+            return True
+        return False
 
     @property
     def success(self):
