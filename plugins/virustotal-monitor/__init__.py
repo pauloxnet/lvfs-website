@@ -12,7 +12,7 @@ import os
 import requests
 
 from app.pluginloader import PluginBase, PluginError, PluginSettingBool, PluginSettingText
-from app.util import _get_settings
+from app.util import _get_settings, _get_absolute_path
 from app.models import Test
 
 class Plugin(PluginBase):
@@ -60,8 +60,7 @@ class Plugin(PluginBase):
             return
 
         # build the remote name
-        from app import app
-        fn = os.path.join(app.config['DOWNLOAD_DIR'], fw.filename)
+        fn = _get_absolute_path(fw)
         remote_path = '/' + fw.vendor.group_id + '/' + str(fw.firmware_id) + '/' + fw.filename[41:]
 
         # upload the file

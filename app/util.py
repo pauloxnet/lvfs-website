@@ -172,6 +172,12 @@ def _get_settings(unused_prefix=None):
         settings[setting.key] = setting.value
     return settings
 
+def _get_absolute_path(fw):
+    from app import app
+    if fw.is_deleted:
+        return os.path.join(app.config['RESTORE_DIR'], fw.filename)
+    return os.path.join(app.config['DOWNLOAD_DIR'], fw.filename)
+
 def _get_basename_safe(fn):
     """ gets the file basename, also with win32-style backslashes """
     return os.path.basename(fn.replace('\\', '/'))

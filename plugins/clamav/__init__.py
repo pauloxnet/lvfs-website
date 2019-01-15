@@ -12,7 +12,7 @@ import os
 import subprocess
 
 from app.pluginloader import PluginBase, PluginError, PluginSettingBool
-from app.util import _get_settings
+from app.util import _get_settings, _get_absolute_path
 from app.models import Test
 
 class Plugin(PluginBase):
@@ -69,8 +69,7 @@ class Plugin(PluginBase):
         test.add_pass('Version', stdout)
 
         # scan cabinet archive
-        from app import app
-        fn = os.path.join(app.config['DOWNLOAD_DIR'], fw.filename)
+        fn = _get_absolute_path(fw)
         if settings['clamav_use_daemon'] == 'enabled':
             argv = ['clamdscan',
                     '--fdpass',

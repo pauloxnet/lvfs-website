@@ -19,7 +19,7 @@ from gi.repository import Gio
 from gi.repository import GLib
 
 from app.pluginloader import PluginBase, PluginError, PluginSettingBool
-from app.util import _get_settings, _archive_get_files_from_glob
+from app.util import _get_settings, _archive_get_files_from_glob, _get_absolute_path
 from app.models import Test
 
 class Plugin(PluginBase):
@@ -67,8 +67,7 @@ class Plugin(PluginBase):
             return
 
         # decompress firmware
-        from app import app
-        fn = os.path.join(app.config['DOWNLOAD_DIR'], fw.filename)
+        fn = _get_absolute_path(fw)
         try:
             istream = Gio.File.new_for_path(fn).read()
         except gi.repository.GLib.Error as e: # pylint: disable=catching-non-exception
