@@ -207,7 +207,8 @@ def _check_firmware():
             # don't leave a failed task running
             db.session.commit()
         except PluginError as e:
-            _event_log('Plugin %s failed for run_test_on_fw(): %s' % (plugin.id, str(e)))
+            test.ended_ts = datetime.datetime.utcnow()
+            test.add_fail('An exception occurred', str(e))
 
     # all done
     db.session.commit()
