@@ -93,7 +93,7 @@ class Plugin(PluginBase):
             try:
                 data = struct.unpack('<16sIII', contents[:28])
             except struct.error as e:
-                test.add_fail('FileSize', len(contents))
+                test.add_fail('FileSize', '0x%x' % len(contents))
                 # we have to abort here, no further tests are possible
                 continue
 
@@ -110,10 +110,12 @@ class Plugin(PluginBase):
                 test.add_fail('GUID', '%s not found in %s' % (guid, referenced_guids))
 
             # check the header size
-            if data[1] % 4096 == 0:
-                test.add_pass('HeaderSize', data[1])
-            else:
+            if data[1] == 0:
+                test.add_fail('HeaderSize', '0x%x' % data[1])
+            elif data[1] % 4096 != 0:
                 test.add_fail('HeaderSize', '0x%x not aligned to 4kB' % data[1])
+            else:
+                test.add_pass('HeaderSize', '0x%x' % data[1])
 
             # check if the flags are sane
             CAPSULE_FLAGS_PERSIST_ACROSS_RESET = 0x00010000
@@ -130,7 +132,7 @@ class Plugin(PluginBase):
 
             # check the capsule image size
             if data[3] == len(contents):
-                test.add_pass('CapsuleImageSize', data[3])
+                test.add_pass('CapsuleImageSize', '0x%x' % data[3])
             else:
                 test.add_fail('CapsuleImageSize',
                               '0x%x does not match file size 0x%x' % (data[3], len(contents)))
