@@ -8,6 +8,7 @@
 
 from flask import url_for, redirect, flash, g, render_template
 from flask_login import login_required
+from sqlalchemy.orm import joinedload
 
 from app import app, db, ploader
 
@@ -24,7 +25,9 @@ def test_overview():
         return _error_permission_denied('Permission denied')
 
     # get all the test data
-    tests = db.session.query(Test).order_by(Test.test_id.asc()).all()
+    tests = db.session.query(Test).\
+                options(joinedload('attributes')). \
+                order_by(Test.test_id.asc()).all()
     plugin_ids = {}
     for test in tests:
         if test.plugin_id not in plugin_ids:
@@ -74,7 +77,9 @@ def test_recent():
     # security check
     if not g.user.is_admin:
         return _error_permission_denied('Permission denied')
-    tests = db.session.query(Test).order_by(Test.started_ts.desc()).limit(20).all()
+    tests = db.session.query(Test).\
+                options(joinedload('attributes')). \
+                order_by(Test.started_ts.desc()).limit(20).all()
     return render_template('test-list.html', tests=tests)
 
 @app.route('/lvfs/test/running')
@@ -87,6 +92,7 @@ def test_running():
     tests = db.session.query(Test). \
                 filter(Test.started_ts != None). \
                 filter(Test.ended_ts == None). \
+                options(joinedload('attributes')). \
                 order_by(Test.test_id.asc()).all()
     return render_template('test-list.html', tests=tests)
 
@@ -99,6 +105,7 @@ def test_pending():
         return _error_permission_denied('Permission denied')
     tests = db.session.query(Test). \
                 filter(Test.started_ts == None). \
+                options(joinedload('attributes')). \
                 order_by(Test.test_id.asc()).all()
     return render_template('test-list.html', tests=tests)
 
@@ -112,6 +119,7 @@ def test_failed():
     tests = db.session.query(Test).\
                 filter(Test.ended_ts != None). \
                 filter(Test.waived_ts == None). \
+                options(joinedload('attributes')). \
                 order_by(Test.test_id.asc()).all()
     tests_failed = []
     for test in tests:
@@ -129,6 +137,7 @@ def test_waived():
     tests = db.session.query(Test).\
                 filter(Test.ended_ts != None). \
                 filter(Test.waived_ts != None). \
+                options(joinedload('attributes')). \
                 order_by(Test.test_id.asc()).all()
     return render_template('test-list.html', tests=tests)
 
