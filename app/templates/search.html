@@ -49,7 +49,7 @@
     </td>
     <td class="col-sm-11">
       <a href="/lvfs/vendorlist#{{vendor.group_id}}">Hardware Vendor: {{vendor.display_name}}</a><br/>
-      Uses the LVFS: {{ 'Yes' if vendor.is_account_holder == 'yes' else 'No' }}<br/>
+      Uses the LVFS: {{ 'Yes' if vendor.is_account_holder else 'No' }}<br/>
       Uploading Firmware: {{ 'Yes' if vendor.is_uploading == 'yes' else 'No' }}<br/>
       Official Statement: {{vendor.description}}
     </td>

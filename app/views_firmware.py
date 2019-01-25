@@ -336,7 +336,7 @@ def firmware_affiliation(firmware_id):
     if g.user.check_acl('@admin'):
         vendors = []
         for v in db.session.query(Vendor).order_by(Vendor.display_name).all():
-            if v.is_account_holder != 'yes':
+            if not v.is_account_holder:
                 continue
             vendors.append(v)
     else:

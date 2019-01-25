@@ -329,7 +329,6 @@ class Vendor(db.Model):
     visible_for_search = Column(Boolean, default=False)
     is_embargo_default = Column(Boolean, default=False)
     is_fwupd_supported = Column(String(16), nullable=False, default='no')
-    is_account_holder = Column(String(16), nullable=False, default='no')
     is_uploading = Column(String(16), nullable=False, default='no')
     comments = Column(Unicode, default=None)
     icon = Column(Text, default=None)
@@ -376,7 +375,6 @@ class Vendor(db.Model):
         self.description = None
         self.visible = False
         self.is_fwupd_supported = None
-        self.is_account_holder = None
         self.is_uploading = None
         self.comments = None
         self.icon = None
@@ -389,15 +387,17 @@ class Vendor(db.Model):
             val += 0x200
         if self.is_fwupd_supported == 'na':
             val += 0x100
-        if self.is_account_holder == 'yes':
+        if self.is_account_holder:
             val += 0x20
-        if self.is_account_holder == 'na':
-            val += 0x10
         if self.is_uploading == 'yes':
             val += 0x2
         if self.is_uploading == 'na':
             val += 0x1
         return val
+
+    @property
+    def is_account_holder(self):
+        return self.users
 
     def is_affiliate_for(self, vendor_id):
         for rel in self.affiliations_for:

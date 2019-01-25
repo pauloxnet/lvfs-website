@@ -611,7 +611,6 @@ class LvfsTestCase(unittest.TestCase):
             description='Everything supported',
             visible=True,
             is_fwupd_supported='1',
-            is_account_holder='1',
             is_uploading='1',
             keywords='keyword',
             comments='Emailed Dave on 2018-01-14 to follow up.',
@@ -1036,15 +1035,11 @@ class LvfsTestCase(unittest.TestCase):
         self.login()
         self.add_vendor('oem')  # 2
         self.add_user('alice@oem.com', 'oem')
-        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
         self.add_vendor('odm')  # 3
         self.add_user('bob@odm.com', 'odm')
-        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
         self.logout()
 
@@ -1098,15 +1093,11 @@ class LvfsTestCase(unittest.TestCase):
         self.login()
         self.add_vendor('oem')  # 2
         self.add_user('alice@oem.com', 'oem')
-        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
         self.add_vendor('odm')  # 3
         self.add_user('bob@odm.com', 'odm')
-        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
         self.logout()
 
@@ -1263,13 +1254,9 @@ class LvfsTestCase(unittest.TestCase):
         self.add_user('bob@odm.com', 'odm')
         self.add_vendor('another-unrelated-oem')  # 4
         self.add_affiliation(2, 3)
-        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
-        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data=dict(
-            is_account_holder='yes',
-        ), follow_redirects=True)
+        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data={}, follow_redirects=True)
         assert b'Updated vendor' in rv.data, rv.data
         self.logout()
 

@@ -485,10 +485,9 @@ def user_admin(user_id, page='admin'):
         return _error_permission_denied('Unable to modify user for non-admin user')
 
     # get all the vendors with LVFS accounts
+    vendors = []
     if g.user.check_acl('@admin'):
-        vendors = db.session.query(Vendor).\
-                    filter(Vendor.is_account_holder == 'yes').\
-                    order_by(Vendor.display_name).all()
-    else:
-        vendors = []
+        for v in db.session.query(Vendor).order_by(Vendor.display_name).all():
+            if v.is_account_holder:
+                vendors.append(v)
     return render_template('user-%s.html' % page, page=page, u=user, possible_vendors=vendors)

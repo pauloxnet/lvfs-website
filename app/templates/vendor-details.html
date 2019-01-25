@@ -79,14 +79,6 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="email">Is LVFS account holder:</label>
-    <select class="form-control" name="is_account_holder">
-      <option value="no" {{ 'selected' if v.is_account_holder == 'no' }}>No</option>
-      <option value="yes" {{ 'selected' if v.is_account_holder == 'yes' }}>Yes</option>
-      <option value="na" {{ 'selected' if v.is_account_holder == 'na' }}>n/a</option>
-    </select>
-  </div>
-  <div class="form-group">
     <label for="email">Is uploading firmware:</label>
     <select class="form-control" name="is_uploading">
       <option value="no" {{ 'selected' if v.is_uploading == 'no' }}>No</option>

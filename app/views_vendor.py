@@ -322,7 +322,6 @@ def vendor_modify_by_admin(vendor_id):
                 'plugins',
                 'description',
                 'is_fwupd_supported',
-                'is_account_holder',
                 'is_uploading',
                 'oauth_unknown_user',
                 'oauth_domain_glob',
@@ -467,7 +466,7 @@ def vendor_affiliations(vendor_id):
     for v in db.session.query(Vendor).order_by(Vendor.display_name).all():
         if v.vendor_id == vendor_id:
             continue
-        if v.is_account_holder != 'yes':
+        if not v.is_account_holder:
             continue
         if v.is_affiliate_for(vendor.vendor_id):
             continue

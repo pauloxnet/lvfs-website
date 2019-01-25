@@ -48,16 +48,14 @@
 {% else %}
     <td class="col-sm-1"></td>
 {% endif %}
-{% if v.is_account_holder == 'no' %}
+{% if not v.is_account_holder %}
     <td class="col-sm-1">
       <img src="/img/cross.svg" width="48" alt="No"/>
     </td>
-{% elif v.is_account_holder == 'yes' %}
+{% else %}
     <td class="col-sm-1">
       <img src="/img/tick.svg" width="48" alt="Yes"/>
     </td>
-{% else %}
-    <td class="col-sm-1"></td>
 {% endif %}
 {% if v.is_uploading == 'no' %}
     <td class="col-sm-1">

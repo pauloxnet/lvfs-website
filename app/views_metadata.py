@@ -54,9 +54,8 @@ def metadata_view():
 
     # show all embargo metadata URLs when admin user
     vendors = []
-    for vendor in db.session.query(Vendor).\
-                    filter(Vendor.is_account_holder != 'no').all():
-        if vendor.check_acl('@view-metadata'):
+    for vendor in db.session.query(Vendor).all():
+        if vendor.is_account_holder and vendor.check_acl('@view-metadata'):
             vendors.append(vendor)
     remotes = {}
     for r in db.session.query(Remote).all():
@@ -80,9 +79,9 @@ def metadata_rebuild():
         r.is_dirty = True
         if not scheduled_signing:
             scheduled_signing = r.scheduled_signing
-    for vendor in db.session.query(Vendor).\
-                    filter(Vendor.is_account_holder != 'no').all():
-        vendor.remote.is_dirty = True
+    for vendor in db.session.query(Vendor).all():
+        if vendor.is_account_holder:
+            vendor.remote.is_dirty = True
     if scheduled_signing:
         flash('Metadata will be rebuilt %s' % humanize.naturaltime(scheduled_signing), 'info')
     return redirect(url_for('.metadata_view'))
