@@ -88,9 +88,9 @@
 {% for attr in fw.security_claim.attrs|sort() %}
         <li class="list-group-item">
 {% if not attr.startswith('no') %}
-          <span class="font-weight-bold text-success">☑</span>
+          <img src="/img/tick.svg" width="32" alt="Yes"/>
 {% else %}
-          <span class="font-weight-bold text-danger">☒</span>
+          <img src="/img/cross.svg" width="32" alt="No"/>
 {% endif %}
           {{fw.security_claim.attrs[attr]}}
         </li>

@@ -5,37 +5,23 @@
 {% block nav %}{% include 'vendorlist-nav.html' %}{% endblock %}
 
 {% block content %}
-<h2>Vendor Status</h2>
-<p>
-  This page shows all the vendors contacted by the LVFS team.
-  If you'd like to be added to this list please let me know.
-</p>
-
 <table class="table">
-  <tr class="row">
-    <th class="col-sm-1">Logo</th>
-    <th class="col-sm-2">Vendor</th>
-    <th class="col-sm-3">fwupd support</th>
+  <tr class="row table-borderless">
+    <th class="col-sm-3">Vendor</th>
+    <th class="col-sm-1">fwupd support</th>
     <th class="col-sm-1">LVFS account</th>
     <th class="col-sm-1">Uploaded firmware</th>
 {% if g.user is defined and g.user.check_acl('@admin') %}
-    <th class="col-sm-3">Comments</th>
+    <th class="col-sm-5">Comments</th>
     <th class="col-sm-1">&nbsp;</th>
 {% else %}
-    <th class="col-sm-4">Comments</th>
+    <th class="col-sm-6">Comments</th>
 {% endif %}
   </tr>
 {% for v in vendors %}
 {% if v.visible or (g.user is defined and g.user.check_acl('@admin')) %}
   <tr class="row" id="{{v.group_id}}">
-    <td class="col-sm-1">
-{% if v.icon %}
-      <img class="img-thumbnail" src="/uploads/{{v.icon}}" height="32"/>
-{% else %}
-      <img class="img-thumbnail" src="/uploads/vendor-unknown.png" height="32"/>
-{% endif %}
-    </td>
-    <td class="col-sm-2">
+    <td class="col-sm-3">
 {% if v.visible %}
 {% if v.url %}
       <a href="{{v.url}}">{{v.display_name}}</a>
@@ -45,51 +31,50 @@
 {% else %}
       <em>{{v.display_name}} [private]</em>
 {% endif %}
+{% if v.icon %}
+      <img class="img-thumbnail float-right" src="/uploads/{{v.icon}}" width="96"/>
+{% else %}
+      <img class="img-thumbnail float-right" src="/uploads/vendor-unknown.png" width="96"/>
+{% endif %}
     </td>
 {% if v.is_fwupd_supported == 'no' %}
-    <td class="col-sm-3 no">
-      No
+    <td class="col-sm-1">
+      <img src="/img/cross.svg" width="48" alt="No"/>
     </td>
 {% elif v.is_fwupd_supported == 'yes' %}
-    <td class="col-sm-3 yes">
-      Yes ({{v.plugins}})
+    <td class="col-sm-1">
+      <img src="/img/tick.svg" width="48" alt="Yes" title="{{v.plugins}}"/>
     </td>
 {% else %}
-    <td class="col-sm-3 na">
-      n/a ({{v.plugins}})
-    </td>
+    <td class="col-sm-1"></td>
 {% endif %}
 {% if v.is_account_holder == 'no' %}
-    <td class="col-sm-1 no">
-      No
+    <td class="col-sm-1">
+      <img src="/img/cross.svg" width="48" alt="No"/>
     </td>
 {% elif v.is_account_holder == 'yes' %}
-    <td class="col-sm-1 yes">
-      Yes
+    <td class="col-sm-1">
+      <img src="/img/tick.svg" width="48" alt="Yes"/>
     </td>
 {% else %}
-    <td class="col-sm-2 na">
-      n/a
-    </td>
+    <td class="col-sm-1"></td>
 {% endif %}
 {% if v.is_uploading == 'no' %}
-    <td class="col-sm-1 no">
-      No
+    <td class="col-sm-1">
+      <img src="/img/cross.svg" width="48" alt="No"/>
     </td>
 {% elif v.is_uploading == 'yes' %}
-    <td class="col-sm-1 yes">
-      Yes
+    <td class="col-sm-1">
+      <img src="/img/tick.svg" width="48" alt="Yes"/>
     </td>
 {% else %}
-    <td class="col-sm-1 na">
-      n/a
-    </td>
+    <td class="col-sm-1"></td>
 {% endif %}
 {% if g.user is defined and g.user.check_acl('@admin') %}
-    <td class="col-sm-3">{{v.description}}</td>
+    <td class="col-sm-5">{{v.description}}</td>
     <td class="col-sm-1"><a class="btn btn-secondary btn-block" href="/lvfs/vendor/{{v.vendor_id}}/details">Edit</a></td>
 {% else %}
-    <td class="col-sm-4">{{v.description}}</td>
+    <td class="col-sm-6">{{v.description}}</td>
 {% endif %}
   </tr>
 {% endif %}
