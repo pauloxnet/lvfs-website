@@ -10,10 +10,10 @@ from flask_mail import Message
 
 from app import app, mail
 
-from .decorators import async
+from .decorators import async_wrapper
 from .util import _event_log
 
-@async
+@async_wrapper
 def send_async_email(app2, msg):
     with app2.app_context():
         mail.send(msg)
