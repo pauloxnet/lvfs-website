@@ -138,8 +138,8 @@ def search(max_results=19):
             if md not in md_priority[keyword]:
                 found_in_all = False
                 break
-            if md_priority[keyword] > priority_max:
-                priority_max = md_priority[keyword]
+            if md_priority[keyword][md] > priority_max:
+                priority_max = md_priority[keyword][md]
         if found_in_all:
             md_priority_in_all[md] = priority_max
     if len(md_priority_in_all) > 0:
