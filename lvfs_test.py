@@ -365,7 +365,7 @@ class LvfsTestCase(unittest.TestCase):
         rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
                           environ_base={'HTTP_USER_AGENT': 'fwupd/1.1.1'})
         assert rv.status_code == 429, rv.status_code
-        assert rv.data == 'ETOOSLOW', rv.data
+        assert rv.data == b'ETOOSLOW', rv.data
 
         # download not matching glob, success
         rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
