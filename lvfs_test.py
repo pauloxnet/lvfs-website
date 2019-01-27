@@ -399,13 +399,13 @@ class LvfsTestCase(unittest.TestCase):
 
     def run_cron_firmware(self, fn='hughski-colorhug2-2.0.3'):
         stdout = self._run_cron('firmware')
-        assert fn in stdout, stdout
+        assert fn in stdout.decode('utf-8'), stdout
 
     def run_cron_metadata(self, remote_ids=None):
         stdout = self._run_cron('metadata')
         if remote_ids:
             for remote_id in remote_ids:
-                assert 'Updating: %s' % remote_id in stdout, stdout
+                assert 'Updating: %s' % remote_id in stdout.decode('utf-8'), stdout
 
     def test_cron_metadata(self):
 
@@ -443,7 +443,7 @@ class LvfsTestCase(unittest.TestCase):
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, _ = ps.communicate()
-        assert 'Signing: /tmp/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab' in stdout, stdout
+        assert 'Signing: /tmp/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab' in stdout.decode('utf-8'), stdout
 
         # verify the firmware is now signed
         rv = self.app.get('/lvfs/firmware/1')
