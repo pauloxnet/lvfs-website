@@ -10,3 +10,5 @@ blinker
 python-gnupg
 pyqrcode
 onetimepass
+PyGObject
+mysqlclient
