@@ -291,6 +291,7 @@ def upload():
             return redirect('/lvfs/firmware/%s' % fw.firmware_id)
 
     # check if the file dropped a GUID previously supported
+    dropped_guids = []
     for component in ufile.get_components():
         new_guids = []
         for prov in component.get_provides():
@@ -305,9 +306,15 @@ def upload():
                     continue
                 for old_guid in md.guids:
                     if not old_guid.value in new_guids:
-                        flash('Firmware %s dropped a GUID previously '
-                              'supported %s' % (md.appstream_id, old_guid.value), 'danger')
-                        return redirect(request.url)
+                        dropped_guids.append(old_guid.value)
+    if dropped_guids:
+        if g.user.is_qa:
+            flash('Firmware drops a GUID previously supported: ' +
+                  ','.join(dropped_guids), 'warning')
+        else:
+            flash('Firmware would drop a GUID previously supported: ' +
+                  ','.join(dropped_guids), 'danger')
+            return redirect(request.url)
 
     # allow plugins to copy any extra files from the source archive
     for cffolder in ufile.get_source_cabinet().get_folders():
