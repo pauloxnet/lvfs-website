@@ -95,8 +95,8 @@ class Plugin(PluginBase):
         affidavit = Affidavit(settings['sign_gpg_metadata_uid'], settings['sign_gpg_keyring_dir'])
         if not affidavit:
             return
-        with open(fn, 'rb').read() as blob:
-            blob_asc = affidavit.create(blob)
+        with open(fn, 'rb') as blob:
+            blob_asc = affidavit.create(blob.read())
         fn_asc = fn + '.asc'
         with open(fn_asc, 'w') as f:
             f.write(blob_asc)
