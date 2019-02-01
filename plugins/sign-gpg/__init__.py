@@ -45,9 +45,9 @@ class Affidavit:
 
     def create_detached(self, filename):
         """ Create a detached signature file """
-        with open(filename) as fin:
+        with open(filename, 'rb') as fin:
             data = fin.read()
-            with open(filename + '.asc', 'w') as f:
+            with open(filename + '.asc', 'wb') as f:
                 f.write(self.create(data))
         return filename + '.asc'
 
