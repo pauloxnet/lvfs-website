@@ -41,7 +41,7 @@ class Affidavit:
     def create(self, data):
         """ Create detached signature data """
         gpg = gnupg.GPG(gnupghome=self._homedir, gpgbinary='gpg2')
-        return str(gpg.sign(str(data), detach=True, keyid=self._keyid))
+        return gpg.sign(data, detach=True, keyid=self._keyid)
 
     def create_detached(self, filename):
         """ Create a detached signature file """
@@ -99,7 +99,7 @@ class Plugin(PluginBase):
             blob_asc = affidavit.create(blob.read())
         fn_asc = fn + '.asc'
         with open(fn_asc, 'w') as f:
-            f.write(blob_asc)
+            f.write(str(blob_asc))
 
         # inform the plugin loader
         ploader.file_modified(fn_asc)
