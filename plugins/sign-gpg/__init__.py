@@ -30,6 +30,7 @@ class Affidavit:
         # find correct key ID for the UID
         self._keyid = None
         gpg = gnupg.GPG(gnupghome=homedir, gpgbinary='gpg2')
+        gpg.encoding = 'utf-8'
         for privkey in gpg.list_keys(True):
             for uid in privkey['uids']:
                 if uid.find(key_uid) != -1:
@@ -54,6 +55,7 @@ class Affidavit:
     def verify(self, data):
         """ Verify that the data was signed by something we trust """
         gpg = gnupg.GPG(gnupghome=self._homedir, gpgbinary='gpg2')
+        gpg.encoding = 'utf-8'
         ver = gpg.verify(data)
         if not ver.valid:
             raise PluginError('Firmware was signed with an unknown private key')
