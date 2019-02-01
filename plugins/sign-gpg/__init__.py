@@ -129,7 +129,7 @@ class Plugin(PluginBase):
             raise PluginError('No firmware signing UID set')
         affidavit = Affidavit(settings['sign_gpg_firmware_uid'], settings['sign_gpg_keyring_dir'])
         contents = firmware_cff.get_bytes().get_data()
-        contents_asc = affidavit.create(contents)
+        contents_asc = str(affidavit.create(contents))
 
         # add it to the archive
         _archive_add(arc, detached_fn, contents_asc.encode('utf-8'))
