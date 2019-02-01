@@ -326,8 +326,8 @@ class UploadedFile:
 
         # check size
         self._data_size = len(data)
-        if self._data_size > 50000000:
-            raise FileTooLarge('File too large, limit is 50Mb')
+        if self._data_size > 104857600:
+            raise FileTooLarge('File too large, limit is 100Mb')
         if self._data_size < 1024:
             raise FileTooSmall('File too small, mimimum is 1k')
 
