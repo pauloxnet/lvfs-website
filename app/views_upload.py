@@ -308,7 +308,7 @@ def upload():
                     if not old_guid.value in dropped_guids:
                         dropped_guids.append(old_guid.value)
     if dropped_guids:
-        if g.user.is_qa:
+        if g.user.is_qa or g.user.is_robot:
             flash('Firmware drops a GUID previously supported: ' +
                   ','.join(dropped_guids), 'warning')
         else:
