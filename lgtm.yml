@@ -4,3 +4,5 @@ extraction:
       version: 3
     index:
       exclude: migrations
+queries:
+  exclude: py/test-equals-none

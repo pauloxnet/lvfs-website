@@ -19,7 +19,7 @@ from gi.repository import GCab
 from gi.repository import Gio
 from gi.repository import GLib
 
-import app as application
+import app as application   #lgtm [py/import-and-import-from]
 from app import db, ploader
 
 from app.models import Remote, Firmware
