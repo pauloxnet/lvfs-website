@@ -9,7 +9,7 @@
 import uuid
 
 from flask import session, request
-from flask_oauthlib.client import OAuth, OAuthException
+from flask_oauthlib.client import OAuthException
 
 from app import oauth
 from app.pluginloader import PluginBase, PluginSettingBool, PluginSettingText, PluginError

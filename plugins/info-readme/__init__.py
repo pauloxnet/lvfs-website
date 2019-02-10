@@ -6,11 +6,7 @@
 #
 # pylint: disable=no-self-use
 
-import os
-import datetime
-
 from app.pluginloader import PluginBase, PluginError, PluginSettingText, PluginSettingBool
-from app.models import Setting
 from app.util import _archive_get_files_from_glob, _archive_add, _get_settings
 
 class Plugin(PluginBase):

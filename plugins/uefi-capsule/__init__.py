@@ -67,7 +67,7 @@ class Plugin(PluginBase):
         fn = _get_absolute_path(fw)
         try:
             istream = Gio.File.new_for_path(fn).read()
-        except gi.repository.GLib.Error as e: # pylint: disable=catching-non-exception
+        except GLib.Error as e: # pylint: disable=catching-non-exception
             raise PluginError(e)
         cfarchive = GCab.Cabinet.new()
         cfarchive.load(istream)

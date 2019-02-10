@@ -6,7 +6,6 @@
 #
 # pylint: disable=no-self-use
 
-import os
 import subprocess
 import tempfile
 
