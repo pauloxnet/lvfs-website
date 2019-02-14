@@ -291,8 +291,8 @@ def _metadata_update_pulp():
     # for each file in stable plus metadata
     data = []
     download_dir = app.config['DOWNLOAD_DIR']
-    for f in files_to_scan:
-        fn = os.path.join(download_dir, f)
+    for basename in files_to_scan:
+        fn = os.path.join(download_dir, basename)
         if not os.path.exists(fn):
             continue
 
@@ -300,7 +300,7 @@ def _metadata_update_pulp():
         with open(fn, 'rb') as f:
             sha256 = _hashfile(f, hashlib.sha256())
         fn_sz = os.path.getsize(fn)
-        data.append('%s,%s,%i\n' % (f, sha256, fn_sz))
+        data.append('%s,%s,%i\n' % (basename, sha256, fn_sz))
 
     # write file
     filename = os.path.join(download_dir, 'PULP_MANIFEST')
