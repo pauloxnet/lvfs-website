@@ -41,6 +41,9 @@ The admin user is set as `sign-test@fwupd.org` with password `Pa$$w0rd`.
     pip3 install -r requirements.txt
     FLASK_DEBUG=1 ./app.wsgi
 
+You may also need to install introspection dependencies.  For example on Ubuntu the following is required:
+    sudo apt install -y python3-gi gcab gir1.2-libgcab-1.0 libappstream-glib-dev gir1.2-appstreamglib-1.0
+
 ## Generating a SSL certificate ##
 
 IMPORTANT: The LVFS needs to be hosted over SSL.
