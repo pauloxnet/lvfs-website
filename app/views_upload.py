@@ -305,7 +305,7 @@ def upload():
                 if md.appstream_id != component.get_id():
                     continue
                 for old_guid in md.guids:
-                    if not old_guid.value in dropped_guids:
+                    if not old_guid.value in new_guids and not old_guid.value in dropped_guids:
                         dropped_guids.append(old_guid.value)
     if dropped_guids:
         if g.user.is_qa or g.user.is_robot:
