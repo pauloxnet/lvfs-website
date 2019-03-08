@@ -26,7 +26,16 @@ The official instance is set up using puppet on RHEL 7, on which you could use:
     vim keys.pp
     puppet apply .
 
-You can set up the database manually using:
+You can set up the development database manually using:
+
+    $ mysql -u root
+    > CREATE DATABASE lvfs;
+    > CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
+    > USE lvfs;
+    > GRANT ALL ON lvfs.* TO 'test'@'localhost';
+    > exit
+
+Then create the schema using:
 
     FLASK_APP=app/__init__.py flask-3 initdb
     FLASK_APP=app/__init__.py flask-3 db stamp
