@@ -18,6 +18,7 @@ def _gzip_decompress_buffer(buf):
     fgz = io.BytesIO()
     fgz.write(buf)
     fgz.seek(0)
+    buf_d = None
     with gzip.GzipFile(fileobj=fgz, mode='rb') as gzip_obj:
         try:
             buf_d = gzip_obj.read()
