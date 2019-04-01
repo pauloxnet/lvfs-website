@@ -257,11 +257,6 @@ def docs_privacy():
 def docs_users():
     return render_template('docs-users.html')
 
-@app.route('/donations') # deprecated
-@app.route('/lvfs/docs/donations')
-def docs_donations():
-    return render_template('docs-donations.html')
-
 @app.route('/vendors')
 @app.route('/lvfs/docs/vendors')
 def docs_vendors():
