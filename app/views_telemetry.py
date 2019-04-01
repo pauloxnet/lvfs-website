@@ -35,19 +35,6 @@ def _get_split_names_for_firmware(fw):
             names.append(name_safe)
     return sorted(names)
 
-@app.route('/lvfs/telemetry/repair')
-@login_required
-def telemetry_repair():
-    # security check
-    if not g.user.check_acl('@admin'):
-        return _error_permission_denied('Not admin user')
-    for fw in db.session.query(Firmware).all():
-        q = db.session.query(Client).filter(Client.firmware_id == fw.firmware_id)
-        count_q = q.statement.with_only_columns([func.count()]).order_by(None)
-        fw.download_cnt = q.session.execute(count_q).scalar()
-    db.session.commit()
-    return redirect(url_for('.telemetry'))
-
 @app.route('/lvfs/telemetry/<int:age>/<sort_key>/<sort_direction>')
 @app.route('/lvfs/telemetry/<int:age>/<sort_key>')
 @app.route('/lvfs/telemetry/<int:age>')
