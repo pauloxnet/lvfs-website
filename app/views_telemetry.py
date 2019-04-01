@@ -6,9 +6,8 @@
 
 import datetime
 
-from flask import url_for, redirect, render_template, g
+from flask import render_template, g
 from flask_login import login_required
-from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
 from app import app, db
