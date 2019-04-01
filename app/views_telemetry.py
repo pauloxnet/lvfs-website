@@ -8,13 +8,14 @@ import datetime
 
 from flask import url_for, redirect, render_template, g
 from flask_login import login_required
-from sqlalchemy import func, text
+from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
 from app import app, db
 
 from .dbutils import _execute_count_star
 from .models import Firmware, Client
+from .models import _get_datestr_from_datetime
 from .util import _error_permission_denied
 
 def _get_split_names_for_firmware(fw):
@@ -67,6 +68,7 @@ def telemetry(age=0, sort_key='downloads', sort_direction='up'):
     show_duplicate_warning = False
     fwlines = []
     age_seconds = age * 60 * 60 * 24
+    datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=1))
     for fw in db.session.query(Firmware).options(joinedload('reports')).all():
 
         # not allowed to view
@@ -84,9 +86,7 @@ def telemetry(age=0, sort_key='downloads', sort_direction='up'):
         else:
             cnt_download = _execute_count_star(db.session.query(Client).\
                                 filter(Client.firmware_id == fw.firmware_id).\
-                                filter(func.timestampdiff(text('DAY'),
-                                                          Client.timestamp,
-                                                          func.current_timestamp()) < age))
+                                filter(Client.datestr <= datestr))
             rpts = []
             for rpt in fw.reports:
                 if (datetime.datetime.now() - rpt.timestamp).total_seconds() < age_seconds:

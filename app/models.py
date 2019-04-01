@@ -1397,6 +1397,7 @@ class Client(db.Model):
 
     id = Column(Integer, primary_key=True, nullable=False, unique=True)
     timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow, index=True)
+    datestr = Column(Integer, default=0, index=True)
     addr = Column(String(40), nullable=False)
     firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
     user_agent = Column(Text, default=None)
@@ -1410,6 +1411,7 @@ class Client(db.Model):
         self.addr = addr
         self.firmware_id = firmware_id
         self.user_agent = user_agent
+        self.datestr = _get_datestr_from_datetime(datetime.datetime.utcnow())
 
     def __repr__(self):
         return "Client object %s" % self.id

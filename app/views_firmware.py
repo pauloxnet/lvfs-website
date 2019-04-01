@@ -16,6 +16,7 @@ from app import app, db
 from .dbutils import _execute_count_star
 
 from .models import Firmware, Report, Client, FirmwareEvent, FirmwareLimit, Remote, Vendor
+from .models import _get_datestr_from_datetime
 from .util import _error_internal, _error_permission_denied, _event_log
 from .util import _get_chart_labels_months, _get_chart_labels_days
 
@@ -480,12 +481,12 @@ def _get_stats_for_fw(size, interval, fw):
     data = []
     now = datetime.date.today()
     for i in range(size):
-        start = now - datetime.timedelta((i * interval) + interval - 1)
-        end = now - datetime.timedelta((i * interval) - 1)
+        start = _get_datestr_from_datetime(now - datetime.timedelta((i * interval) + interval - 1))
+        end = _get_datestr_from_datetime(now - datetime.timedelta((i * interval) - 1))
         cnt = _execute_count_star(db.session.query(Client).\
                     filter(Client.firmware_id == fw.firmware_id).\
-                    filter(Client.timestamp >= start).\
-                    filter(Client.timestamp < end))
+                    filter(Client.datestr >= start).\
+                    filter(Client.datestr < end))
         data.append(int(cnt))
     return data
 
