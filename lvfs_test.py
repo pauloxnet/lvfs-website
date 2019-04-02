@@ -1460,7 +1460,6 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
                 '/developers',
                 '/privacy',
                 '/status',
-                '/donations',
                 '/vendorlist',
                 '/lvfs/newaccount',
                 '/lvfs/devicelist',
