@@ -1239,10 +1239,6 @@ class Firmware(db.Model):
         return self.remote.is_deleted
 
     @property
-    def is_public(self):
-        return self.remote.is_public
-
-    @property
     def banned_country_codes(self):
         if self._banned_country_codes:
             return self._banned_country_codes
@@ -1381,8 +1377,6 @@ class Firmware(db.Model):
                 return False
             return False
         if action == '@view':
-            if self.is_public:
-                return True
             if user.is_qa and self._is_vendor(user):
                 return True
             if user.is_analyst and self._is_vendor(user):
