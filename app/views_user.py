@@ -75,7 +75,7 @@ def user_modify(user_id):
 
     # unchecked checkbuttons are not included in the form data
     for key in ['is_otp_enabled']:
-        setattr(user, key, True if key in request.form else False)
+        setattr(user, key, bool(key in request.form))
 
     # user has to have tested OTP before it can be enabled
     if user.is_otp_enabled and not user.is_otp_working:
@@ -238,7 +238,7 @@ def user_modify_by_admin(user_id):
     # unchecked checkbuttons are not included in the form data
     for key in ['is_qa', 'is_analyst', 'is_vendor_manager',
                 'is_approved_public', 'is_robot', 'is_admin', 'is_otp_enabled']:
-        setattr(user, key, True if key in request.form else False)
+        setattr(user, key, bool(key in request.form))
 
     # password is optional, and hashed
     if 'password' in request.form and request.form['password']:
@@ -256,7 +256,7 @@ def user_modify_by_admin(user_id):
 
     # reparent any uploaded firmware
     is_dirty = False
-    reparent = True if 'reparent' in request.form else False
+    reparent = bool('reparent' in request.form)
     if old_vendor.vendor_id != user.vendor_id and reparent:
         for fw in db.session.query(Firmware).\
                     filter(Firmware.user_id == user.user_id).all():

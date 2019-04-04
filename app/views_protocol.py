@@ -89,10 +89,10 @@ def protocol_modify(protocol_id):
         return _error_permission_denied('Unable to modify protocol')
 
     # modify protocol
-    protocol.is_signed = True if 'is_signed' in request.form else False
-    protocol.is_public = True if 'is_public' in request.form else False
-    protocol.can_verify = True if 'can_verify' in request.form else False
-    protocol.has_header = True if 'has_header' in request.form else False
+    protocol.is_signed = bool('is_signed' in request.form)
+    protocol.is_public = bool('is_public' in request.form)
+    protocol.can_verify = bool('can_verify' in request.form)
+    protocol.has_header = bool('has_header' in request.form)
     for key in ['name']:
         if key in request.form:
             setattr(protocol, key, request.form[key])

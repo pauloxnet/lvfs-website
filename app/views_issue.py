@@ -193,7 +193,7 @@ def issue_modify(issue_id):
         return redirect(url_for('.issue_details', issue_id=issue_id))
 
     # modify issue
-    issue.enabled = True if 'enabled' in request.form else False
+    issue.enabled = bool('enabled' in request.form)
     for key in ['url', 'name', 'description']:
         if key in request.form:
             setattr(issue, key, request.form[key])

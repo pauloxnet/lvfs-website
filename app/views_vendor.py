@@ -362,7 +362,7 @@ def vendor_modify_by_admin(vendor_id):
                 'visible_on_landing',
                 'visible_for_search']:
         if key in request.form:
-            setattr(vendor, key, True if request.form[key] == '1' else False)
+            setattr(vendor, key, bool(request.form[key] == '1'))
     db.session.commit()
     flash('Updated vendor', 'info')
     return redirect(url_for('.vendor_list'))
