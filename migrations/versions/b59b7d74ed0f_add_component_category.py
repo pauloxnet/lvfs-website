@@ -70,7 +70,7 @@ def upgrade():
                     break
             for suffix in ['controller Update']:
                 if md.name.endswith(suffix) or md.summary.endswith(suffix):
-                    md.category_id = apxs['controller'].category_id
+                    md.category_id = apxs['X-Controller'].category_id
                     break
 
         # protocol fallback

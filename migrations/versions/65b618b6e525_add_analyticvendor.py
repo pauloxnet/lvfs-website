@@ -21,7 +21,7 @@ from app.models import Client, Vendor, AnalyticVendor, _get_datestr_from_datetim
 from app.dbutils import _execute_count_star
 
 def upgrade():
-    if 0:
+    if 1:
         op.create_table('analytics_vendor',
         sa.Column('analytic_id', sa.Integer(), nullable=False),
         sa.Column('datestr', sa.Integer(), nullable=True),
