@@ -772,10 +772,28 @@ class Test(db.Model):
         return False
 
     @property
+    def is_waived(self):
+        if self.waived_ts:
+            return True
+        return False
+
+    @property
     def is_running(self):
         if self.started_ts and not self.ended_ts:
             return True
         return False
+
+    @property
+    def color(self):
+        if self.success:
+            return 'success'
+        if self.is_running:
+            return 'info'
+        if self.is_pending:
+            return 'info'
+        if self.is_waived:
+            return 'warning'
+        return 'danger'
 
     @property
     def success(self):
