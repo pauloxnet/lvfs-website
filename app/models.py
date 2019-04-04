@@ -1809,7 +1809,7 @@ class Protocol(db.Model):
         self.has_header = has_header
 
     def __repr__(self):
-        return "Protocol object %i:%s" % (self.protocol_id, self.value)
+        return "Protocol object %s:%s" % (self.protocol_id, self.value)
 
 class SearchEvent(db.Model):
 
