@@ -16744,7 +16744,6 @@ canvas {
 -----------------------------------------------*/
 td:last-child {
   width: 1px;
-  white-space: nowrap;
 }
 
 th {
