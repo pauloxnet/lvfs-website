@@ -493,8 +493,6 @@ class LvfsTestCase(unittest.TestCase):
         assert '/downloads/' + self.checksum_upload in rv.data.decode('utf-8'), rv.data
         rv = self.app.get('/lvfs/firmware')
         assert b'/lvfs/firmware/1' in rv.data, rv.data
-        rv = self.app.get('/lvfs/firmware/1/analytics/clients')
-        assert b'User Agent' in rv.data, rv.data
         rv = self.app.get('/lvfs/firmware/1/promote/testing',
                           follow_redirects=True)
         assert b'Permission denied: No QA access' in rv.data, rv.data
@@ -506,8 +504,6 @@ class LvfsTestCase(unittest.TestCase):
         assert '/downloads/' + self.checksum_upload in rv.data.decode('utf-8'), rv.data
         rv = self.app.get('/lvfs/firmware')
         assert b'/lvfs/firmware/1' in rv.data, rv.data
-        rv = self.app.get('/lvfs/firmware/1/analytics/clients')
-        assert b'User Agent' in rv.data, rv.data
         self.run_cron_firmware()
         rv = self.app.get('/lvfs/firmware/1/promote/testing',
                           follow_redirects=True)

@@ -4,25 +4,16 @@
 {% block nav %}{% include 'firmware-nav.html' %}{% endblock %}
 
 {% block content %}
-<div class="card">
-  <div class="card-body">
-    <h4 class="card-title">Downloads</h4>
-<table class="table">
-  <tr class="row table-borderless">
-    <th class="col-sm-2">Timestamp</th>
-    <th class="col-sm-2">Address</th>
-    <th class="col-sm-8">User Agent</th>
-  </tr>
+
 {% for c in clients %}
-  <tr class="row">
-    <td class="col-sm-2">{{c.timestamp}}</td>
-    <td class="col-sm-2"><code>{{c.addr|truncate(9, False, '…')}}</code></td>
-    <td class="col-sm-8">{{c.user_agent}}</td>
-  </tr>
-{% endfor %}
-</table>
+<div class="card mt-3">
+  <div class="card-body">
+    <h4 class="card-title">{{c.timestamp}}</h4>
+    <p class="card-text">{{c.user_agent}}</p>
   </div>
 </div>
+{% endfor %}
+
 {% endblock %}
 
 {% block breadcrumb %}{% include 'firmware-breadcrumb.html' %}{% endblock %}
