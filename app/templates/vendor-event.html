@@ -6,7 +6,7 @@
 {% block content %}
 
 <div class="list-group">
-{% for e in v.events.limit(1000) %}
+{% for e in v.events.limit(100) %}
   <div class="list-group-item list-group-item-action {{'list-group-item-warning' if e.is_important}}">
     <h4>{{e.message}}</h4>
     <p class="text-secondary">
