@@ -36,10 +36,10 @@
     </td>
     </form>
   </tr>
-{% endif %}
 </table>
   </div>
 </div>
+{% endif %}
 
 {% if v.affiliations|length == 0 %}
 <div class="card mt-3">
@@ -56,10 +56,10 @@
   <div class="card">
     <div class="card-body">
       <h4 class="card-title">
-        <img class="img-thumbnail mr-3" src="/uploads/{{r.vendor_odm.icon}}" width="128"/>
+        {{r.vendor_odm.display_name}}
       </h4>
       <p class="card-text">
-        {{r.vendor_odm.display_name}}
+        <img class="img-thumbnail mr-3" src="/uploads/{{r.vendor_odm.icon}}" width="128"/>
       </p>
 {% if v.check_acl('@modify-affiliations') %}
       <a class="card-link" href="/lvfs/vendor/{{v.vendor_id}}/affiliation/{{r.affiliation_id}}/delete" role="button">Remove</a>
