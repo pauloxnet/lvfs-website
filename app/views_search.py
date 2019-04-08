@@ -7,9 +7,12 @@
 from flask import request, render_template, flash, redirect, url_for, g
 from flask_login import login_required
 
+from sqlalchemy import func
+
 from app import app, db
 
-from .models import Guid, Keyword, Vendor, SearchEvent, _split_search_string
+from .models import Guid, Keyword, Vendor, SearchEvent, Component, Firmware
+from .models import _split_search_string
 from .hash import _addr_hash
 from .util import _get_client_address, _error_internal, _error_permission_denied
 
@@ -71,41 +74,35 @@ def _add_search_event(ev):
     db.session.commit()
 
 @app.route('/lvfs/firmware/search', methods=['GET', 'POST'])
+@app.route('/lvfs/firmware/search/<int:max_results>', methods=['GET', 'POST'])
 @login_required
 def search_fw(max_results=100):
 
     if 'value' not in request.args:
         return _error_internal('No search value!')
-
-    # there must be a more efficient way to do this...
-    fws = []
-    kws_fw = {}
     keywords = _split_search_string(request.args['value'])
-    for keyword in keywords:
-        fws_for_this_keyword = []
-        kws = db.session.query(Keyword).\
-                        filter(Keyword.value == keyword).\
-                        order_by(Keyword.keyword_id.desc()).all()
-        for kw in kws:
-            fw = kw.md.fw
-            if fw in fws_for_this_keyword:
-                continue
-            if not fw.check_acl('@view'):
-                continue
-            if fw in kws_fw:
-                kws_fw[fw] += 1
-            else:
-                kws_fw[fw] = 1
-            fws_for_this_keyword.append(fw)
-    for fw in kws_fw:
-        if kws_fw[fw] == len(keywords):
-            fws.append(fw)
+    if not keywords:
+        keywords = request.args['value'].split(' ')
+
+    # use keywords first
+    fws = db.session.query(Firmware).join(Component).\
+                           join(Keyword).\
+                           filter(Keyword.value.in_(keywords)).\
+                           group_by(Keyword.component_id).\
+                           having(func.count() == len(keywords)).\
+                           distinct().limit(max_results).all()
+
+    # filter by ACL
+    fws_safe = []
+    for fw in fws:
+        if fw.check_acl('@view'):
+            fws_safe.append(fw)
 
     return render_template('firmware-search.html',
                            category='firmware',
                            state='search',
                            remote=None,
-                           fws=fws[:max_results])
+                           fws=fws_safe)
 
 @app.route('/lvfs/search', methods=['GET', 'POST'])
 @app.route('/lvfs/search/<int:max_results>', methods=['POST'])
