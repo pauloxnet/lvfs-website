@@ -36,9 +36,9 @@
 {% endif %}
 {% if fw.reports|length > 0 %}
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_analytics_reports' and state == 2 else 'default'}}"
-        href="{{url_for('.firmware_analytics_reports', firmware_id=fw.firmware_id, state=2)}}">👍 Reports</a>
+        href="{{url_for('.firmware_analytics_reports', firmware_id=fw.firmware_id, state=2)}}"><span class="fas fa-thumbs-up fs-0"></span> Reports</a>
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_analytics_reports' and state == 3 else 'default'}}"
-        href="{{url_for('.firmware_analytics_reports', firmware_id=fw.firmware_id, state=3)}}">👎 Reports</a>
+        href="{{url_for('.firmware_analytics_reports', firmware_id=fw.firmware_id, state=3)}}"><span class="fas fa-thumbs-down fs-0"></span> Reports</a>
 {% endif %}
 {% endif %}
     </div>
