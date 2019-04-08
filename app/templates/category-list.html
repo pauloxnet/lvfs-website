@@ -1,8 +1,10 @@
 {% extends "default.html" %}
-{% block title %}Categories{% endblock %}
+{% block title %}Update Categories{% endblock %}
 
 {% block content %}
-<h1>Update Categories</h1>
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Update Categories</h2>
 
 {% if categories|length == 0 %}
 <p>
@@ -11,7 +13,7 @@
 
 {% else %}
 
-<table class="table">
+<table class="table card-text">
   <tr class="row">
     <th class="col-sm-5">Value</th>
     <th class="col-sm-5">Name</th>
@@ -31,20 +33,20 @@
 </table>
 
 {% endif %}
-
-<hr/>
-
-<h2>Create a new update category</h2>
-<form method="post" action="/lvfs/category/add" class="form-inline">
-  <div class="table">
-    <div class="row">
-      <div class="col-sm-10">
-        <input class="form-control" type="text" size="100" name="value" placeholder="Value" required>
-      </div>
-      <div class="col-sm-2">
-        <input class="btn btn-primary btn-block" type="submit" value="Add">
-      </div>
-    </div>
   </div>
-</form>
+</div>
+
+<div class="card mt-3">
+  <div class="card-body">
+    <h2 class="card-title">Create a new category</h2>
+    <form method="post" action="/lvfs/category/add" class="form">
+      <div class="form-group card-text">
+        <label>Value name, e.g. <code>X-DeviceFoo</code></label>
+        <input class="form-control" type="text" name="value" placeholder="Value" required />
+      </div>
+      <input class="card-link btn btn-primary" type="submit" value="Add"/>
+    </form>
+  </div>
+</div>
+
 {% endblock %}

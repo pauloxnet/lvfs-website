@@ -22,7 +22,9 @@ def category_all():
 
     # only show categories with the correct group_id
     categories = db.session.query(Category).order_by(Category.category_id.asc()).all()
-    return render_template('category-list.html', categories=categories)
+    return render_template('category-list.html',
+                           category='admin',
+                           categories=categories)
 
 @app.route('/lvfs/category/add', methods=['POST'])
 @login_required
@@ -114,4 +116,6 @@ def category_details(category_id):
         return _error_permission_denied('Unable to view category details')
 
     # show details
-    return render_template('category-details.html', cat=cat)
+    return render_template('category-details.html',
+                           category='admin',
+                           cat=cat)
