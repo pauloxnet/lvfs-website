@@ -92,6 +92,25 @@ def search_fw(max_results=100):
                            having(func.count() == len(keywords)).\
                            distinct().limit(max_results).all()
 
+    # try GUIDs
+    if not fws:
+        fws = db.session.query(Firmware).join(Component).\
+                               join(Guid).\
+                               filter(Guid.value.in_(keywords)).\
+                               group_by(Guid.component_id).\
+                               having(func.count() == len(keywords)).\
+                               distinct().order_by(Firmware.timestamp.desc()).\
+                               limit(max_results).all()
+
+    # try version numbers
+    if not fws:
+        fws = db.session.query(Firmware).join(Component).\
+                               filter(Component.version.in_(keywords)).\
+                               group_by(Component.component_id).\
+                               having(func.count() == len(keywords)).\
+                               distinct().order_by(Firmware.timestamp.desc()).\
+                               limit(max_results).all()
+
     # filter by ACL
     fws_safe = []
     for fw in fws:
