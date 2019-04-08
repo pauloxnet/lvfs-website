@@ -42,7 +42,7 @@
   <div class="card">
     <div class="card-body">
       <p class="card-text">
-        Support for the <a href="{{url_for('.device', guid=fw.md_prio.guids[0].value)}}">{{fw.md_prio.name}}</a>
+        Support for the <a href="{{url_for('.device_show', appstream_id=fw.md_prio.appstream_id)}}">{{fw.md_prio.name}}</a>
         was added by {{fw.md_prio.developer_name_display}}.
       </p>
     </div>
@@ -68,7 +68,7 @@
 <ul class="list-group">
 {% for md in mds_by_vendor[vendor] %}
   <li class="list-group-item">
-    <a href="{{url_for('.device', guid=md.guids[0].value)}}">{{md.name_with_category}}</a>
+    <a href="{{url_for('.device_show', appstream_id=md.appstream_id)}}">{{md.name_with_category}}</a>
   </li>
 {% endfor %}
 </ul>

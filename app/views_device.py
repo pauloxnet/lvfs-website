@@ -25,15 +25,15 @@ def device():
     if not g.user.check_acl('@admin'):
         return _error_permission_denied('Unable to view devices')
 
-    # get all the guids we can target
+    # get all the appstream_ids we can target
     devices = []
-    seen_guid = {}
+    seen_appstream_id = {}
     for fw in db.session.query(Firmware).all():
         for md in fw.mds:
-            if md.guids[0].value in seen_guid:
+            if md.appstream_id in seen_appstream_id:
                 continue
-            seen_guid[md.guids[0].value] = 1
-            devices.append(md.guids[0].value)
+            seen_appstream_id[md.appstream_id] = 1
+            devices.append(md.appstream_id)
 
     return render_template('devices.html', devices=devices)
 
@@ -44,8 +44,8 @@ def _dt_from_quarter(year, quarter):
         year += 1
     return datetime.datetime(year, month, 1)
 
-def _get_fws_for_guid(guid):
-    # get all the guids we can target
+def _get_fws_for_appstream_id(appstream_id):
+    # get all the appstream_ids we can target
     fws = []
     for fw in db.session.query(Firmware).\
                     order_by(Firmware.timestamp.desc()).all():
@@ -54,29 +54,29 @@ def _get_fws_for_guid(guid):
         if not fw.mds:
             continue
         for md in fw.mds:
-            if md.guids[0].value != guid:
+            if md.appstream_id != appstream_id:
                 continue
             fws.append(fw)
             break
     return fws
 
-@app.route('/lvfs/device/<guid>')
-def device_guid(guid):
+@app.route('/lvfs/device/<appstream_id>')
+def device_show(appstream_id):
     """
     Show information for one device, which can be seen without a valid login
     """
-    fws = _get_fws_for_guid(guid)
-    return render_template('device.html', guid=guid, fws=fws)
+    fws = _get_fws_for_appstream_id(appstream_id)
+    return render_template('device.html', appstream_id=appstream_id, fws=fws)
 
-@app.route('/lvfs/device/<guid>/analytics')
-def device_analytics(guid):
+@app.route('/lvfs/device/<appstream_id>/analytics')
+def device_analytics(appstream_id):
     """
     Show analytics for one device, which can be seen without a valid login
     """
     data = []
     labels = []
     now = datetime.date.today()
-    fws = _get_fws_for_guid(guid)
+    fws = _get_fws_for_appstream_id(appstream_id)
     if not fws:
         return _error_internal('No firmware with that GUID')
     for i in range(-2, 1):
@@ -92,7 +92,7 @@ def device_analytics(guid):
             data.append(cnt)
 
     return render_template('device-analytics.html',
-                           guid=guid,
+                           appstream_id=appstream_id,
                            labels=labels,
                            data=data,
                            fws=fws)

@@ -246,15 +246,15 @@ class LvfsTestCase(unittest.TestCase):
 
         # check devices page shows private firmware as admin -- and hidden when anon
         rv = self.app.get('/lvfs/device')
-        assert b'2082b5e0-7a64-478a-b1b2-e3404fab6dad' in rv.data, rv.data
-        rv = self.app.get('/lvfs/device/2082b5e0-7a64-478a-b1b2-e3404fab6dad')
+        assert b'com.hughski.ColorHug2.firmware' in rv.data, rv.data
+        rv = self.app.get('/lvfs/device/com.hughski.ColorHug2.firmware')
         assert b'MCDC04 errata' in rv.data, rv.data
         self.logout()
 
         # check private firmware isn't visible when not logged in
         rv = self.app.get('/lvfs/device')
         assert b'2082b5e0-7a64-478a-b1b2-e3404fab6dad' not in rv.data, rv.data
-        rv = self.app.get('/lvfs/device/2082b5e0-7a64-478a-b1b2-e3404fab6dad')
+        rv = self.app.get('/lvfs/device/com.hughski.ColorHug2.firmware')
         # FIXME is it a bug that we show the device exists even though it's not got any mds?
         assert b'MCDC04 errata' not in rv.data, rv.data
         rv = self.app.get('/lvfs/devicelist')
