@@ -20,8 +20,7 @@ from .util import _error_permission_denied
 def _get_split_names_for_firmware(fw):
     names = []
     for md in fw.mds:
-        name_safe = md.name.replace(' System Update', '')
-        name_split = name_safe.split('/')
+        name_split = md.name.split('/')
         all_substrings_long_enough = True
         for name in name_split:
             if len(name) < 8:
@@ -31,7 +30,7 @@ def _get_split_names_for_firmware(fw):
             for name in name_split:
                 names.append(name)
         else:
-            names.append(name_safe)
+            names.append(md.name)
     return sorted(names)
 
 @app.route('/lvfs/telemetry/<int:age>/<sort_key>/<sort_direction>')
