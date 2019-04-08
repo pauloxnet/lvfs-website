@@ -602,6 +602,9 @@ class Keyword(db.Model):
         self.priority = priority
         self.md = md
 
+    def __repr__(self):
+        return "Keyword object %s" % self.value
+
 def _is_keyword_valid(value):
     if not len(value):
         return False
