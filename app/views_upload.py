@@ -111,9 +111,13 @@ def _create_fw_from_uploaded_file(ufile):
         md.release_download_size = rel.get_size(AppStreamGlib.SizeKind.DOWNLOAD)
         md.release_urgency = AppStreamGlib.urgency_kind_to_string(rel.get_urgency())
         if hasattr(AppStreamGlib.UrlKind, 'DETAILS'):
-            md.details_url = str(rel.get_url(AppStreamGlib.UrlKind.DETAILS)) # pylint: disable=no-member
+            tmp = rel.get_url(AppStreamGlib.UrlKind.DETAILS) # pylint: disable=no-member
+            if tmp:
+                md.details_url = str(tmp)
         if hasattr(AppStreamGlib.UrlKind, 'SOURCE'):
-            md.source_url = str(rel.get_url(AppStreamGlib.UrlKind.SOURCE)) # pylint: disable=no-member
+            tmp = rel.get_url(AppStreamGlib.UrlKind.SOURCE) # pylint: disable=no-member
+            if tmp:
+                md.source_url = str(tmp)
 
         # from requires
         for req in component.get_requires():
