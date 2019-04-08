@@ -12,8 +12,12 @@
   <div class="card-body">
     <h4 class="card-title">
       <img src="/img/{{problem.icon_name}}.png"/>
+{% if problem.md %}
       {{problem.summary}} for &lsquo;{{problem.md.name_with_category}}&rsquo;
       <code class="float-right">{{problem.md.appstream_id}}</code>
+{% else %}
+      {{problem.summary}}
+{% endif %}
     </h4>
 {% if problem.kind == 'no-release-urgency' %}
     <td class="col-sm-7">
