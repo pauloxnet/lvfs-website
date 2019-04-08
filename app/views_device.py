@@ -143,7 +143,7 @@ def device_list():
                 order_by(Firmware.timestamp.asc()).all():
         if not fw.remote.is_public:
             continue
-        desc = fw.md_prio.developer_name + ':' + fw.md_prio.name
+        desc = fw.md_prio.developer_name + ':' + fw.md_prio.name_with_category
         if desc in devices_seen:
             continue
         devices_seen[desc] = fw
