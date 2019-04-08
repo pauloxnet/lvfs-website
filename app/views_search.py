@@ -90,7 +90,8 @@ def search_fw(max_results=100):
                            filter(Keyword.value.in_(keywords)).\
                            group_by(Keyword.component_id).\
                            having(func.count() == len(keywords)).\
-                           distinct().limit(max_results).all()
+                           distinct().order_by(Firmware.timestamp.desc()).\
+                           limit(max_results).all()
 
     # try GUIDs
     if not fws:
