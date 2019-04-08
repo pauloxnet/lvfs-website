@@ -85,7 +85,7 @@
         The optional URL listed here should refer specifically to this firmware release.
       </p>
   </div>
-{% if md.requires_source_url %}
+{% if md.requires_source_url or md.source_url %}
   <div class="form-group">
     <label for="source_url">Source URL</label>
       <input class="form-control" type="test" name="source_url" value="{{md.source_url if md.source_url}}"/>
