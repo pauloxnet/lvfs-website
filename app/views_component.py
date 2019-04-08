@@ -129,7 +129,7 @@ def firmware_component_checksums(component_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Unable to view component')
 
-    # find reports witch device checkums that match this firmware
+    # find reports witch device checksums that match this firmware
     checksum_counts = db.session.query(func.count(ReportAttribute.value),
                                        ReportAttribute.value).\
                                        join(Report).\

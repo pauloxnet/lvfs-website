@@ -239,7 +239,7 @@ class UploadedFile:
         if not release_default:
             raise MetadataInvalid('The metadata file did not provide any releases.')
 
-        # ensure the update desciption does not refer to a file in the archive
+        # ensure the update description does not refer to a file in the archive
         release_description = release_default.get_description()
         if release_description:
             for word in release_description.split(' '):
@@ -333,7 +333,7 @@ class UploadedFile:
         if self._data_size > 104857600:
             raise FileTooLarge('File too large, limit is 100Mb')
         if self._data_size < 1024:
-            raise FileTooSmall('File too small, mimimum is 1k')
+            raise FileTooSmall('File too small, minimum is 1k')
 
         # get new filename
         self.checksum_upload = hashlib.sha1(data).hexdigest()

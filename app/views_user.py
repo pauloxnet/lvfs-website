@@ -485,7 +485,7 @@ def user_certificate_add():
     try:
         text = fileitem.read().decode('utf8')
     except UnicodeDecodeError as e:
-        flash('Invalid data recieved: %s' % str(e), 'warning')
+        flash('Invalid data received: %s' % str(e), 'warning')
         return redirect(url_for('.profile'), code=302)
     if not text:
         flash('No data recieved', 'warning')
