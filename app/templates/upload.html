@@ -28,54 +28,43 @@
 <div class="card mt-3">
   <div class="card-body">
     <h2 class="card-title">Upload Firmware</h2>
-<p class="card-text">
-  Uploading firmware is covered by <a href="/lvfs/agreement">our legal agreement</a>.
-</p>
-<form action="/lvfs/upload" method="post" enctype="multipart/form-data" class="form">
+    <p class="card-text">
+      Uploading firmware is covered by <a href="/lvfs/agreement">our legal agreement</a>.
+    </p>
+    <form action="/lvfs/upload" method="post" enctype="multipart/form-data" class="form">
 {% if affiliations|length %}
-  <div class="form-group row">
-    <label for="target" class="col-sm-2 col-form-label">Upload for vendor</label>
-    <div class="col-sm-10">
-      <select class="form-control pt-0 pb-0 pl-0 pr-0" name="vendor_id" size="{{affiliations|length+1}}" required>
-        <option class="pt-2 pb-2 pl-2" value="{{g.user.vendor.vendor_id}}">{{g.user.vendor.display_name}}</option>
+      <div class="form-group card-text">
+        <label for="vendor_id">Upload for vendor</label>
+        <select class="form-control pt-0 pb-0 pl-0 pr-0" name="vendor_id" size="{{affiliations|length+1}}" required>
+          <option class="pt-2 pb-2 pl-2" value="{{g.user.vendor.vendor_id}}">{{g.user.vendor.display_name}}</option>
 {% for r in affiliations %}
-        <option class="pt-2 pb-2 pl-2" value="{{r.vendor.vendor_id}}">{{r.vendor.display_name}}</option>
+          <option class="pt-2 pb-2 pl-2" value="{{r.vendor.vendor_id}}">{{r.vendor.display_name}}</option>
 {% endfor %}
-      </select>
-    </div>
-  </div>
+        </select>
+      </div>
 {% else %}
-  <input type="hidden" name="vendor_id" value="{{g.user.vendor_id}}">
+      <input type="hidden" name="vendor_id" value="{{g.user.vendor_id}}">
 {% endif %}
 {% if g.user.vendor.is_embargo_default %}
-  <input type="hidden" name="target" value="embargo">
+      <input type="hidden" name="target" value="embargo">
 {% else %}
-  <div class="form-group row">
-    <label for="target" class="col-sm-2 col-form-label">Upload to remote</label>
-    <div class="col-sm-10">
-      <select class="form-control pt-0 pb-0 pl-0 pr-0" name="target" size="2" required>
-        <option class="pt-2 pb-2 pl-2" value="private">Private (secret)</option>
-        <option class="pt-2 pb-2 pl-2" value="embargo">Embargoed (available to all members of the vendor group)</option>
-      </select>
-    </div>
-  </div>
-{% endif %}
-  <div class="form-group row">
-    <label for="file" class="col-sm-2 col-form-label">Firmware file</label>
-    <div class="col-sm-10">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="file-input" name="file" required/>
-        <label class="custom-file-label" for="file-input">Choose file</label>
+      <div class="form-group card-text">
+        <label for="target">Upload to remote</label>
+        <select class="form-control pt-0 pb-0 pl-0 pr-0" name="target" size="2" required>
+          <option class="pt-2 pb-2 pl-2" value="private">Private (secret)</option>
+          <option class="pt-2 pb-2 pl-2" value="embargo">Embargoed (available to all members of the vendor group)</option>
+        </select>
       </div>
-    </div>
-  </div>
-  <div class="form-group row">
-    <p class="col-sm-2">&nbsp;</p>
-    <div class="col-sm-10">
-      <input type="submit" class="btn btn-primary btn-large" value="Upload"/>
-    </div>
-  </div>
-</form>
+{% endif %}
+      <div class="form-group card-text">
+        <label for="file-input">Firmware file</label>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="file-input" name="file" required/>
+          <label class="custom-file-label" for="file-input">Choose file</label>
+        </div>
+      </div>
+      <input type="submit" class="btn btn-primary card-link" value="Upload"/>
+    </form>
   </div>
 </div>
 {% endblock %}
