@@ -1782,9 +1782,9 @@ class Analytic(db.Model):
     datestr = Column(Integer, primary_key=True, unique=True, default=0, index=True)
     cnt = Column(Integer, default=1)
 
-    def __init__(self, datestr=0):
+    def __init__(self, datestr=0, cnt=1):
         """ Constructor for object """
-        self.cnt = 1
+        self.cnt = cnt
         self.datestr = datestr
 
     def __repr__(self):

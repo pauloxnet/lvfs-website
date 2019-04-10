@@ -266,7 +266,7 @@ def _generate_stats():
     analytic = db.session.query(Analytic).filter(Analytic.datestr == datestr).first()
     if analytic:
         db.session.delete(analytic)
-    db.session.add(Analytic(datestr))
+    db.session.add(Analytic(datestr, len(clients)))
     db.session.commit()
 
 if __name__ == '__main__':
