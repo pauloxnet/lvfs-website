@@ -30,7 +30,7 @@
     </td>
     <td class="col-sm-3">{{fwev.fw.version_display}}</td>
     <td class="col-sm-2">
-      <a href="/lvfs/device/{{fwev.fw.md_prio.guids[0].value}}"
+      <a href="{{url_for('device_show', appstream_id=fwev.fw.md_prio.appstream_id)}}"
          class="btn btn-info btn-block">Details</a>
     </td>
   </tr>
