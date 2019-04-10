@@ -9,6 +9,7 @@
 import datetime
 import fnmatch
 import re
+from enum import Enum
 
 import onetimepass
 
@@ -1813,6 +1814,12 @@ class AnalyticVendor(db.Model):
     def __repr__(self):
         return "AnalyticVendor object %s:%s" % (self.datestr, self.vendor_id)
 
+class UseragentKind(Enum):
+    APP = 0
+    FWUPD = 1
+    LANG = 2
+    DISTRO = 3
+
 class Useragent(db.Model):
 
     # sqlalchemy metadata
@@ -1820,12 +1827,14 @@ class Useragent(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     useragent_id = Column(Integer, primary_key=True, nullable=False, unique=True)
+    kind = Column(Integer, default=0, index=True)
     datestr = Column(Integer, default=0)
     value = Column(Text, default=None)
     cnt = Column(Integer, default=1)
 
-    def __init__(self, value, datestr=0, cnt=1):
+    def __init__(self, kind, value, datestr=0, cnt=1):
         """ Constructor for object """
+        self.kind = kind.value
         self.value = value
         self.cnt = cnt
         self.datestr = datestr

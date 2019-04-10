@@ -13,7 +13,7 @@ from flask_login import login_required
 
 from app import app, db
 
-from .models import Analytic, Client, Report, Useragent, SearchEvent, AnalyticVendor
+from .models import Analytic, Client, Report, Useragent, UseragentKind, SearchEvent, AnalyticVendor
 from .models import _get_datestr_from_datetime, _split_search_string
 from .util import _error_permission_denied
 from .util import _get_chart_labels_months, _get_chart_labels_days
@@ -95,14 +95,21 @@ def _user_agent_wildcard(user_agent):
     return tokens[0] + ' ' + '.'.join((versplt[0], versplt[1], 'x'))
 
 @app.route('/lvfs/analytics/user_agent')
-@app.route('/lvfs/analytics/user_agent/<int:timespan_days>')
+@app.route('/lvfs/analytics/user_agent/<kind>')
+@app.route('/lvfs/analytics/user_agent/<kind>/<int:timespan_days>')
 @login_required
-def analytics_user_agents(timespan_days=30):
+def analytics_user_agents(kind='APP', timespan_days=30):
     """ A analytics screen to show information about users """
 
     # security check
     if not g.user.check_acl('@admin'):
         return _error_permission_denied('Unable to view analytics')
+
+    # map back to UseragentKind
+    try:
+        kind_enum = UseragentKind[kind]
+    except KeyError as e:
+        return _error_permission_denied('Unable to view analytic type: %s' % str(e))
 
     # get data for this time period
     cnt_total = {}
@@ -111,6 +118,7 @@ def analytics_user_agents(timespan_days=30):
     datestr_start = _get_datestr_from_datetime(yesterday - datetime.timedelta(days=timespan_days))
     datestr_end = _get_datestr_from_datetime(yesterday)
     for ug in db.session.query(Useragent).\
+                    filter(Useragent.kind == kind_enum.value).\
                     filter(and_(Useragent.datestr > datestr_start,
                                 Useragent.datestr <= datestr_end)).all():
         user_agent_safe = _user_agent_wildcard(ug.value)
@@ -142,7 +150,7 @@ def analytics_user_agents(timespan_days=30):
         'ee8510',   # orange
     ]
     idx = 0
-    for value in sorted(most_popular):
+    for value in most_popular:
         dataset = {}
         dataset['label'] = value
         dataset['color'] = palette[idx % 6]
@@ -159,6 +167,7 @@ def analytics_user_agents(timespan_days=30):
         datasets.append(dataset)
     return render_template('analytics-user-agent.html',
                            category='analytics',
+                           kind=kind,
                            labels_user_agent=_get_chart_labels_days(timespan_days)[::-1],
                            datasets=datasets)
 
