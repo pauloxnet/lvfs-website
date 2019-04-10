@@ -181,6 +181,9 @@
             <li class="nav-item {{'active' if request.url_rule.endpoint == 'analytics_user_agents'}}">
               <a class="nav-link" href="{{url_for('.analytics_user_agents')}}">User Agents</a>
             </li>
+            <li class="nav-item {{'active' if request.url_rule.endpoint == 'analytics_vendor'}}">
+              <a class="nav-link" href="{{url_for('.analytics_vendor')}}">Vendor Downloads</a>
+            </li>
             <li class="nav-item {{'active' if request.url_rule.endpoint == 'analytics_clients'}}">
               <a class="nav-link" href="{{url_for('.analytics_clients')}}">Recent Downloads</a>
             </li>

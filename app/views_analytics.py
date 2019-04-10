@@ -13,7 +13,7 @@ from flask_login import login_required
 
 from app import app, db
 
-from .models import Analytic, Client, Report, Useragent, SearchEvent
+from .models import Analytic, Client, Report, Useragent, SearchEvent, AnalyticVendor
 from .models import _get_datestr_from_datetime, _split_search_string
 from .util import _error_permission_denied
 from .util import _get_chart_labels_months, _get_chart_labels_days
@@ -158,6 +158,72 @@ def analytics_user_agents(timespan_days=30):
         dataset['data'] = '[' + ', '.join(data[::-1]) + ']'
         datasets.append(dataset)
     return render_template('analytics-user-agent.html',
+                           category='analytics',
+                           labels_user_agent=_get_chart_labels_days(timespan_days)[::-1],
+                           datasets=datasets)
+
+@app.route('/lvfs/analytics/vendor')
+@app.route('/lvfs/analytics/vendor/<int:timespan_days>')
+@login_required
+def analytics_vendor(timespan_days=30):
+    """ A analytics screen to show information about users """
+
+    # security check
+    if not g.user.check_acl('@admin'):
+        return _error_permission_denied('Unable to view analytics')
+
+    # get data for this time period
+    cnt_total = {}
+    cached_cnt = {}
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    datestr_start = _get_datestr_from_datetime(yesterday - datetime.timedelta(days=timespan_days))
+    datestr_end = _get_datestr_from_datetime(yesterday)
+    for ug in db.session.query(AnalyticVendor).\
+                    filter(and_(AnalyticVendor.datestr > datestr_start,
+                                AnalyticVendor.datestr <= datestr_end)).all():
+        display_name = ug.vendor.display_name
+        key = str(ug.datestr) + display_name
+        if key not in cached_cnt:
+            cached_cnt[key] = ug.cnt
+        if not display_name in cnt_total:
+            cnt_total[display_name] = ug.cnt
+            continue
+        cnt_total[display_name] += ug.cnt
+
+    # find most popular user agent strings
+    most_popular = []
+    for key, value in sorted(iter(cnt_total.items()), key=lambda k_v: (k_v[1], k_v[0]), reverse=True):
+        most_popular.append(key)
+        if len(most_popular) >= 6:
+            break
+
+    # generate enough for the template
+    datasets = []
+    palette = [
+        'ef4760',   # red
+        'ffd160',   # yellow
+        '06c990',   # green
+        '2f8ba0',   # teal
+        '845f80',   # purple
+        'ee8510',   # orange
+    ]
+    idx = 0
+    for value in most_popular:
+        dataset = {}
+        dataset['label'] = value
+        dataset['color'] = palette[idx % 6]
+        idx += 1
+        data = []
+        for i in range(timespan_days):
+            datestr = _get_datestr_from_datetime(yesterday - datetime.timedelta(days=i))
+            key = str(datestr) + value
+            dataval = 'NaN'
+            if key in cached_cnt:
+                dataval = str(cached_cnt[key])
+            data.append(dataval)
+        dataset['data'] = '[' + ', '.join(data[::-1]) + ']'
+        datasets.append(dataset)
+    return render_template('analytics-vendor.html',
                            category='analytics',
                            labels_user_agent=_get_chart_labels_days(timespan_days)[::-1],
                            datasets=datasets)

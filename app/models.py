@@ -1801,6 +1801,9 @@ class AnalyticVendor(db.Model):
     vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     cnt = Column(Integer, default=0)
 
+    # link using foreign keys
+    vendor = relationship('Vendor', foreign_keys=[vendor_id])
+
     def __init__(self, vendor_id, datestr=0, cnt=0):
         """ Constructor for object """
         self.vendor_id = vendor_id
