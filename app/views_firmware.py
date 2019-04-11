@@ -13,9 +13,8 @@ from flask_login import login_required
 from sqlalchemy.orm import joinedload
 
 from app import app, db
-from .dbutils import _execute_count_star
 
-from .models import Firmware, Report, Client, FirmwareEvent, FirmwareLimit, Remote, Vendor
+from .models import Firmware, Report, Client, FirmwareEvent, FirmwareLimit, Remote, Vendor, AnalyticFirmware
 from .models import _get_datestr_from_datetime
 from .util import _error_internal, _error_permission_denied, _event_log
 from .util import _get_chart_labels_months, _get_chart_labels_days
@@ -463,22 +462,6 @@ def firmware_show(firmware_id):
                            reports_issue=reports_issue,
                            reports_failure=reports_failure)
 
-def _get_stats_for_fw(size, interval, fw):
-    """ Gets stats data """
-
-    # yes, there's probably a way to do this in one query...
-    data = []
-    now = datetime.date.today()
-    for i in range(size):
-        start = _get_datestr_from_datetime(now - datetime.timedelta((i * interval) + interval - 1))
-        end = _get_datestr_from_datetime(now - datetime.timedelta((i * interval) - 1))
-        cnt = _execute_count_star(db.session.query(Client).\
-                    filter(Client.firmware_id == fw.firmware_id).\
-                    filter(Client.datestr >= start).\
-                    filter(Client.datestr < end))
-        data.append(int(cnt))
-    return data
-
 @app.route('/lvfs/firmware/<int:firmware_id>/analytics/year')
 @login_required
 def firmware_analytics_year(firmware_id):
@@ -493,7 +476,21 @@ def firmware_analytics_year(firmware_id):
     if not fw.check_acl('@view-analytics'):
         return _error_permission_denied('Insufficient permissions to view analytics')
 
-    data_fw = _get_stats_for_fw(12, 30, fw)
+    # get data for the last year
+    datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=360))
+    data = db.session.query(AnalyticFirmware.cnt).\
+                filter(AnalyticFirmware.firmware_id == fw.firmware_id).\
+                filter(AnalyticFirmware.datestr > datestr).\
+                order_by(AnalyticFirmware.datestr.desc()).all()
+
+    # put in month-sized buckets
+    data_fw = []
+    for _ in range(12):
+        data_fw.append(0)
+    cnt = 0
+    for res in data:
+        data_fw[int(cnt / 30)] += res[0]
+        cnt += 1
     return render_template('firmware-analytics-year.html',
                            fw=fw,
                            graph_labels=_get_chart_labels_months()[::-1],
@@ -559,7 +556,13 @@ def firmware_analytics_month(firmware_id):
     if not fw.check_acl('@view-analytics'):
         return _error_permission_denied('Insufficient permissions to view analytics')
 
-    data_fw = _get_stats_for_fw(30, 1, fw)
+    # get data for the last month
+    datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=31))
+    data = db.session.query(AnalyticFirmware.cnt).\
+                filter(AnalyticFirmware.firmware_id == fw.firmware_id).\
+                filter(AnalyticFirmware.datestr > datestr).\
+                order_by(AnalyticFirmware.datestr.desc()).all()
+    data_fw = [r[0] for r in data]
     return render_template('firmware-analytics-month.html',
                            fw=fw,
                            graph_labels=_get_chart_labels_days()[::-1],

@@ -23,7 +23,8 @@ import app as application   #lgtm [py/import-and-import-from]
 from app import db, ploader
 
 from app.dbutils import _execute_count_star
-from app.models import Remote, Firmware, Vendor, Client, AnalyticVendor, Useragent, UseragentKind, Analytic
+from app.models import Remote, Firmware, Vendor, Client, AnalyticVendor
+from app.models import AnalyticFirmware, Useragent, UseragentKind, Analytic
 from app.models import _get_datestr_from_datetime
 from app.metadata import _metadata_update_targets, _metadata_update_pulp
 from app.util import _archive_get_files_from_glob, _get_dirname_safe, _event_log
@@ -233,6 +234,19 @@ def _generate_stats_for_vendor(v, datestr):
     print('adding %s:%s = %i' % (datestr, v.group_id, cnt))
     db.session.add(analytic)
 
+def _generate_stats_for_firmware(fw, datestr):
+
+    # is datestr older than firmware
+    if datestr < _get_datestr_from_datetime(fw.timestamp):
+        return
+
+    # count how many times any of the firmware files were downloaded
+    cnt = _execute_count_star(db.session.query(Client).\
+                    filter(Client.firmware_id == fw.firmware_id).\
+                    filter(Client.datestr == datestr))
+    analytic = AnalyticFirmware(fw.firmware_id, datestr, cnt)
+    db.session.add(analytic)
+
 def _get_app_from_ua(ua):
     # always exists
     return ua.split(' ')[0]
@@ -258,6 +272,7 @@ def _generate_stats_for_datestr(datestr, kinds=None):
     if not kinds:
         kinds = ['Analytic',
                  'AnalyticVendor',
+                 'AnalyticFirmware',
                  'Useragent']
 
     # update AnalyticVendor
@@ -266,6 +281,14 @@ def _generate_stats_for_datestr(datestr, kinds=None):
             db.session.delete(analytic)
         for v in db.session.query(Vendor).all():
             _generate_stats_for_vendor(v, datestr)
+        db.session.commit()
+
+    # update AnalyticFirmware
+    if 'AnalyticFirmware' in kinds:
+        for analytic in db.session.query(AnalyticFirmware).filter(AnalyticFirmware.datestr == datestr).all():
+            db.session.delete(analytic)
+        for fw in db.session.query(Firmware).all():
+            _generate_stats_for_firmware(fw, datestr)
         db.session.commit()
 
     # update Useragent

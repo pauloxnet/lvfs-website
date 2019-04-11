@@ -1814,6 +1814,29 @@ class AnalyticVendor(db.Model):
     def __repr__(self):
         return "AnalyticVendor object %s:%s" % (self.datestr, self.vendor_id)
 
+class AnalyticFirmware(db.Model):
+
+    # sqlalchemy metadata
+    __tablename__ = 'analytics_firmware'
+    __table_args__ = {'mysql_character_set': 'utf8mb4'}
+
+    analytic_id = Column(Integer, primary_key=True, nullable=False, unique=True)
+    datestr = Column(Integer, default=0, index=True)
+    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
+    cnt = Column(Integer, default=0)
+
+    # link using foreign keys
+    firmware = relationship('Firmware', foreign_keys=[firmware_id])
+
+    def __init__(self, firmware_id, datestr=0, cnt=0):
+        """ Constructor for object """
+        self.firmware_id = firmware_id
+        self.datestr = datestr
+        self.cnt = cnt
+
+    def __repr__(self):
+        return "AnalyticFirmware object %s:%s" % (self.datestr, self.firmware_id)
+
 class UseragentKind(Enum):
     APP = 0
     FWUPD = 1
