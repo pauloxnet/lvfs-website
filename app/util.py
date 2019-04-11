@@ -29,7 +29,8 @@ def _fix_component_name(name, developer_name=None):
     if not name:
         return None
     words_new = []
-    words_banned = ['firmware', 'update', 'system', 'device', 'bios', 'me', 'controller']
+    words_banned = ['firmware', 'update', 'system', 'device', 'bios', 'me',
+                    'embedded', 'controller']
     if developer_name:
         words_banned.append(developer_name.lower())
     for word in name.split(' '):
