@@ -17,7 +17,7 @@
 <div class="card">
   <div class="card-body rounded-soft bg-gradient">
     <h4 class="text-white">Downloads over the last 30 days</h4>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js" integrity="sha256-t3+U9BqykoMN9cqZmJ5Z53TvPv4V7S9AmjUcIWNNyxo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js" crossorigin="anonymous"></script>
 <script>
 Chart.defaults.global.animation = false;
 </script>
@@ -59,6 +59,7 @@ new Chart(ctx, {
         }],
         yAxes: [{
           ticks: {
+            precision: 0,
             fontColor: "rgba(255,255,255,0.7)",
             fontStyle: 600,
             beginAtZero: true
