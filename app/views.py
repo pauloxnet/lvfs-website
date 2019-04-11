@@ -14,6 +14,7 @@ import humanize
 from flask import request, flash, url_for, redirect, render_template
 from flask import send_from_directory, abort, Response, g
 from flask_login import login_required, login_user, logout_user
+from sqlalchemy.orm import joinedload
 
 import gi
 gi.require_version('AppStreamGlib', '1.0')
@@ -74,7 +75,9 @@ def serveStaticResource(resource):
 
         # increment the firmware download counter
         fw = db.session.query(Firmware).\
-                filter(Firmware.filename == os.path.basename(resource)).first()
+                filter(Firmware.filename == os.path.basename(resource)).\
+                options(joinedload('limits')).\
+                options(joinedload('vendor')).first()
         if not fw:
             abort(404)
         if fw.is_deleted:
