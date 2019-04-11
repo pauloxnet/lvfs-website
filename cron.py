@@ -253,72 +253,83 @@ def _get_lang_distro_from_ua(ua):
         return None
     return (parts[1], parts[2])
 
-def _generate_stats_for_datestr(datestr):
+def _generate_stats_for_datestr(datestr, kinds=None):
+
+    if not kinds:
+        kinds = ['Analytic',
+                 'AnalyticVendor',
+                 'Useragent']
 
     # update AnalyticVendor
-    for analytic in db.session.query(AnalyticVendor).filter(AnalyticVendor.datestr == datestr).all():
-        db.session.delete(analytic)
-    for v in db.session.query(Vendor).all():
-        _generate_stats_for_vendor(v, datestr)
-    db.session.commit()
+    if 'AnalyticVendor' in kinds:
+        for analytic in db.session.query(AnalyticVendor).filter(AnalyticVendor.datestr == datestr).all():
+            db.session.delete(analytic)
+        for v in db.session.query(Vendor).all():
+            _generate_stats_for_vendor(v, datestr)
+        db.session.commit()
 
     # update Useragent
-    for agnt in db.session.query(Useragent).filter(Useragent.datestr == datestr).all():
-        db.session.delete(agnt)
-    ua_apps = {}
-    ua_fwupds = {}
-    ua_distros = {}
-    ua_langs = {}
-    clients = db.session.query(Client.user_agent).\
-                    filter(Client.datestr == datestr).all()
-    for res in clients:
-        ua = res[0]
-        if not ua:
-            continue
+    if 'Useragent' in kinds:
+        for agnt in db.session.query(Useragent).filter(Useragent.datestr == datestr).all():
+            db.session.delete(agnt)
+        ua_apps = {}
+        ua_fwupds = {}
+        ua_distros = {}
+        ua_langs = {}
+        clients = db.session.query(Client.user_agent).\
+                        filter(Client.datestr == datestr).all()
+        for res in clients:
+            ua = res[0]
+            if not ua:
+                continue
 
-        # downloader app
-        ua_app = _get_app_from_ua(ua)
-        if ua_app not in ua_apps:
-            ua_apps[ua_app] = 1
-        else:
-            ua_apps[ua_app] += 1
-
-        # fwupd version
-        ua_fwupd = _get_fwupd_from_ua(ua)
-        if ua_fwupd not in ua_fwupds:
-            ua_fwupds[ua_fwupd] = 1
-        else:
-            ua_fwupds[ua_fwupd] += 1
-
-        # language and distro
-        ua_lang_distro = _get_lang_distro_from_ua(ua)
-        if ua_lang_distro:
-            ua_lang = ua_lang_distro[0]
-            ua_distro = ua_lang_distro[1]
-            if ua_lang not in ua_langs:
-                ua_langs[ua_lang] = 1
+            # downloader app
+            ua_app = _get_app_from_ua(ua)
+            if ua_app not in ua_apps:
+                ua_apps[ua_app] = 1
             else:
-                ua_langs[ua_lang] += 1
-            if ua_distro not in ua_distros:
-                ua_distros[ua_distro] = 1
+                ua_apps[ua_app] += 1
+
+            # fwupd version
+            ua_fwupd = _get_fwupd_from_ua(ua)
+            if ua_fwupd not in ua_fwupds:
+                ua_fwupds[ua_fwupd] = 1
             else:
-                ua_distros[ua_distro] += 1
-    for ua in ua_apps:
-        db.session.add(Useragent(UseragentKind.APP, ua, datestr, cnt=ua_apps[ua]))
-    for ua in ua_fwupds:
-        db.session.add(Useragent(UseragentKind.FWUPD, ua, datestr, cnt=ua_fwupds[ua]))
-    for ua in ua_langs:
-        db.session.add(Useragent(UseragentKind.LANG, ua, datestr, cnt=ua_langs[ua]))
-    for ua in ua_distros:
-        db.session.add(Useragent(UseragentKind.DISTRO, ua, datestr, cnt=ua_distros[ua]))
-    db.session.commit()
+                ua_fwupds[ua_fwupd] += 1
+
+            # language and distro
+            ua_lang_distro = _get_lang_distro_from_ua(ua)
+            if ua_lang_distro:
+                ua_lang = ua_lang_distro[0]
+                ua_distro = ua_lang_distro[1]
+                if ua_lang not in ua_langs:
+                    ua_langs[ua_lang] = 1
+                else:
+                    ua_langs[ua_lang] += 1
+                if ua_distro not in ua_distros:
+                    ua_distros[ua_distro] = 1
+                else:
+                    ua_distros[ua_distro] += 1
+        for ua in ua_apps:
+            db.session.add(Useragent(UseragentKind.APP, ua, datestr, cnt=ua_apps[ua]))
+        for ua in ua_fwupds:
+            db.session.add(Useragent(UseragentKind.FWUPD, ua, datestr, cnt=ua_fwupds[ua]))
+        for ua in ua_langs:
+            db.session.add(Useragent(UseragentKind.LANG, ua, datestr, cnt=ua_langs[ua]))
+        for ua in ua_distros:
+            db.session.add(Useragent(UseragentKind.DISTRO, ua, datestr, cnt=ua_distros[ua]))
+        db.session.commit()
 
     # update Analytic
-    analytic = db.session.query(Analytic).filter(Analytic.datestr == datestr).first()
-    if analytic:
-        db.session.delete(analytic)
-    db.session.add(Analytic(datestr, len(clients)))
-    db.session.commit()
+    if 'Analytic' in kinds:
+        analytic = db.session.query(Analytic).filter(Analytic.datestr == datestr).first()
+        if analytic:
+            db.session.delete(analytic)
+        db.session.add(Analytic(datestr, len(clients)))
+        db.session.commit()
+
+    # for the log
+    print('generated for %s: %s' % (datestr, ','.join(kinds)))
 
 if __name__ == '__main__':
 
@@ -365,10 +376,13 @@ if __name__ == '__main__':
             sys.exit(1)
     if 'statsmigrate' in sys.argv:
         try:
+            update_kinds = None
+            if len(sys.argv) > 2:
+                update_kinds = sys.argv[2:]
             with app.test_request_context():
                 for days in range(1, 720):
                     val = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=days))
-                    _generate_stats_for_datestr(val)
+                    _generate_stats_for_datestr(val, kinds=update_kinds)
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
