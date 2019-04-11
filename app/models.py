@@ -816,7 +816,7 @@ class Test(db.Model):
         return True
 
     def __repr__(self):
-        return "Test object %s(%s)" % (self.kind, self.has_passed)
+        return "Test object %s(%s)" % (self.plugin_id, self.success)
 
 class Category(db.Model):
 
