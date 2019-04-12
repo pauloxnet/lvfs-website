@@ -14,6 +14,7 @@
 </div>
 {% endif %}
 
+{% if download_cnt > 0 %}
 <div class="card">
   <div class="card-body rounded-soft bg-gradient">
     <h4 class="text-white">Downloads over the last 30 days</h4>
@@ -74,8 +75,10 @@ new Chart(ctx, {
 });
 
 </script>
+{% endif %}
 
 <div class="card-deck mt-3">
+{% if g.user.vendor.fws|length %}
   <div class="card overflow-hidden" style="min-width: 12rem">
     <div class="bg-holder bg-card" style="background-image:url(/img/corner-1.png);"></div>
     <div class="card-body position-relative">
@@ -91,6 +94,25 @@ new Chart(ctx, {
 {% endif %}
     </div>
   </div>
+{% else %}
+  <div class="card overflow-hidden" style="min-width: 12rem">
+    <div class="bg-holder bg-card" style="background-image:url(/img/corner-1.png);"></div>
+    <div class="card-body position-relative">
+      <h4>Lets upload firmware!</h4>
+      <p class="card-text">
+        We can start by uploading a cabinet archive and then the LVFS will
+        automatically sign the firmware for you.
+      </p>
+      <p class="card-text font-weight-bold">
+        Don't worry, uploading firmware doesn't make it public.
+      </p>
+      <a class="card-link text-nowrap" href="{{url_for('.upload')}}">
+        Upload <span class="font-weight-bold">›</span>
+      </a>
+    </div>
+  </div>
+{% endif %}
+{% if devices_cnt > 0 %}
   <div class="card overflow-hidden" style="min-width: 12rem">
     <div class="bg-holder bg-card" style="background-image:url(/img/corner-2.png);"></div>
     <div class="card-body position-relative">
@@ -101,11 +123,20 @@ new Chart(ctx, {
       </a>
     </div>
   </div>
+{% endif %}
   <div class="card overflow-hidden" style="min-width: 12rem">
     <div class="bg-holder bg-card" style="background-image:url(/img/corner-3.png);"></div>
     <div class="card-body position-relative">
       <h4>Users</h4>
-      <p class="card-text">{{g.user.vendor.users|length}} users are in your organisation.</p>
+      <p class="card-text">
+        {{g.user.vendor.users|length}} users are in your organisation.
+      </p>
+{% if g.user.vendor.users|length < 5 %}
+      <p class="card-text">
+        Users can have specific restrictions, for instance limiting analytics
+        or moving firmware to stable.
+      </p>
+{% endif %}
 {% if g.user.vendor.check_acl('@manage-users') %}
       <a class="card-link text-nowrap" href="{{url_for('.vendor_users', vendor_id=g.user.vendor.vendor_id)}}">
         Manage <span class="font-weight-bold">›</span>
@@ -115,6 +146,7 @@ new Chart(ctx, {
   </div>
 </div>
 
+{% if fws_recent|length %}
 <div class="card mt-3">
   <div class="card-body">
     <h4 class="card-title">Recently uploaded firmware</h4>
@@ -153,5 +185,6 @@ new Chart(ctx, {
     </div>
   </div>
 </div>
+{% endif %}
 
 {% endblock %}
