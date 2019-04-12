@@ -18,7 +18,7 @@
 <div class="card">
   <div class="card-body">
     <h2 class="card-title">Device Details</h2>
-<p class="card-text">This page show all the firmware releases for a specific device.</p>
+    <p class="card-text">This page show all the firmware releases for a specific device.</p>
 <table class="table card-text">
   <div class="row">
     <div class="col-sm-2">Name</div>
@@ -29,7 +29,7 @@
     <div class="col-sm-10">{{fws[0].md_prio.summary}}</div>
   </div>
   <div class="row">
-    <div class="col-sm-2">Developer Name</div>
+    <div class="col-sm-2">Vendor</div>
   <div class="col-sm-10"><a href="{{fws[0].md_prio.url_homepage}}">{{fws[0].md_prio.developer_name}}</a></div>
   </div>
 </table>
@@ -114,9 +114,9 @@
     </div>
   </div>
 </div>
-{% endif %}
   </div>
 </div>
+{% endif %}
 {% endfor %}
 
 {% endif %}
