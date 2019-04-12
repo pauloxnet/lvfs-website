@@ -44,8 +44,8 @@ def _dt_from_quarter(year, quarter):
         year += 1
     return datetime.datetime(year, month, 1)
 
-def _get_fws_for_appstream_id(appstream_id):
-    # get all the appstream_ids we can target
+def _get_fws_for_appstream_id(value):
+    # get all the firmwares that match either the GUID or AppStream ID
     fws = []
     for fw in db.session.query(Firmware).\
                     order_by(Firmware.timestamp.desc()).all():
@@ -54,10 +54,8 @@ def _get_fws_for_appstream_id(appstream_id):
         if not fw.mds:
             continue
         for md in fw.mds:
-            if md.appstream_id != appstream_id:
-                continue
-            fws.append(fw)
-            break
+            if value in (md.appstream_id, md.guids[0].value):
+                fws.append(fw)
     return fws
 
 @app.route('/lvfs/device/<appstream_id>')
@@ -78,7 +76,7 @@ def device_analytics(appstream_id):
     now = datetime.date.today()
     fws = _get_fws_for_appstream_id(appstream_id)
     if not fws:
-        return _error_internal('No firmware with that GUID')
+        return _error_internal('No firmware with that AppStream ID or GUID')
     for i in range(-2, 1):
         year = now.year + i
         for quarter in range(0, 4):
