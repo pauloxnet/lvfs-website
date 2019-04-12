@@ -9,10 +9,12 @@ import datetime
 from flask import render_template, g
 from flask_login import login_required
 
+from sqlalchemy import func
+
 from app import app, db
 
 from .util import _error_permission_denied, _error_internal
-from .models import Firmware
+from .models import Firmware, Component, Remote
 
 @app.route('/lvfs/device')
 @login_required
@@ -98,56 +100,35 @@ def device_analytics(appstream_id):
 @app.route('/lvfs/devicelist')
 def device_list():
 
-    # get a sorted list of vendors
-    fws = db.session.query(Firmware).all()
+    # get a list of firmwares with a map of components
+    fws = db.session.query(Firmware).\
+                           join(Remote).filter(Remote.is_public).\
+                           join(Component).group_by(Component.name).\
+                           order_by(Firmware.timestamp.desc()).\
+                           distinct(Component.name).all()
     vendors = []
-    for fw in fws:
-        if not fw.remote.is_public:
-            continue
-        vendor = fw.md_prio.developer_name
-        if vendor in vendors:
-            continue
-        vendors.append(vendor)
-
-    seen_ids = {}
     mds_by_vendor = {}
-    for vendor in sorted(vendors):
-        for fw in fws:
-            if not fw.remote.is_public:
-                continue
-            for md in fw.mds:
-
-                # only show correct vendor
-                if vendor != md.developer_name:
-                    continue
-
-                # only show the newest version
-                if md.appstream_id in seen_ids:
-                    continue
-                seen_ids[md.appstream_id] = 1
-
-                # add
-                if not vendor in mds_by_vendor:
-                    mds_by_vendor[vendor] = []
-                mds_by_vendor[vendor].append(md)
+    for fw in fws:
+        vendor = fw.md_prio.developer_name
+        if vendor not in vendors:
+            vendors.append(vendor)
+        if not vendor in mds_by_vendor:
+            mds_by_vendor[vendor] = []
+        mds_by_vendor[vendor].append(fw.md_prio)
 
     # ensure list is sorted
     for vendor in mds_by_vendor:
         mds_by_vendor[vendor].sort(key=lambda obj: obj.name)
 
     # get most recent supported devices
-    devices_seen = {}
-    for fw in db.session.query(Firmware).\
-                order_by(Firmware.timestamp.asc()).all():
-        if not fw.remote.is_public:
-            continue
-        desc = fw.md_prio.developer_name + ':' + fw.md_prio.name_with_category
-        if desc in devices_seen:
-            continue
-        devices_seen[desc] = fw
-    devices = sorted(list(devices_seen.values()), key=lambda fw: fw.timestamp, reverse=True)
+    fws_recent = db.session.query(Firmware).\
+                                  join(Remote).filter(Remote.is_public).\
+                                  join(Component).group_by(Component.name).\
+                                  having(func.count() == 1).\
+                                  order_by(Firmware.timestamp.desc()).\
+                                  limit(6).all()
 
     return render_template('devicelist.html',
                            vendors=sorted(vendors),
-                           devices=devices[:6],
+                           devices=fws_recent,
                            mds_by_vendor=mds_by_vendor)
