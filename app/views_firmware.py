@@ -453,7 +453,7 @@ def firmware_show(firmware_id):
                         order_by(AnalyticFirmware.datestr.desc()).all()
             graph_data = [r[0] for r in data]
             graph_data = graph_data[::-1]
-            graph_labels = _get_chart_labels_days()[::-1]
+            graph_labels = _get_chart_labels_days(limit=len(data))[::-1]
         else:
             datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=360))
             data = db.session.query(AnalyticFirmware.cnt).\
