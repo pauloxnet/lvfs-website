@@ -1311,6 +1311,8 @@ class Firmware(db.Model):
 
     @property
     def success(self):
+        if not self.report_failure_cnt or not self.report_success_cnt:
+            return None
         total = self.report_failure_cnt + self.report_success_cnt
         if not total:
             return None
