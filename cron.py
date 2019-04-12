@@ -219,6 +219,12 @@ def _check_firmware():
 
 def _generate_stats_for_vendor(v, datestr):
 
+    # is datestr older than firmware
+    if not v.ctime:
+        return
+    if datestr < _get_datestr_from_datetime(v.ctime - datetime.timedelta(days=1)):
+        return
+
     # get all the firmware for a specific vendor
     fw_ids = []
     for fw in v.fws:

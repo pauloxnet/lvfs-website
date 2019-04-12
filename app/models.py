@@ -414,6 +414,36 @@ class Vendor(db.Model):
     def is_account_holder(self):
         return self.users
 
+    @property
+    def ctime(self):
+        val = None
+        for user in self.users:
+            if not user.ctime:
+                continue
+            if not val or user.ctime < val:
+                val = user.ctime
+        return val
+
+    @property
+    def mtime(self):
+        val = None
+        for user in self.users:
+            if not user.mtime:
+                continue
+            if not val or user.mtime > val:
+                val = user.mtime
+        return val
+
+    @property
+    def atime(self):
+        val = None
+        for user in self.users:
+            if not user.atime:
+                continue
+            if not val or user.atime > val:
+                val = user.atime
+        return val
+
     def is_affiliate_for(self, vendor_id):
         for rel in self.affiliations_for:
             if rel.vendor_id == vendor_id:

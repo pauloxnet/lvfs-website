@@ -323,7 +323,7 @@ def dashboard():
                            fws_recent=fws,
                            devices_cnt=devices_cnt,
                            download_cnt=download_cnt,
-                           labels_days=_get_chart_labels_days()[::-1],
+                           labels_days=_get_chart_labels_days(limit=len(data))[::-1],
                            data_days=data[::-1],
                            server_warning=settings.get('server_warning', None),
                            category='home',
