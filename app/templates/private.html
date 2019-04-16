@@ -98,8 +98,11 @@
             </div>
           </a>
           <ul class="nav collapse {{'show' if category == 'telemetry'}}" id="telemetry" data-parent="#navbarVerticalCollapse">
-            <li class="nav-item {{'active' if request.url_rule.endpoint == 'telemetry' and age==0}}">
-              <a class="nav-link" href="{{url_for('.telemetry')}}">All</a>
+            <li class="nav-item {{'active' if request.url_rule.endpoint == 'telemetry' and age==0 and sort_key=='download_cnt'}}">
+              <a class="nav-link" href="{{url_for('.telemetry', age=0, sort_key='download_cnt', sort_direction='up')}}">Downloads</a>
+            </li>
+            <li class="nav-item {{'active' if request.url_rule.endpoint == 'telemetry' and age==0 and sort_key=='success'}}">
+              <a class="nav-link" href="{{url_for('.telemetry', age=0, sort_key='success', sort_direction='down')}}">Success</a>
             </li>
             <li class="nav-item {{'active' if request.url_rule.endpoint == 'telemetry' and age==30}}">
               <a class="nav-link" href="{{url_for('.telemetry', age=30)}}">Last 30 days</a>

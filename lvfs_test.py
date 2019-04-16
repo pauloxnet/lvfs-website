@@ -386,25 +386,37 @@ class LvfsTestCase(unittest.TestCase):
         # download, success
         self._download_firmware(useragent='fwupd/1.1.1')
 
-    def _run_cron(self, kind='metadata'):
+    def run_cron_firmware(self, fn='hughski-colorhug2-2.0.3'):
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', kind], env=env,
+        ps = subprocess.Popen(['./cron.py', 'firmware'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
-        stdout, _ = ps.communicate()
-        return stdout
-
-    def run_cron_firmware(self, fn='hughski-colorhug2-2.0.3'):
-        stdout = self._run_cron('firmware')
+        stdout, stderr = ps.communicate()
+        if ps.returncode != 0:
+            raise IOError(stdout, stderr)
         assert fn in stdout.decode('utf-8'), stdout
 
     def run_cron_stats(self):
-        stdout = self._run_cron('stats')
+        env = {}
+        env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
+        ps = subprocess.Popen(['./cron.py', 'stats', '0'], env=env,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+        stdout, stderr = ps.communicate()
+        if ps.returncode != 0:
+            raise IOError(stdout, stderr)
         assert 'generated' in stdout.decode('utf-8'), stdout
 
     def run_cron_metadata(self, remote_ids=None):
-        stdout = self._run_cron('metadata')
+        env = {}
+        env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
+        ps = subprocess.Popen(['./cron.py', 'metadata'], env=env,
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE)
+        stdout, stderr = ps.communicate()
+        if ps.returncode != 0:
+            raise IOError(stdout, stderr)
         if remote_ids:
             for remote_id in remote_ids:
                 assert 'Updating: %s' % remote_id in stdout.decode('utf-8'), stdout
@@ -997,11 +1009,19 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
         rv = self.app.get('/lvfs/report/1')
         assert b'UpdateState=success' in rv.data, rv.data
 
-        # check the report appeared on the telemetry page
+        # download the firmware at least once
+        self._download_firmware()
+
+        # check the report appeared on download telemetry page
         self.run_cron_stats()
-        rv = self.app.get('/lvfs/telemetry')
+        rv = self.app.get('/lvfs/telemetry/0/download_cnt/down')
         assert b'ColorHug2' in rv.data, rv.data
         assert b'>1<' in rv.data, rv.data
+
+        # check the report appeared on the success telemetry page
+        self.run_cron_stats()
+        rv = self.app.get('/lvfs/telemetry/0/success/down')
+        assert b'ColorHug2' not in rv.data, rv.data
 
         # delete the report
         rv = self.app.get('/lvfs/report/1/delete', follow_redirects=True)

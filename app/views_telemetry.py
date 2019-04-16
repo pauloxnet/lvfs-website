@@ -35,7 +35,7 @@ def _get_split_names_for_firmware(fw):
 @app.route('/lvfs/telemetry/<int:age>')
 @app.route('/lvfs/telemetry')
 @login_required
-def telemetry(age=0, sort_key='downloads', sort_direction='up'):
+def telemetry(age=0, sort_key='success', sort_direction='down'):
     """ Show firmware component information """
 
     # only Analyst users can view this data
@@ -43,12 +43,7 @@ def telemetry(age=0, sort_key='downloads', sort_direction='up'):
         return _error_permission_denied('Unable to view telemetry as not Analyst')
 
     # get data
-    total_downloads = 0
-    total_success = 0
-    total_failed = 0
-    total_issue = 0
-    show_duplicate_warning = False
-    fwlines = []
+    fws = []
     stmt = db.session.query(Firmware)
     if age:
         stmt = stmt.filter(Firmware.timestamp > datetime.date.today() - datetime.timedelta(days=age))
@@ -61,42 +56,23 @@ def telemetry(age=0, sort_key='downloads', sort_direction='up'):
             continue
         if not fw.remote.is_public:
             continue
-
-        # add lines
-        res = {}
-        res['downloads'] = fw.download_cnt
-        res['success'] = fw.report_success_cnt
-        res['failed'] = fw.report_failure_cnt
-        res['issue'] = fw.report_issue_cnt
-        res['names'] = _get_split_names_for_firmware(fw)
-        res['version'] = fw.version_display
-        if not res['version']:
-            res['version'] = fw.md_prio.version
-        res['nameversion'] = res['names'][0] + ' ' + res['version']
-        res['firmware_id'] = fw.firmware_id
-        res['target'] = fw.remote.name
-        res['duplicate'] = len(fw.mds)
-        fwlines.append(res)
-
-        # show the user a warning
-        if len(fw.mds) > 1:
-            show_duplicate_warning = True
+        if not fw.download_cnt:
+            continue
+        if sort_key == 'success':
+            if not fw.report_success_cnt or not fw.report_failure_cnt:
+                continue
+        fws.append(fw)
 
     if sort_direction == 'down':
-        fwlines.sort(key=lambda x: x['downloads'])
-        fwlines.sort(key=lambda x: x[sort_key])
+        fws.sort(key=lambda x: getattr(x, 'download_cnt'))
+        fws.sort(key=lambda x: getattr(x, sort_key) or 1)
     else:
-        fwlines.sort(key=lambda x: x['downloads'], reverse=True)
-        fwlines.sort(key=lambda x: x[sort_key], reverse=True)
+        fws.sort(key=lambda x: getattr(x, 'download_cnt'), reverse=True)
+        fws.sort(key=lambda x: getattr(x, sort_key) or 1, reverse=True)
     return render_template('telemetry.html',
                            category='telemetry',
                            age=age,
                            sort_key=sort_key,
                            sort_direction=sort_direction,
-                           firmware=fwlines,
-                           group_id=g.user.vendor.group_id,
-                           show_duplicate_warning=show_duplicate_warning,
-                           total_failed=total_failed,
-                           total_issue=total_issue,
-                           total_downloads=total_downloads,
-                           total_success=total_success)
+                           fws=fws,
+                           group_id=g.user.vendor.group_id)

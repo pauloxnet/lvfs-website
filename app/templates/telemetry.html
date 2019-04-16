@@ -2,84 +2,84 @@
 {% block title %}Telemetry{% endblock %}
 
 {% block content %}
-{% if show_duplicate_warning %}
-<div class="alert alert-info" role="alert">
-  Some archives contains firmware for more than one machine. These have been marked with <sup>★</sup>.
-</div>
-{% endif %}
 
+{% if fws|length > 0 %}
 <div class="card mt-3">
   <div class="card-body">
-    <h2 class="card-title">Telemetry for group {{group_id}}</h2>
-{% if firmware|length > 0 %}
-<table class="table">
-  <tr class="row">
-    <th class="col-sm-4">Hardware</th>
-    <th class="col-sm-3">
-      Version<br/>
-      <a class="{{'text-warning' if sort_key=='nameversion' and sort_direction=='up'}}" href="/lvfs/telemetry/{{age}}/nameversion/up">▼</a>
-      <a class="{{'text-warning' if sort_key=='nameversion' and sort_direction=='down'}}" href="/lvfs/telemetry/{{age}}/nameversion/down">▲</a>
-    </th>
-    <th class="col-sm-2">
-      Downloads<br/>
-      <a class="{{'text-warning' if sort_key=='downloads' and sort_direction=='up'}}" href="/lvfs/telemetry/{{age}}/downloads/up">▼</a>
-      <a class="{{'text-warning' if sort_key=='downloads' and sort_direction=='down'}}" href="/lvfs/telemetry/{{age}}/downloads/down">▲</a>
-    </th>
-    <th class="col-sm-1">
-      Success<br/>
-      <a class="{{'text-warning' if sort_key=='success' and sort_direction=='up'}}" href="/lvfs/telemetry/{{age}}/success/up">▼</a>
-      <a class="{{'text-warning' if sort_key=='success' and sort_direction=='down'}}" href="/lvfs/telemetry/{{age}}/success/down">▲</a>
-    </th>
-    <th class="col-sm-1">
-      Failed<br/>
-      <a class="{{'text-warning' if sort_key=='failed' and sort_direction=='up'}}" href="/lvfs/telemetry/{{age}}/failed/up">▼</a>
-      <a class="{{'text-warning' if sort_key=='failed' and sort_direction=='down'}}" href="/lvfs/telemetry/{{age}}/failed/down">▲</a>
-    </th>
-    <th class="col-sm-1">
-      Triaged<br/>
-      <a class="{{'text-warning' if sort_key=='issue' and sort_direction=='up'}}" href="/lvfs/telemetry/{{age}}/issue/up">▼</a>
-      <a class="{{'text-warning' if sort_key=='issue' and sort_direction=='down'}}" href="/lvfs/telemetry/{{age}}/issue/down">▲</a>
-    </th>
-  </tr>
-{% for f in firmware %}
-  <tr class="row">
-    <td class="col-sm-4">
-{% for n in f['names'] %}
-      <div>
-        <a href="/lvfs/firmware/{{f['firmware_id']}}">{{n}}</a>
-      </div>
-{% endfor %}
-{% if f['target'] == 'testing' %}
-      <span class="badge badge-info">testing</span>
+    <h2 class="card-title">
+      Telemetry for group {{group_id}}
+    </h2>
+    <p class="card-text">
+      Only firmware that has been downloaded at least once will be shown here.
+    </p>
+{% if sort_direction != 'up' %}
+    <a class="card-link btn btn-sm btn-info" href="{{url_for('.telemetry', age=age, sort_key=sort_key, sort_direction='up')}}">
+      Sort ▼
+    </a>
 {% endif %}
-    </td>
-    <td class="col-sm-3">{{f['version']}}</td>
-    <td class="col-sm-2">
-      {{f['downloads']}}
-{% if f['duplicate'] > 1 %}
-      <span><sup>★</sup></span>
-{% endif %}
-    </td>
-    <td class="col-sm-1">{{f['success']}}</td>
-    <td class="col-sm-1">{{f['failed']}}</td>
-    <td class="col-sm-1">{{f['issue']}}</td>
-  </tr>
-{% endfor %}
-  <tr class="row">
-    <td class="col-sm-4"><b>&nbsp;</b></td>
-    <td class="col-sm-3"><b>&nbsp;</b></td>
-    <td class="col-sm-2"><b>{{total_downloads}}</b></td>
-    <td class="col-sm-1"><b>{{total_success}}</b></td>
-    <td class="col-sm-1"><b>{{total_failed}}</b></td>
-    <td class="col-sm-1"><b>{{total_issue}}</b></td>
-  </tr>
-</table>
-{% else %}
-<p class="text-secondary">
-  No firmware analytics available.
-</p>
+{% if sort_direction != 'down' %}
+    <a class="card-link btn btn-sm btn-info" href="{{url_for('.telemetry', age=age, sort_key=sort_key, sort_direction='down')}}">
+      Sort ▲
+    </a>
 {% endif %}
   </div>
 </div>
+{% endif %}
+
+{% if fws|length > 0 %}
+{% for fw in fws %}
+<div class="card mt-3">
+  <h5 class="card-header list-group-item-{{fw.color}}">
+    <div class="row">
+      <div class="col-lg-8 text-truncate">
+        {{fw.names|join(' & ')}}
+      </div>
+      <div class="col">
+        <code class="float-right">{{fw.version_display}}</code>
+      </div>
+    </div>
+{% if fw.remote.name == 'testing' %}
+    <span class="badge badge-secondary">testing</span>
+{% endif %}
+  </h5>
+  <div class="card-body">
+    <table class="card-text table table-borderless">
+      <tr class="row">
+        <th class="col">Downloads</th>
+        <td class="col">{{fw.download_cnt}}</td>
+      </tr>
+      <tr class="row">
+        <th class="col">Success reports</th>
+        <td class="col">{{fw.report_success_cnt}}</td>
+      </tr>
+      <tr class="row">
+        <th class="col">Failed reports</th>
+        <td class="col">{{fw.report_failure_cnt}}</td>
+      </tr>
+      <tr class="row">
+        <th class="col">Known issues</th>
+        <td class="col">{{fw.report_issue_cnt}}</td>
+      </tr>
+    </table>
+{% if fw.mds|length > 1 %}
+    <p class="card-text">
+      Contains firmware for more than one machine.
+    </p>
+{% endif %}
+    <a class="card-link btn btn-sm btn-info" href="{{url_for('.firmware_show', firmware_id=fw.firmware_id)}}">
+      Details
+    </a>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="card mt-3">
+  <div class="card-body">
+    <p class="card-text text-secondary">
+      No firmware analytics available.
+    </p>
+  </div>
+</div>
+{% endif %}
 
 {% endblock %}

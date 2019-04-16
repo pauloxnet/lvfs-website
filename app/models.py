@@ -966,6 +966,12 @@ class Component(db.Model):
         self.priority = 0
 
     @property
+    def names(self):
+        if not self.name:
+            return None
+        return self.name.split('/')
+
+    @property
     def name_with_category(self):
         if not self.category:
             return self.name
@@ -1357,6 +1363,13 @@ class Firmware(db.Model):
         if self.success > 80:
             return 'warning'
         return 'danger'
+
+    @property
+    def names(self):
+        names = []
+        for md in self.mds:
+            names.extend(md.names)
+        return names
 
     @property
     def inhibit_download(self):
