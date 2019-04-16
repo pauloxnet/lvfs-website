@@ -101,7 +101,7 @@ def _create_fw_from_uploaded_file(ufile):
         rel = component.get_release_default()
         md.version = rel.get_version()
         #allows this to work on older versions of appstream-glib
-        if hasattr(rel, 'get_object_duration'):
+        if hasattr(rel, 'get_install_duration'):
             md.install_duration = rel.get_install_duration()
         else:
             md.install_duration = 0
