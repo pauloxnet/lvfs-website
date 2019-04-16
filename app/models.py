@@ -1350,6 +1350,8 @@ class Firmware(db.Model):
 
     @property
     def color(self):
+        if not self.success:
+            return 'secondary'
         if self.success > 95:
             return 'success'
         if self.success > 80:
