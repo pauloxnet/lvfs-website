@@ -213,6 +213,13 @@ class LvfsTestCase(unittest.TestCase):
         rv = self.app.get('/lvfs/firmware/1/nuke', follow_redirects=True)
         assert b'No firmware has been uploaded' in rv.data, rv.data
 
+    def _download_firmware(self, useragent='fwupd/1.1.1'):
+        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
+                          environ_base={'HTTP_USER_AGENT': useragent})
+        assert rv.status_code == 200, rv.status_code
+        assert len(rv.data) > 10000, len(rv.data)
+        assert len(rv.data) < 20000, len(rv.data)
+
     def test_upload_valid(self):
 
         # upload firmware
@@ -224,10 +231,7 @@ class LvfsTestCase(unittest.TestCase):
         assert b'com.hughski.ColorHug2.firmware' in rv.data, rv.data
 
         # download
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab')
-        assert rv.status_code == 200, rv.status_code
-        assert len(rv.data) > 10000, len(rv.data)
-        assert len(rv.data) < 20000, len(rv.data)
+        self._download_firmware()
 
         # check analytics works
         uris = ['/lvfs/firmware/1/analytics',
@@ -276,8 +280,7 @@ class LvfsTestCase(unittest.TestCase):
         self.login()
 
         # download it
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab')
-        assert rv.status_code == 200, rv.status_code
+        self._download_firmware()
 
         # test deleting the firmware
         self.delete_firmware()
@@ -358,9 +361,7 @@ class LvfsTestCase(unittest.TestCase):
 
         # download twice, both, success
         for _ in range(2):
-            rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                              environ_base={'HTTP_USER_AGENT': 'fwupd/1.1.1'})
-            assert rv.status_code == 200, rv.status_code
+            self._download_firmware(useragent='fwupd/1.1.1')
 
         # download, fail
         rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
@@ -369,9 +370,7 @@ class LvfsTestCase(unittest.TestCase):
         assert rv.data == b'ETOOSLOW', rv.data
 
         # download not matching glob, success
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                          environ_base={'HTTP_USER_AGENT': 'wget/1.2.3'})
-        assert rv.status_code == 200, rv.status_code
+        self._download_firmware(useragent='wget/1.2.3')
 
         # delete download limit
         rv = self.app.get('/lvfs/firmware/limit/1/delete',
@@ -385,9 +384,7 @@ class LvfsTestCase(unittest.TestCase):
         assert b'ETOOSLOW' not in rv.data, rv.data
 
         # download, success
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                          environ_base={'HTTP_USER_AGENT': 'fwupd/1.1.1'})
-        assert rv.status_code == 200, rv.status_code
+        self._download_firmware(useragent='fwupd/1.1.1')
 
     def _run_cron(self, kind='metadata'):
         env = {}
@@ -1680,9 +1677,7 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
 
         # download a few times
         for _ in range(5):
-            rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                              environ_base={'HTTP_USER_AGENT': 'fwupd/1.1.1'})
-            assert rv.status_code == 200, rv.status_code
+            self._download_firmware()
 
     def test_download_old_fwupd(self):
 
@@ -1691,14 +1686,10 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
         self.upload()
 
         # download with a new version of fwupd
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                          environ_base={'HTTP_USER_AGENT': 'fwupd/1.0.5'})
-        assert rv.status_code == 200, rv.status_code
+        self._download_firmware(useragent='fwupd/1.0.5')
 
         # download with an old gnome-software and a new fwupd
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
-                          environ_base={'HTTP_USER_AGENT': 'gnome-software/3.20.5 fwupd/1.0.5'})
-        assert rv.status_code == 200, rv.status_code
+        self._download_firmware(useragent='gnome-software/3.20.5 fwupd/1.0.5')
 
         # download with an old version of fwupd
         rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab',
