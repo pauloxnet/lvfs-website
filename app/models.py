@@ -394,6 +394,8 @@ class Vendor(db.Model):
         self.comments = None
         self.icon = None
         self.keywords = None
+        self.quote_text = None
+        self.quote_author = None
         self.remote_id = remote_id
 
     def get_sort_key(self):
