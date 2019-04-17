@@ -140,10 +140,10 @@ new Chart(ctx, {
 {% if fw.success %}
     <div class="card overflow-hidden mt-3" style="min-width: 12rem">
       <div class="bg-holder bg-card" style="background-image:url(/img/corner-3.png);"></div>
-      <div class="card-title">
-        {{fw.success|round}}% Reported Success
-      </div>
       <div class="card-body position-relative">
+        <div class="card-title">
+          {{fw.success|round}}% Reported Success
+        </div>
 {% if fw.report_success_cnt > 0 %}
         <p class="card-text">
           <a href="{{url_for('.firmware_analytics_reports', firmware_id=fw.firmware_id, state=2)}}">
@@ -164,6 +164,8 @@ new Chart(ctx, {
       <div class="bg-holder bg-card" style="background-image:url(/img/corner-1.png);"></div>
       <div class="card-body position-relative">
         <div class="card-title">
+          Banned Countries
+        </div>
         <p class="card-text">
           The firmware cannot be downloaded from users in these countries:
           <code>{{fw.banned_country_codes}}</code>.
