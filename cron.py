@@ -430,7 +430,11 @@ if __name__ == '__main__':
     if 'stats' in sys.argv:
         try:
             with app.test_request_context():
-                val = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=1))
+                # default to yesterday, but also allow specifying the offset
+                days = 1
+                if len(sys.argv) > 2:
+                    days = int(sys.argv[2])
+                val = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=days))
                 _generate_stats_for_datestr(val)
                 _generate_stats()
         except NotImplementedError as e:
