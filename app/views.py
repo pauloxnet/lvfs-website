@@ -316,7 +316,8 @@ def dashboard():
     datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=31))
     for cnt in db.session.query(AnalyticVendor.cnt).\
                     filter(AnalyticVendor.vendor_id == g.user.vendor.vendor_id).\
-                    filter(AnalyticVendor.datestr > datestr).all():
+                    filter(AnalyticVendor.datestr > datestr).\
+                    order_by(AnalyticVendor.datestr).all():
         data.append(int(cnt[0]))
 
     return render_template('dashboard.html',
@@ -324,7 +325,7 @@ def dashboard():
                            devices_cnt=devices_cnt,
                            download_cnt=download_cnt,
                            labels_days=_get_chart_labels_days(limit=len(data))[::-1],
-                           data_days=data[::-1],
+                           data_days=data,
                            server_warning=settings.get('server_warning', None),
                            category='home',
                            default_admin_password=default_admin_password)
