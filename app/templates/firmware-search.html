@@ -29,10 +29,10 @@
 {% for fw in fws %}
   <tr class="row">
     <td class="col col-sm-8">
-      <h5 class="list-group-item-title">
+      <p class="list-group-item-title">
         {{fw.md_prio.developer_name_display}}
         {{fw.md_prio.name_with_category}}
-      </h5>
+      </p>
       <p class="text-muted">
         Version {{fw.version_display}} uploaded {{format_humanize_naturaltime(fw.timestamp)}}
       </p>
