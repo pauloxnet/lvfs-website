@@ -295,7 +295,7 @@ def _get_chart_labels_months():
 
 def _get_chart_labels_days(limit=30):
     """ Gets the chart labels """
-    now = datetime.date.today()
+    now = datetime.date.today() - datetime.timedelta(days=1)
     labels = []
     for i in range(0, limit):
         then = now - datetime.timedelta(i)

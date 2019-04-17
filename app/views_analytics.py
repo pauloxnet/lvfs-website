@@ -30,7 +30,7 @@ def analytics_month():
 
     # this is somewhat klunky
     data = []
-    now = datetime.date.today()
+    now = datetime.date.today() - datetime.timedelta(days=1)
     for _ in range(30):
         datestr = _get_datestr_from_datetime(now)
         analytic = db.session.query(Analytic).\
@@ -60,7 +60,7 @@ def analytics_year():
 
     # this is somewhat klunky
     data = []
-    now = datetime.date.today()
+    now = datetime.date.today() - datetime.timedelta(days=1)
     for _ in range(12):
         datestrold = _get_datestr_from_datetime(now)
         now -= datetime.timedelta(days=30)
