@@ -45,19 +45,17 @@
   <div class="card-body">
     <table class="card-text table table-borderless">
       <tr class="row">
-        <th class="col">Downloads</th>
+        <th class="col-4">Downloads</th>
         <td class="col">{{fw.download_cnt}}</td>
       </tr>
       <tr class="row">
-        <th class="col">Success reports</th>
-        <td class="col">{{fw.report_success_cnt}}</td>
+        <th class="col-4">Success</th>
+        <td class="col">{{fw.success|round(1)}}%
+        ({{fw.report_success_cnt}} <span class="fas fa-check-circle fs--1 text-success"></span>
+         {{fw.report_failure_cnt}}  <span class="fas fa-times-circle fs--1 text-danger"></span>)</td>
       </tr>
       <tr class="row">
-        <th class="col">Failed reports</th>
-        <td class="col">{{fw.report_failure_cnt}}</td>
-      </tr>
-      <tr class="row">
-        <th class="col">Known issues</th>
+        <th class="col-4">Known issues</th>
         <td class="col">{{fw.report_issue_cnt}}</td>
       </tr>
     </table>
@@ -76,7 +74,7 @@
 <div class="card mt-3">
   <div class="card-body">
     <p class="card-text text-secondary">
-      No firmware analytics available.
+      There are no reports for firmware uploaded in the last {{age}} days.
     </p>
   </div>
 </div>
