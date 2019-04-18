@@ -59,7 +59,7 @@ def telemetry(age=0, sort_key='success', sort_direction='down'):
         if not fw.download_cnt:
             continue
         if sort_key == 'success':
-            if fw.success is None:
+            if not fw.report_success_cnt and not fw.report_failure_cnt:
                 continue
         fws.append(fw)
 

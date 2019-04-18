@@ -1021,7 +1021,7 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
         # check the report appeared on the success telemetry page
         self.run_cron_stats()
         rv = self.app.get('/lvfs/telemetry/0/success/down')
-        assert b'ColorHug2' not in rv.data, rv.data
+        assert b'ColorHug2' in rv.data, rv.data
 
         # delete the report
         rv = self.app.get('/lvfs/report/1/delete', follow_redirects=True)
