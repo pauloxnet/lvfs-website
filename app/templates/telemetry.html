@@ -31,16 +31,16 @@
 <div class="card mt-3">
   <div class="card-header card-title list-group-item-{{fw.color}}">
     <div class="row">
-      <div class="col col-lg-8 text-truncate">
-        {{fw.names|join(' & ')}}
+      <div class="col col-lg-8">
+        <span class="text-truncate">{{fw.names|join(' & ')}}</span>
+{% if fw.remote.name == 'testing' %}
+        <span class="badge badge-secondary">testing</span>
+{% endif %}
       </div>
       <div class="col">
         <code class="float-right">{{fw.version_display}}</code>
       </div>
     </div>
-{% if fw.remote.name == 'testing' %}
-    <span class="badge badge-secondary">testing</span>
-{% endif %}
   </div>
   <div class="card-body">
     <table class="card-text table table-borderless">
