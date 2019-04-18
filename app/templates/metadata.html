@@ -4,109 +4,116 @@
 {% block content %}
 
 {% if g.user.is_qa %}
-<div class="alert alert-warning" role="alert">
-  Do not share the embargo URL with external users as the
-  private firmware should remain hidden from the public.
-</div>
-{% else %}
-<div class="alert alert-warning" role="alert">
-  End-to-end tests using the metadata can <strong>only</strong> be used with a
-  custom <code>/etc/fwupd/remotes.d/{{g.user.vendor.group_id}}-embargo.conf</code> file as this user account does not
-  yet have permission to push to <em>testing</em> or <em>stable</em>.
-</div>
-{% endif %}
 
-<div class="card">
+<div class="card mt-3">
   <div class="card-body">
-    <div class="card-title">Metadata</div>
-<p class="card-text">
-  The metadata remotes can be used to perform end-to-end tests.
-  Save the file to <code>/etc/fwupd/remotes.d</code> is you are using the distribution version of
-  fwupd or to <code>/root/snap/fwupd/current/etc/fwupd/remotes.d</code> for the
-  <a href="https://snapcraft.io/fwupd">Snap</a> version.
-  You also may need to do <code>fwupdmgr refresh</code> on each
-  client to show new updates.
-</p>
-<table class="table table-borderless">
-  <tr class="row">
-    <th class="col col-sm-3">Description</th>
-    <th class="col col-sm-1">Public</th>
-    <th class="col col-sm-3">URL</th>
-    <th class="col col-sm-3">Custom Remote</th>
-{% if g.user.check_acl('@admin') %}
-    <th class="col col-sm-2">Action</th>
-{% endif %}
-  </tr>
-  <tr class="row">
-    <td class="col col-sm-3">Stable</td>
-    <td class="col col-sm-1"><b>Yes</b></td>
-    <td class="col col-sm-3"><a href="/downloads/firmware.xml.gz">
-      firmware.xml.gz
+    <div class="card-title">
+      Stable
+      <span class="badge badge-success">Public</span>
+      <a class="float-right" href="/downloads/firmware.xml.gz">
+        <code>firmware.xml.gz</code>
+      </a>
+    </div>
+    <p class="card-text">
+      This remote contains firmware available to millions of end users.
+    </p>
 {% if remotes['stable'].is_dirty %}
-      <br/><span class="badge badge-warning">Will be signed in {{format_timedelta_approx(remotes['stable'].scheduled_signing)}}</span>
+    <div class="alert alert-info card-text" role="alert">
+      Remote will be signed with new firmware in {{format_timedelta_approx(remotes['stable'].scheduled_signing)}}
+    </div>
 {% endif %}
-    </td>
-    <td class="col col-sm-3 text-muted">not required</td>
-    <td class="col col-sm-2">
 {% if g.user.check_acl('@admin') %}
-      <a class="btn btn-block btn-warning"
-        href={{url_for('metadata_rebuild_remote',
-                       remote_id=remotes['stable'].remote_id)}}>Rebuild</a>
+    <a class="card-link btn btn-primary"
+      href={{url_for('metadata_rebuild_remote',
+                     remote_id=remotes['stable'].remote_id)}}>Rebuild</a>
 {% endif %}
-    </td>
-  </tr>
-  <tr class="row">
-    <td class="col col-sm-3">Testing</td>
-    <td class="col col-sm-1"><b>Yes</b></td>
-    <td class="col col-sm-3"><a href="/downloads/firmware-testing.xml.gz">
-      firmware-testing.xml.gz
-{% if remotes['testing'].is_dirty %}
-      <br/><span class="badge badge-warning">Will be signed in {{format_timedelta_approx(remotes['testing'].scheduled_signing)}})</span>
-{% endif %}
-    </td>
-    <td class="col col-sm-3 text-muted">not required</td>
-    <td class="col col-sm-2">
-{% if g.user.check_acl('@admin') %}
-      <a class="btn btn-block btn-warning"
-        href={{url_for('metadata_rebuild_remote',
-                       remote_id=remotes['testing'].remote_id)}}>Rebuild</a>
-{% endif %}
-    </td>
-  </tr>
-{% for v in vendors %}
-  <tr class="row">
-    <td class="col col-sm-3">Embargo &lsquo;{{v.group_id}}&rsquo;</td>
-    <td class="col col-sm-1"><b>No</b></td>
-    <td class="col col-sm-3">
-      <a href="/downloads/{{v.remote.filename}}">{{ v.remote.filename[:16] }}
-{% if remotes['embargo-' + v.group_id].is_dirty %}
-      <br/><span class="badge badge-warning">Will be signed in {{format_timedelta_approx(remotes['embargo-' + v.group_id].scheduled_signing)}}</span>
-{% endif %}
-    </td>
-    <td class="col col-sm-3"><code><a href="/lvfs/metadata/{{v.group_id}}">{{v.group_id}}-embargo.conf</a></code></td>
-    <td class="col col-sm-2">
-{% if g.user.check_acl('@admin') %}
-      <a class="btn btn-block btn-warning"
-        href={{url_for('metadata_rebuild_remote',
-                       remote_id=v.remote.remote_id)}}>Rebuild</a>
-{% endif %}
-    </td>
-  </tr>
-{% endfor %}
-</table>
   </div>
 </div>
+
+<div class="card mt-3">
+  <div class="card-body">
+    <div class="card-title">
+      Testing
+      <span class="badge badge-success">Public</span>
+      <a class="float-right" href="/downloads/firmware-testing.xml.gz">
+        <code>firmware-testing.xml.gz</code>
+      </a>
+    </div>
+    <p class="card-text">
+      This remote contains firmware available to thousands of end users who have
+      manually enabled the <code>lvfs-testing</code> remote.
+    </p>
+{% if remotes['testing'].is_dirty %}
+    <div class="alert alert-info card-text" role="alert">
+      Remote will be signed with new firmware in {{format_timedelta_approx(remotes['testing'].scheduled_signing)}}
+    </div>
+{% endif %}
+{% if g.user.check_acl('@admin') %}
+    <a class="card-link btn btn-primary"
+      href={{url_for('metadata_rebuild_remote',
+                     remote_id=remotes['testing'].remote_id)}}>Rebuild</a>
+{% endif %}
+  </div>
+</div>
+
+{% else %}
+
+<div class="alert alert-warning" role="alert">
+  This user account does not yet have permission to push to the
+  <code>testing</code> or <code>stable</code> remotes.
+</div>
+
+{% endif %}
+
+{% for v in vendors %}
+<div class="card mt-3">
+  <div class="card-body">
+    <div class="card-title">
+      {{v.display_name}} Embargo
+      <span class="badge badge-warning">Private</span>
+      <a class="float-right" href="/downloads/{{v.remote.filename}}">
+        <code>{{v.remote.filename[:16]}}</code>
+      </a>
+    </div>
+    <p class="card-text">
+      This remote contains firmware available only to users who have installed the
+      vendor remote.
+      To complete an end-to-end test save <a href="/lvfs/metadata/{{v.group_id}}">
+      <code>{{v.group_id}}-embargo.conf</code></a> to <code>/etc/fwupd/remotes.d</code>
+      if you are using the distribution version of fwupd or to
+      <code>/root/snap/fwupd/current/etc/fwupd/remotes.d</code> for the
+      <a href="https://snapcraft.io/fwupd">Snap</a> version.
+    </p>
+    <p class="card-text">
+      Do not share the embargo URL with external users as the private firmware
+      should remain hidden from the public.
+      You also may need to do <code>fwupdmgr refresh</code> on each
+      client to show new updates.
+    </p>
+{% if remotes['embargo-' + v.group_id].is_dirty %}
+    <div class="alert alert-info card-text" role="alert">
+      Remote will be signed with new firmware in {{format_timedelta_approx(remotes['embargo-' + v.group_id].scheduled_signing)}}
+    </div>
+{% endif %}
+{% if g.user.check_acl('@admin') %}
+    <a class="card-link btn btn-primary"
+      href={{url_for('metadata_rebuild_remote',
+                     remote_id=remotes['stable'].remote_id)}}>Rebuild</a>
+{% endif %}
+  </div>
+</div>
+{% endfor %}
 
 {% if g.user.check_acl('@admin') %}
 <!-- admin only actions -->
 <div class="card mt-3">
   <div class="card-body">
-    <div class="card-title">Actions</div>
+    <div class="card-title">Complete Rebuild</div>
 <p class="card-text">
   This rebuilds metadata for all targets and QA groups.
 </p>
 <form method=\"get\" action="/lvfs/metadata/rebuild">
-<button class="btn btn-warning">Rebuild Metadata</button>
+<button class="btn btn-danger">Rebuild Metadata</button>
 </form>
   </div>
 </div>

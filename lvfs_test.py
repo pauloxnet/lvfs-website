@@ -425,19 +425,19 @@ class LvfsTestCase(unittest.TestCase):
         # verify all metadata is in good shape
         self.login()
         rv = self.app.get('/lvfs/metadata')
-        assert b'Will be signed in' not in rv.data, rv.data
+        assert b'Remote will be signed with' not in rv.data, rv.data
 
         # upload file, dirtying the admin-embargo remote
         self.upload('embargo')
         rv = self.app.get('/lvfs/metadata')
-        assert b'Will be signed in' in rv.data, rv.data
+        assert b'Remote will be signed with' in rv.data, rv.data
 
         # run the cron job manually
         self.run_cron_metadata(['embargo-admin'])
 
         # verify all metadata is in good shape
         rv = self.app.get('/lvfs/metadata')
-        assert b'Will be signed in' not in rv.data, rv.data
+        assert b'Remote will be signed with' not in rv.data, rv.data
 
     def test_cron_firmware(self):
 
