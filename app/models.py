@@ -1349,8 +1349,6 @@ class Firmware(db.Model):
 
     @property
     def success(self):
-        if not self.report_failure_cnt or not self.report_success_cnt:
-            return None
         total = self.report_failure_cnt + self.report_success_cnt
         if not total:
             return None
@@ -1358,7 +1356,7 @@ class Firmware(db.Model):
 
     @property
     def color(self):
-        if not self.success:
+        if self.success is None:
             return 'secondary'
         if self.success > 95:
             return 'success'
