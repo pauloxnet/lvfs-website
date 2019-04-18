@@ -1777,6 +1777,8 @@ class Report(db.Model):
         if self.state == 2:
             return 'success'
         if self.state == 3:
+            if self.issue_id:
+                return 'secondary'
             return 'danger'
         if self.state == 4:
             return 'info'
