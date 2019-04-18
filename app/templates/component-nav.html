@@ -1,18 +1,18 @@
 <nav>
   <div class="text-center mb-3">
     <div class="btn-group" role="group">
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_component_show' and page == 'overview' else 'default'}}"
-        href="{{url_for('.firmware_component_show', component_id=md.component_id, page='overview')}}">Overview</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'overview' else 'default'}}"
+        href="{{url_for('.component_show', component_id=md.component_id, page='overview')}}">Overview</a>
 {% if md.protocol and md.protocol.can_verify %}
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_component_show' and page == 'checksums' else 'default'}}"
-        href="{{url_for('.firmware_component_show', component_id=md.component_id, page='checksums')}}">Device Checksums</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'checksums' else 'default'}}"
+        href="{{url_for('.component_show', component_id=md.component_id, page='checksums')}}">Device Checksums</a>
 {% endif %}
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_component_show' and page == 'update' else 'default'}}"
-        href="{{url_for('.firmware_component_show', component_id=md.component_id, page='update')}}">Update Details</a>
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_component_show' and page in ['requires', 'requires-advanced'] else 'default'}}"
-        href="{{url_for('.firmware_component_show', component_id=md.component_id, page='requires')}}">Requirements</a>
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'firmware_component_show' and page == 'keywords' else 'default'}}"
-        href="{{url_for('.firmware_component_show', component_id=md.component_id, page='keywords')}}">Search Keywords</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'update' else 'default'}}"
+        href="{{url_for('.component_show', component_id=md.component_id, page='update')}}">Update Details</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page in ['requires', 'requires-advanced'] else 'default'}}"
+        href="{{url_for('.component_show', component_id=md.component_id, page='requires')}}">Requirements</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'keywords' else 'default'}}"
+        href="{{url_for('.component_show', component_id=md.component_id, page='keywords')}}">Search Keywords</a>
     </div>
   </div>
 </nav>

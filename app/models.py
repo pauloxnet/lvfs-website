@@ -1070,7 +1070,7 @@ class Component(db.Model):
         if not self.protocol or self.protocol.value == 'unknown':
             problem = Problem('no-protocol',
                               'Update protocol has not been set')
-            problem.url = url_for('.firmware_component_show',
+            problem.url = url_for('.component_show',
                                   component_id=self.component_id)
             problems.append(problem)
 
@@ -1078,7 +1078,7 @@ class Component(db.Model):
         if not self.category or self.category.value == 'unknown':
             problem = Problem('no-category',
                               'Firmware category has not been set')
-            problem.url = url_for('.firmware_component_show',
+            problem.url = url_for('.component_show',
                                   component_id=self.component_id)
             problems.append(problem)
 
@@ -1086,7 +1086,7 @@ class Component(db.Model):
         if self.protocol and not self.protocol.is_public:
             problem = Problem('no-protocol',
                               'Update protocol is not public')
-            problem.url = url_for('.firmware_component_show',
+            problem.url = url_for('.component_show',
                                   component_id=self.component_id)
             problems.append(problem)
 
@@ -1094,7 +1094,7 @@ class Component(db.Model):
         if self.requires_source_url and not self.source_url:
             problem = Problem('no-source',
                               'Update does not link to source code')
-            problem.url = url_for('.firmware_component_show',
+            problem.url = url_for('.component_show',
                                   component_id=self.component_id,
                                   page='update')
             problems.append(problem)
@@ -1103,7 +1103,7 @@ class Component(db.Model):
         for problem in problems:
             if problem.url:
                 continue
-            problem.url = url_for('.firmware_component_show',
+            problem.url = url_for('.component_show',
                                   component_id=self.component_id,
                                   page='update')
         return problems

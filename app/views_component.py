@@ -42,7 +42,7 @@ def _sanitize_markdown_text(txt):
 
 @app.route('/lvfs/component/problems')
 @login_required
-def firmware_component_problems():
+def component_problems():
     """
     Show all components with problems
     """
@@ -62,7 +62,7 @@ def firmware_component_problems():
 
 @app.route('/lvfs/component/<int:component_id>/modify', methods=['POST'])
 @login_required
-def firmware_component_modify(component_id):
+def component_modify(component_id):
     """ Modifies the component properties """
 
     # find firmware
@@ -110,13 +110,13 @@ def firmware_component_modify(component_id):
     md.fw.mark_dirty()
     db.session.commit()
     flash('Component updated', 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=component_id,
                             page=page))
 
 @app.route('/lvfs/component/<int:component_id>/checksums')
 @login_required
-def firmware_component_checksums(component_id):
+def component_checksums(component_id):
     """ Show firmware component information """
 
     # get firmware component
@@ -151,7 +151,7 @@ def firmware_component_checksums(component_id):
 @app.route('/lvfs/component/<int:component_id>')
 @app.route('/lvfs/component/<int:component_id>/<page>')
 @login_required
-def firmware_component_show(component_id, page='overview'):
+def component_show(component_id, page='overview'):
     """ Show firmware component information """
 
     # get firmware component
@@ -181,7 +181,7 @@ def firmware_component_show(component_id, page='overview'):
 
 @app.route('/lvfs/component/<int:component_id>/requirement/delete/<requirement_id>')
 @login_required
-def firmware_requirement_delete(component_id, requirement_id):
+def component_requirement_delete(component_id, requirement_id):
 
     # get firmware component
     rq = db.session.query(Requirement).filter(Requirement.requirement_id == requirement_id).first()
@@ -206,13 +206,13 @@ def firmware_requirement_delete(component_id, requirement_id):
 
     # log
     flash('Removed requirement %s' % rq.value, 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='requires'))
 
 @app.route('/lvfs/component/<int:component_id>/requirement/add', methods=['POST'])
 @login_required
-def firmware_requirement_add(component_id):
+def component_requirement_add(component_id):
     """ Adds a requirement to a component """
 
     # check we have data
@@ -235,7 +235,7 @@ def firmware_requirement_add(component_id):
     # validate CHID is a valid GUID
     if request.form['kind'] == 'hardware' and not _validate_guid(request.form['value']):
         flash('Cannot add requirement: %s is not a valid GUID' % request.form['value'], 'warning')
-        return redirect(url_for('.firmware_component_show',
+        return redirect(url_for('.component_show',
                                 component_id=md.component_id,
                                 page='requires'))
 
@@ -250,13 +250,13 @@ def firmware_requirement_add(component_id):
     md.fw.mark_dirty()
     db.session.commit()
     flash('Added requirement', 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='requires'))
 
 @app.route('/lvfs/component/<int:component_id>/requirement/modify', methods=['POST'])
 @login_required
-def firmware_requirement_modify(component_id):
+def component_requirement_modify(component_id):
     """ Adds a requirement to a component """
 
     # check we have data
@@ -279,7 +279,7 @@ def firmware_requirement_modify(component_id):
     # validate CHID is a valid GUID
     if request.form['kind'] == 'hardware' and not _validate_guid(request.form['value']):
         flash('Cannot add requirement: %s is not a valid GUID' % request.form['value'], 'warning')
-        return redirect(url_for('.firmware_component_show',
+        return redirect(url_for('.component_show',
                                 component_id=md.component_id,
                                 page='requires'))
 
@@ -293,13 +293,13 @@ def firmware_requirement_modify(component_id):
                 db.session.delete(rq)
                 db.session.commit()
                 flash('Deleted requirement %s' % rq.value, 'info')
-                return redirect(url_for('.firmware_component_show',
+                return redirect(url_for('.component_show',
                                         component_id=md.component_id,
                                         page='requires'))
             rq.compare = request.form['compare']
         db.session.commit()
         flash('Modified requirement %s' % rq.value, 'info')
-        return redirect(url_for('.firmware_component_show',
+        return redirect(url_for('.component_show',
                                 component_id=md.component_id,
                                 page='requires'))
 
@@ -314,13 +314,13 @@ def firmware_requirement_modify(component_id):
     md.fw.mark_dirty()
     db.session.commit()
     flash('Added requirement', 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='requires'))
 
 @app.route('/lvfs/component/<int:component_id>/keyword/<keyword_id>/delete')
 @login_required
-def firmware_keyword_delete(component_id, keyword_id):
+def component_keyword_delete(component_id, keyword_id):
 
     # get firmware component
     kw = db.session.query(Keyword).filter(Keyword.keyword_id == keyword_id).first()
@@ -345,13 +345,13 @@ def firmware_keyword_delete(component_id, keyword_id):
 
     # log
     flash('Removed keyword %s' % kw.value, 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='keywords'))
 
 @app.route('/lvfs/component/<int:component_id>/keyword/add', methods=['POST'])
 @login_required
-def firmware_keyword_add(component_id):
+def component_keyword_add(component_id):
     """ Adds one or more keywords to the existing component """
 
     # check we have data
@@ -374,12 +374,12 @@ def firmware_keyword_add(component_id):
     md.fw.mark_dirty()
     db.session.commit()
     flash('Added keywords', 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='keywords'))
 @app.route('/lvfs/component/<int:component_id>/checksum/delete/<checksum_id>')
 @login_required
-def firmware_checksum_delete(component_id, checksum_id):
+def component_checksum_delete(component_id, checksum_id):
 
     # get firmware component
     csum = db.session.query(Checksum).filter(Checksum.checksum_id == checksum_id).first()
@@ -404,13 +404,13 @@ def firmware_checksum_delete(component_id, checksum_id):
 
     # log
     flash('Removed checksum %s' % csum.value, 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='checksums'))
 
 @app.route('/lvfs/component/<int:component_id>/checksum/add', methods=['POST'])
 @login_required
-def firmware_checksum_add(component_id):
+def component_checksum_add(component_id):
     """ Adds a checksum to a component """
 
     # check we have data
@@ -436,7 +436,7 @@ def firmware_checksum_add(component_id):
         hash_kind = 'SHA256'
     else:
         flash('%s is not a recognised SHA1 or SHA256 hash' % hash_value, 'warning')
-        return redirect(url_for('.firmware_component_show',
+        return redirect(url_for('.component_show',
                                 component_id=md.component_id,
                                 page='checksums'))
 
@@ -444,7 +444,7 @@ def firmware_checksum_add(component_id):
     for csum in md.device_checksums:
         if csum.value == hash_value:
             flash('%s has already been added' % hash_value, 'warning')
-            return redirect(url_for('.firmware_component_show',
+            return redirect(url_for('.component_show',
                                     component_id=md.component_id,
                                     page='checksums'))
 
@@ -454,6 +454,6 @@ def firmware_checksum_add(component_id):
     md.fw.mark_dirty()
     db.session.commit()
     flash('Added device checksum', 'info')
-    return redirect(url_for('.firmware_component_show',
+    return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='checksums'))
