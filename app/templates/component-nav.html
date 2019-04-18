@@ -4,8 +4,8 @@
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'overview' else 'default'}}"
         href="{{url_for('.component_show', component_id=md.component_id, page='overview')}}">Overview</a>
 {% if md.protocol and md.protocol.can_verify %}
-      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'checksums' else 'default'}}"
-        href="{{url_for('.component_show', component_id=md.component_id, page='checksums')}}">Device Checksums</a>
+      <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_checksums' else 'default'}}"
+        href="{{url_for('.component_checksums', component_id=md.component_id)}}">Device Checksums</a>
 {% endif %}
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'component_show' and page == 'update' else 'default'}}"
         href="{{url_for('.component_show', component_id=md.component_id, page='update')}}">Update Details</a>
