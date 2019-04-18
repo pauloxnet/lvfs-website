@@ -223,7 +223,9 @@ def vendor_details(vendor_id):
     if not vendor:
         flash('Failed to get vendor details: No a vendor with that group ID', 'warning')
         return redirect(url_for('.vendor_list'), 302)
-    return render_template('vendor-details.html', v=vendor)
+    return render_template('vendor-details.html',
+                           category='vendors',
+                           v=vendor)
 
 @app.route('/lvfs/vendor/<int:vendor_id>/restrictions')
 @login_required
@@ -237,7 +239,9 @@ def vendor_restrictions(vendor_id):
     if not vendor:
         flash('Failed to get vendor details: No a vendor with that group ID', 'warning')
         return redirect(url_for('.vendor_list'), 302)
-    return render_template('vendor-restrictions.html', v=vendor)
+    return render_template('vendor-restrictions.html',
+                           category='vendors',
+                           v=vendor)
 
 @app.route('/lvfs/vendor/<int:vendor_id>/event')
 @login_required
@@ -251,7 +255,9 @@ def vendor_event(vendor_id):
         return redirect(url_for('.vendor_list'), 302)
     if not vendor.check_acl('@manage-users'):
         return _error_permission_denied('Unable to view event log')
-    return render_template('vendor-event.html', v=vendor, page='event')
+    return render_template('vendor-event.html',
+                           category='vendors',
+                           v=vendor, page='event')
 
 @app.route('/lvfs/vendor/<int:vendor_id>/users')
 @login_required
@@ -267,7 +273,9 @@ def vendor_users(vendor_id):
     # security check
     if not vendor.check_acl('@manage-users'):
         return _error_permission_denied('Unable to edit vendor as non-admin')
-    return render_template('vendor-users.html', v=vendor)
+    return render_template('vendor-users.html',
+                           category='vendors',
+                           v=vendor)
 
 @app.route('/lvfs/vendor/<int:vendor_id>/oauth')
 @login_required
@@ -283,7 +291,9 @@ def vendor_oauth(vendor_id):
     # security check
     if not vendor.check_acl('@modify-oauth'):
         return _error_permission_denied('Unable to edit vendor as non-admin')
-    return render_template('vendor-oauth.html', v=vendor)
+    return render_template('vendor-oauth.html',
+                           category='vendors',
+                           v=vendor)
 
 @app.route('/lvfs/vendor/<int:vendor_id>/restriction/add', methods=['POST'])
 @login_required
@@ -504,7 +514,10 @@ def vendor_affiliations(vendor_id):
         if v.is_affiliate_for(vendor.vendor_id):
             continue
         vendors.append(v)
-    return render_template('vendor-affiliations.html', v=vendor, other_vendors=vendors)
+    return render_template('vendor-affiliations.html',
+                           category='vendors',
+                           v=vendor,
+                           other_vendors=vendors)
 
 @app.route('/lvfs/vendor/<int:vendor_id>/affiliation/add', methods=['POST'])
 @login_required
