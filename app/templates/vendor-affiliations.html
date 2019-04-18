@@ -51,7 +51,9 @@
     <div class="card-body">
       <div class="card-title">
         {{r.vendor_odm.display_name}}
+{% if r.vendor_odm.icon %}
         <img class="float-right" src="/uploads/{{r.vendor_odm.icon}}" width="64"/>
+{% endif %}
       </div>
 {% if v.check_acl('@modify-affiliations') %}
       <a class="card-link btn btn-danger"
