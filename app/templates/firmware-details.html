@@ -86,7 +86,7 @@ new Chart(ctx, {
           <img class="img-thumbnail float-right" src="/uploads/{{fw.vendor.icon}}" width="64"/>
         </div>
         <p class="card-text">
-          <a href="/downloads/{{fw.filename}}">
+          <a href="{{fw.filename_absolute}}">
           {{fw.md_prio.name}} {{fw.version_display}}
           </a>
           has been downloaded {{fw.download_cnt}} times.

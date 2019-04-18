@@ -6,6 +6,7 @@
 #
 # pylint: disable=too-few-public-methods,too-many-instance-attributes,too-many-arguments,too-many-lines,protected-access
 
+import os
 import datetime
 import fnmatch
 import re
@@ -1353,6 +1354,12 @@ class Firmware(db.Model):
         if not total:
             return None
         return (self.report_success_cnt * 100) / total
+
+    @property
+    def filename_absolute(self):
+        if self.is_deleted:
+            return os.path.join('/deleted', self.filename)
+        return os.path.join('/downloads', self.filename)
 
     @property
     def color(self):
