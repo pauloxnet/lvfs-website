@@ -285,9 +285,8 @@ class LvfsTestCase(unittest.TestCase):
         # test deleting the firmware
         self.delete_firmware()
 
-        # download missing file
-        rv = self.app.get('/downloads/' + self.checksum_upload + '-hughski-colorhug2-2.0.3.cab')
-        assert rv.status_code == 410, rv.status_code
+        # download deleted file
+        self._download_firmware()
 
         # re-upload the same file
         rv = self._upload('contrib/hughski-colorhug2-2.0.3.cab', 'private')
