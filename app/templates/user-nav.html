@@ -1,5 +1,11 @@
-<nav>
-  <div class="text-center mb-3">
+<nav class="row">
+  <div class="col col-sm-1 btn-group mb-3">
+    <a class="btn btn-falcon-default mr-sm-3"
+      href="{{url_for('.vendor_users', vendor_id=u.vendor.vendor_id)}}">
+      <span class="fas fa-arrow-left"></span>
+    </a>
+  </div>
+  <div class="col col-sm-10 text-center mb-3">
     <div class="btn-group" role="group">
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'user_admin' and page == 'admin' else 'default'}}"
         href="{{url_for('.user_admin', user_id=u.user_id, page='admin')}}">Overview</a>

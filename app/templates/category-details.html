@@ -48,12 +48,3 @@
 </div>
 
 {% endblock %}
-
-{% block breadcrumb %}
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb mt-3">
-    <li class="breadcrumb-item"><a href="{{url_for('.category_all')}}">Categories</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{cat.value}}</li>
-  </ol>
-</nav>
-{% endblock %}
