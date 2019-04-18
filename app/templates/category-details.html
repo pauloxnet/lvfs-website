@@ -5,7 +5,7 @@
 <div class="card">
   <div class="card-body">
     <div class="card-title">Update Category Details</div>
-<form method="post" action="/lvfs/category/{{cat.category_id}}/modify">
+<form method="post" action="{{url_for('.category_modify', category_id=cat.category_id)}}">
   <div class="form-group">
     <label for="group_id">Value:</label>
     <input type="text" class="form-control" name="value" value="{{cat.value}}" required {{'disabled' if not cat.check_acl('@modify')}}>
@@ -41,7 +41,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger" href="/lvfs/category/{{cat.category_id}}/delete" role="button">Delete</a>
+        <a class="btn btn-danger" href="{{url_for('.category_delete', category_id=cat.category_id)}}" role="button">Delete</a>
       </div>
     </div>
   </div>

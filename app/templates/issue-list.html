@@ -26,12 +26,12 @@
     <!-- {{issue.priority}} -->
     <div class="btn-group float-right" role="group">
 {% if issue == issues[0] %}
-      <a class="btn btn-sm btn-outline-dark" href="/lvfs/issue/{{issue.issue_id}}/priority/down">▼</a>
+      <a class="btn btn-sm btn-outline-dark" href="{{url_for('.issue_priority', issue_id=issue.issue_id, op='down')}}">▼</a>
 {% elif issue == issues[issues|length-1] %}
-      <a class="btn btn-sm btn-outline-dark" href="/lvfs/issue/{{issue.issue_id}}/priority/up">▲</a>
+      <a class="btn btn-sm btn-outline-dark" href="{{url_for('.issue_priority', issue_id=issue.issue_id, op='up')}}">▲</a>
 {% else %}
-      <a class="btn btn-sm btn-outline-dark" href="/lvfs/issue/{{issue.issue_id}}/priority/up">▲</a>
-      <a class="btn btn-sm btn-outline-dark" href="/lvfs/issue/{{issue.issue_id}}/priority/down">▼</a>
+      <a class="btn btn-sm btn-outline-dark" href="{{url_for('.issue_priority', issue_id=issue.issue_id, op='up')}}">▲</a>
+      <a class="btn btn-sm btn-outline-dark" href="{{url_for('.issue_priority', issue_id=issue.issue_id, op='down')}}">▼</a>
 {% endif %}
     </div>
 {% endif %}

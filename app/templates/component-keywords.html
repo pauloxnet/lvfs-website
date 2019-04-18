@@ -14,7 +14,8 @@
     <td class="col">
 {% if md.check_acl('@modify-keywords') %}
 {% if kw.priority < 5 %}
-      <a class="btn btn-block btn-danger" href="/lvfs/component/{{md.component_id}}/keyword/{{kw.keyword_id}}/delete">Delete</a>
+      <a class="btn btn-block btn-danger"
+        href="{{url_for('.firmware_keyword_delete', component_id=md.component_id, keyword_id=kw.keyword_id)}}">Delete</a>
 {% else %}
       <a class="btn btn-block btn-danger disabled" href="#">Delete</a>
 {% endif %}
@@ -23,7 +24,7 @@
   </tr>
 {% endfor %}
 {% if md.check_acl('@modify-keywords') %}
-  <form method="post" action="/lvfs/component/{{md.component_id}}/keyword/add" class="form">
+  <form method="post" action="{{url_for('.firmware_keyword_add', component_id=md.component_id)}}" class="form">
   <tr class="row table-borderless">
     <td class="col col-lg-10">
       <input type="text" class="form-control" name="value" required>

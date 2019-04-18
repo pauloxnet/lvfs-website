@@ -56,7 +56,7 @@
     </p>
 
     <a class="card-link btn btn-info"
-       href="/lvfs/protocol/{{pr.protocol_id}}/details"
+       href="{{url_for('.protocol_details', protocol_id=pr.protocol_id)}}"
        role="button">Details</a>
   </div>
 </div>
@@ -64,7 +64,7 @@
 
 {% endif %}
 
-<form method="post" action="/lvfs/protocol/add" class="form">
+<form method="post" action="{{url_for('.protocol_add')}}" class="form">
 <div class="card mt-3">
   <div class="card-body">
     <div class="card-title">Create a new update protocol</div>

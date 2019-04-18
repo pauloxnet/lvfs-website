@@ -177,7 +177,7 @@ new Chart(ctx, {
     </div>
     <div class="col text-right pt-1">
       <a class="btn btn-info btn-block"
-        href="/lvfs/firmware/{{fw.firmware_id}}">Details</a>
+        href="{{url_for('.firmware_show', firmware_id=fw.firmware_id)}}">Details</a>
     </div>
   </div>
 {% endfor %}

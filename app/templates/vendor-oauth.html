@@ -10,7 +10,7 @@
 </div>
 <div class="card mt-3">
   <div class="card-body">
-<form method="post" action="/lvfs/vendor/{{v.vendor_id}}/modify_by_admin">
+<form method="post" action="{{url_for('.vendor_modify_by_admin', vendor_id=v.vendor_id)}}">
   <div class="form-group">
     <label for="auth_type">Action when user with no account logs in using OAuth:</label>
     <select class="form-control" name="oauth_unknown_user">

@@ -78,7 +78,7 @@
     <p class="card-text">
       This remote contains firmware available only to users who have installed the
       vendor remote.
-      To complete an end-to-end test save <a href="/lvfs/metadata/{{v.group_id}}">
+      To complete an end-to-end test save <a href="{{url_for('.metadata_remote', group_id=v.group_id)}}">
       <code>{{v.group_id}}-embargo.conf</code></a> to <code>/etc/fwupd/remotes.d</code>
       if you are using the distribution version of fwupd or to
       <code>/root/snap/fwupd/current/etc/fwupd/remotes.d</code> for the
@@ -112,7 +112,7 @@
 <p class="card-text">
   This rebuilds metadata for all targets and QA groups.
 </p>
-<form method=\"get\" action="/lvfs/metadata/rebuild">
+<form method=\"get\" action="{{url_for('.metadata_rebuild')}}">
 <button class="btn btn-danger">Rebuild Metadata</button>
 </form>
   </div>

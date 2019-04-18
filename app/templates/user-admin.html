@@ -13,7 +13,7 @@
 </div>
 {% endif %}
 
-<form method="post" action="/lvfs/user/{{u.user_id}}/modify_by_admin">
+<form method="post" action="{{url_for('.user_modify_by_admin', user_id=u.user_id)}}">
 {% if u.auth_type != 'oauth' %}
   <div class="form-group row">
     <label class="col col-sm-2 col-form-label" for="display_name">Display Name</label>
@@ -150,7 +150,7 @@
 {% endif %}
   <input type="submit" class="btn btn-primary btn-large" value="Modify">
   <div class="float-right">
-    <a class="btn btn-warning" href="/lvfs/user/{{u.user_id}}/reset_by_admin">Reset Password</a>
+    <a class="btn btn-warning" href="{{url_for('.user_reset_by_admin', user_id=u.user_id)}}">Reset Password</a>
 {% if g.user.check_acl('@admin') and u.group_id != 'admin' %}
     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
 {% endif %}
@@ -185,7 +185,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger" href="/lvfs/user/{{u.user_id}}/delete">Delete</a>
+        <a class="btn btn-danger" href="{{url_for('.user_delete', user_id=u.user_id)}}">Delete</a>
       </div>
     </div>
   </div>

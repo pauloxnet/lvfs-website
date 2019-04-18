@@ -54,11 +54,12 @@
 {% endif %}
     </td>
     <td class="col col-2">
-      <a class="btn btn-danger btn-block" href="/lvfs/firmware/limit/{{fl.firmware_limit_id}}/delete">Delete</a>
+      <a class="btn btn-danger btn-block"
+        href="{{url_for('.firmware_limit_delete', firmware_limit_id=fl.firmware_limit_id)}}">Delete</a>
     </td>
   </tr>
 {% endfor %}
-  <form method="post" action="/lvfs/firmware/limit/add" class="form">
+  <form method="post" action="{{url_for('.firmware_limit_add')}}" class="form">
   <input type="hidden" name="firmware_id" value="{{fw.firmware_id}}">
   <tr class="row table-borderless">
     <td class="col col-3">

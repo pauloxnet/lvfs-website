@@ -71,7 +71,7 @@
 {% endif %}
 {% if g.user is defined and g.user.check_acl('@admin') %}
     <td class="col col-sm-5">{{v.description}}</td>
-    <td class="col col-sm-1"><a class="btn btn-secondary btn-block" href="/lvfs/vendor/{{v.vendor_id}}/details">Edit</a></td>
+    <td class="col col-sm-1"><a class="btn btn-secondary btn-block" href="{{url_for('.vendor_details', vendor_id=v.vendor_id)}}">Edit</a></td>
 {% else %}
     <td class="col col-sm-6">{{v.description}}</td>
 {% endif %}
@@ -87,7 +87,7 @@
 <div class="card mt-3">
   <div class="card-body">
     <div class="card-title">Create a new vendor</div>
-<form method="post" action="/lvfs/vendor/add" class="form-inline">
+<form method="post" action="{{url_for('.vendor_add')}}" class="form-inline">
   <input class="form-control" type="text" size="20" name="group_id" placeholder="Group ID" required>
   <input class="btn btn-primary" type="submit" value="Add">
 </form>

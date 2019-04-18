@@ -1256,6 +1256,16 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
         self.add_user('bob@odm.com', 'odm')
         self.add_vendor('another-unrelated-oem')  # 4
 
+        rv = self.app.post('/lvfs/vendor/2/modify_by_admin', data=dict(
+            display_name='AliceOEM',
+        ), follow_redirects=True)
+        assert b'Updated vendor' in rv.data, rv.data
+
+        rv = self.app.post('/lvfs/vendor/3/modify_by_admin', data=dict(
+            display_name='BobOEM',
+        ), follow_redirects=True)
+        assert b'Updated vendor' in rv.data, rv.data
+
         # no affiliations
         rv = self.app.get('/lvfs/vendor/2/affiliations')
         assert b'No affiliations exist' in rv.data, rv.data
@@ -1263,7 +1273,7 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
         # add affiliation (as admin)
         self.add_affiliation(2, 3)
         rv = self.app.get('/lvfs/vendor/2/affiliations')
-        assert b'>None<' in rv.data, rv.data
+        assert b'<div class="card-title">\n        BobOEM' in rv.data, rv.data
 
         # add duplicate (as admin)
         rv = self.app.post('/lvfs/vendor/2/affiliation/add', data=dict(

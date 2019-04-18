@@ -7,7 +7,7 @@
 <div class="card">
   <div class="card-body">
     <div class="card-title">Issue Details</div>
-<form method="post" action="/lvfs/issue/{{issue.issue_id}}/modify">
+<form method="post" action="{{url_for('.issue_modify', issue_id=issue.issue_id)}}">
   <div class="form-group">
     <label for="group_id">URL:</label>
     <input type="text" class="form-control" name="url" value="{{issue.url}}" required {{'disabled' if not issue.check_acl('@modify')}}>
@@ -53,7 +53,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger" href="/lvfs/issue/{{issue.issue_id}}/delete" role="button">Delete</a>
+        <a class="btn btn-danger" href="{{url_for('.issue_delete', issue_id=issue.issue_id)}}" role="button">Delete</a>
       </div>
     </div>
   </div>
@@ -64,7 +64,7 @@
 {% block breadcrumb %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mt-3">
-    <li class="breadcrumb-item"><a href="/lvfs/issue/all">Issues</a></li>
+    <li class="breadcrumb-item"><a href="{{url_for('.issue_all')}}">Issues</a></li>
     <li class="breadcrumb-item active" aria-current="page">Issue #{{issue.issue_id}}</li>
   </ol>
 </nav>

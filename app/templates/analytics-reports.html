@@ -25,7 +25,7 @@
       <p class="text-success">Success</p>
 {% elif r.state == 3 %}
 {% if r.issue_id > 0 %}
-      <a class="text-info" href="/lvfs/issue/{{r.issue_id}}/details">Triaged</a>
+      <a class="text-info" href="{{url_for('.issue_details', issue_id=r.issue_id)}}">Triaged</a>
 {% else %}
       <p class="text-danger">Failed</p>
 {% endif %}
@@ -36,14 +36,14 @@
     <td class="col col-sm-2"><code>{{r.machine_id|truncate(13, False, '…')}}</code></td>
     <td class="col col-sm-5">
 {% if r.fw %}
-      <a href="/lvfs/firmware/{{r.firmware_id}}"><code>{{r.fw.filename[41:]}}</code></a></td>
+      <a href="{{url_for('.firmware_show', firmware_id=r.firmware_id)}}"><code>{{r.fw.filename[41:]}}</code></a></td>
 {% else %}
       <p class="text-danger">Not known!</p>
 {% endif %}
     </td>
     <td class="col col-sm-2 text-right">
-      <a class="btn btn-danger" href="/lvfs/report/{{r.report_id}}/delete">Delete</a>
-      <a class="btn btn-info" href="/lvfs/report/{{r.report_id}}/details">Details</a>
+      <a class="btn btn-danger" href="{{url_for('.report_delete', report_id=r.report_id)}}">Delete</a>
+      <a class="btn btn-info" href="{{url_for('.report_details', report_id=r.report_id)}}">Details</a>
     </td>
   </tr>
 {% endfor %}

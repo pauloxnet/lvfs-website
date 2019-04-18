@@ -29,9 +29,9 @@
   <div class="card-body">
     <div class="card-title">Upload Firmware</div>
     <p class="card-text">
-      Uploading firmware is covered by <a href="/lvfs/agreement">our legal agreement</a>.
+      Uploading firmware is covered by <a href="{{url_for('.agreement_show')}}">our legal agreement</a>.
     </p>
-    <form action="/lvfs/upload" method="post" enctype="multipart/form-data" class="form">
+    <form action="{{url_for('.upload')}}" method="post" enctype="multipart/form-data" class="form">
 {% if affiliations|length %}
       <div class="form-group card-text">
         <label for="vendor_id">Upload for vendor</label>

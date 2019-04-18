@@ -211,7 +211,6 @@ def firmware_requirement_delete(component_id, requirement_id):
                             page='requires'))
 
 @app.route('/lvfs/component/<int:component_id>/requirement/add', methods=['POST'])
-@app.route('/lvfs/component/<int:component_id>/requirement/modify', methods=['POST'])
 @login_required
 def firmware_requirement_add(component_id):
     """ Adds a requirement to a component """
@@ -240,26 +239,69 @@ def firmware_requirement_add(component_id):
                                 component_id=md.component_id,
                                 page='requires'))
 
+    # add requirement
+    rq = Requirement(md.component_id,
+                     request.form['kind'],
+                     request.form['value'],
+                     request.form['compare'] if 'compare' in request.form else None,
+                     request.form['version'] if 'version' in request.form else None,
+                    )
+    md.requirements.append(rq)
+    md.fw.mark_dirty()
+    db.session.commit()
+    flash('Added requirement', 'info')
+    return redirect(url_for('.firmware_component_show',
+                            component_id=md.component_id,
+                            page='requires'))
+
+@app.route('/lvfs/component/<int:component_id>/requirement/modify', methods=['POST'])
+@login_required
+def firmware_requirement_modify(component_id):
+    """ Adds a requirement to a component """
+
+    # check we have data
+    for key in ['kind', 'value']:
+        if key not in request.form or not request.form[key]:
+            return _error_internal('No %s specified!' % key)
+    if request.form['kind'] not in ['hardware', 'firmware', 'id']:
+        return _error_internal('No valid kind specified!')
+
+    # get firmware component
+    md = db.session.query(Component).\
+            filter(Component.component_id == component_id).first()
+    if not md:
+        return _error_internal('No component matched!')
+
+    # security check
+    if not md.check_acl('@modify-requirements'):
+        return _error_permission_denied('Unable to modify other vendor firmware')
+
+    # validate CHID is a valid GUID
+    if request.form['kind'] == 'hardware' and not _validate_guid(request.form['value']):
+        flash('Cannot add requirement: %s is not a valid GUID' % request.form['value'], 'warning')
+        return redirect(url_for('.firmware_component_show',
+                                component_id=md.component_id,
+                                page='requires'))
+
     # check it's not already been added
-    if 'modify' in request.url_rule.rule:
-        rq = md.find_req(request.form['kind'], request.form['value'])
-        if rq:
-            if 'version' in request.form:
-                rq.version = request.form['version']
-            if 'compare' in request.form:
-                if request.form['compare'] == 'any':
-                    db.session.delete(rq)
-                    db.session.commit()
-                    flash('Deleted requirement %s' % rq.value, 'info')
-                    return redirect(url_for('.firmware_component_show',
-                                            component_id=md.component_id,
-                                            page='requires'))
-                rq.compare = request.form['compare']
-            db.session.commit()
-            flash('Modified requirement %s' % rq.value, 'info')
-            return redirect(url_for('.firmware_component_show',
-                                    component_id=md.component_id,
-                                    page='requires'))
+    rq = md.find_req(request.form['kind'], request.form['value'])
+    if rq:
+        if 'version' in request.form:
+            rq.version = request.form['version']
+        if 'compare' in request.form:
+            if request.form['compare'] == 'any':
+                db.session.delete(rq)
+                db.session.commit()
+                flash('Deleted requirement %s' % rq.value, 'info')
+                return redirect(url_for('.firmware_component_show',
+                                        component_id=md.component_id,
+                                        page='requires'))
+            rq.compare = request.form['compare']
+        db.session.commit()
+        flash('Modified requirement %s' % rq.value, 'info')
+        return redirect(url_for('.firmware_component_show',
+                                component_id=md.component_id,
+                                page='requires'))
 
     # add requirement
     rq = Requirement(md.component_id,

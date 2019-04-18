@@ -37,7 +37,7 @@
     <td class="col col-sm-2">
 {% if u.auth_type and u.user_id != g.user.user_id %}
       <a class="btn btn-block btn-info"
-         href="/lvfs/user/{{u.user_id}}/admin">Details</a>
+         href="{{url_for('.user_admin', user_id=u.user_id)}}">Details</a>
 {% endif %}
     </td>
   </tr>
@@ -46,7 +46,7 @@
   </div>
 </div>
 
-<form method="post" action="/lvfs/vendor/{{v.vendor_id}}/user/add" class="form">
+<form method="post" action="{{url_for('.vendor_user_add', vendor_id=v.vendor_id)}}" class="form">
 <div class="card mt-3">
   <div class="card-body">
     <div class="card-title">Create a new user</div>

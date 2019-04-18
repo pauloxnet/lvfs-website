@@ -116,7 +116,7 @@ new Chart(ctx, {
         <button type="button" class="btn btn-danger card-link" data-toggle="modal" data-target="#deleteModal">Delete</button>
 {% endif %}
 {% if fw.is_deleted and fw.check_acl('@undelete') %}
-        <a class="btn btn-warning card-link" href="/lvfs/firmware/{{fw.firmware_id}}/undelete" role="button">Undelete</a>
+        <a class="btn btn-warning card-link" href="{{url_for('.firmware_undelete', firmware_id=fw.firmware_id)}}" role="button">Undelete</a>
 {% endif %}
 {% if fw.is_deleted and fw.check_acl('@nuke') %}
         <button type="button" class="btn btn-danger card-link" data-toggle="modal" data-target="#nukeModal">☠ Nuke ☠</button>
@@ -221,7 +221,7 @@ new Chart(ctx, {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger" href="/lvfs/firmware/{{fw.firmware_id}}/delete">Delete Firmware</a>
+        <a class="btn btn-danger" href="{{url_for('.firmware_delete', firmware_id=fw.firmware_id)}}">Delete Firmware</a>
       </div>
     </div>
   </div>
@@ -249,7 +249,7 @@ new Chart(ctx, {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <a class="btn btn-danger" href="/lvfs/firmware/{{fw.firmware_id}}/nuke">☠ Nuke ☠</a>
+        <a class="btn btn-danger" href="{{url_for('.firmware_nuke', firmware_id=fw.firmware_id)}}">☠ Nuke ☠</a>
       </div>
     </div>
   </div>

@@ -47,7 +47,9 @@
     </td>
     <td class="col col-sm-2">
 {% if issue.check_acl('@modify') %}
-      <a class="btn btn-block btn-danger" href="/lvfs/issue/{{issue.issue_id}}/condition/{{condition.condition_id}}/delete" role="button">Delete</a>
+      <a class="btn btn-block btn-danger"
+        href="{{url_for('.issue_condition_delete', issue_id=issue.issue_id, condition_id=condition.condition_id)}}"
+        role="button">Delete</a>
 {% endif %}
     </td>
   </tr>
@@ -55,7 +57,7 @@
 {% endif %}
 {% if issue.check_acl('@modify') %}
   <tr class="row">
-    <form method="post" action="/lvfs/issue/{{issue.issue_id}}/condition/add">
+    <form method="post" action="{{url_for('.issue_condition_add', issue_id=issue.issue_id)}}">
     <td class="col col-sm-3">
       <input type="text" class="form-control" name="key" value="" placeholder="Key..." required>
     </td>
@@ -87,7 +89,7 @@
 {% block breadcrumb %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb mt-3">
-    <li class="breadcrumb-item"><a href="/lvfs/issue/all">Issues</a></li>
+    <li class="breadcrumb-item"><a href="{{url_for('.issue_all')}}">Issues</a></li>
     <li class="breadcrumb-item active" aria-current="page">Issue #{{issue.issue_id}}</li>
   </ol>
 </nav>
