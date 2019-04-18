@@ -56,7 +56,9 @@ def firmware_component_problems():
         if md.fw.is_deleted:
             continue
         mds.append(md)
-    return render_template('component-problems.html', mds=mds)
+    return render_template('component-problems.html',
+                           category='firmware',
+                           mds=mds)
 
 @app.route('/lvfs/component/<int:component_id>/modify', methods=['POST'])
 @login_required
@@ -141,6 +143,7 @@ def firmware_component_checksums(component_id):
     for csum in md.device_checksums:
         device_checksums.append(csum.value)
     return render_template('component-checksums.html',
+                           category='firmware',
                            md=md, page='checksums',
                            device_checksums=device_checksums,
                            checksum_counts=checksum_counts)
@@ -170,7 +173,11 @@ def firmware_component_show(component_id, page='overview'):
     protocols = db.session.query(Protocol).order_by(Protocol.protocol_id.asc()).all()
     categories = db.session.query(Category).order_by(Category.category_id.asc()).all()
     return render_template('component-' + page + '.html',
-                           protocols=protocols, categories=categories, md=md, page=page)
+                           category='firmware',
+                           protocols=protocols,
+                           categories=categories,
+                           md=md,
+                           page=page)
 
 @app.route('/lvfs/component/<int:component_id>/requirement/delete/<requirement_id>')
 @login_required

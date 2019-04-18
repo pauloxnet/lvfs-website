@@ -66,7 +66,10 @@ def firmware_new(limit=200):
             continue
         fwevs_public.append(fwev)
         fws.append(fwev.fw)
-    return render_template('firmware-new.html', fwevs=fwevs_public, limit=limit)
+    return render_template('firmware-new.html',
+                           category='firmware',
+                           fwevs=fwevs_public,
+                           limit=limit)
 
 @app.route('/lvfs/firmware/<int:firmware_id>/undelete')
 @login_required
@@ -254,7 +257,9 @@ def firmware_components(firmware_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Insufficient permissions to view components')
 
-    return render_template('firmware-components.html', fw=fw)
+    return render_template('firmware-components.html',
+                           category='firmware',
+                           fw=fw)
 
 @app.route('/lvfs/firmware/<int:firmware_id>/limits')
 @login_required
@@ -270,7 +275,9 @@ def firmware_limits(firmware_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Insufficient permissions to view limits')
 
-    return render_template('firmware-limits.html', fw=fw)
+    return render_template('firmware-limits.html',
+                           category='firmware',
+                           fw=fw)
 
 @app.route('/lvfs/firmware/limit/<int:firmware_limit_id>/delete')
 @login_required
@@ -350,7 +357,9 @@ def firmware_affiliation(firmware_id):
         for aff in fw.vendor.affiliations_for:
             vendors.append(aff.vendor)
 
-    return render_template('firmware-affiliation.html', fw=fw, vendors=vendors)
+    return render_template('firmware-affiliation.html',
+                           category='firmware',
+                           fw=fw, vendors=vendors)
 
 @app.route('/lvfs/firmware/<int:firmware_id>/affiliation/change', methods=['POST'])
 @login_required
@@ -407,7 +416,9 @@ def firmware_problems(firmware_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Insufficient permissions to view components')
 
-    return render_template('firmware-problems.html', fw=fw)
+    return render_template('firmware-problems.html',
+                           category='firmware',
+                           fw=fw)
 
 @app.route('/lvfs/firmware/<int:firmware_id>/target')
 @login_required
@@ -423,7 +434,9 @@ def firmware_target(firmware_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Insufficient permissions to view firmware')
 
-    return render_template('firmware-target.html', fw=fw)
+    return render_template('firmware-target.html',
+                           category='firmware',
+                           fw=fw)
 
 @app.route('/lvfs/firmware/<int:firmware_id>')
 @login_required
@@ -471,6 +484,7 @@ def firmware_show(firmware_id):
             graph_labels = _get_chart_labels_months()[::-1]
 
     return render_template('firmware-details.html',
+                           category='firmware',
                            fw=fw,
                            graph_data=graph_data,
                            graph_labels=graph_labels)
@@ -492,6 +506,7 @@ def firmware_analytics_clients(firmware_id):
     clients = db.session.query(Client).filter(Client.firmware_id == fw.firmware_id).\
                 order_by(Client.id.desc()).limit(10).all()
     return render_template('firmware-analytics-clients.html',
+                           category='firmware',
                            fw=fw,
                            clients=clients)
 
@@ -520,6 +535,7 @@ def firmware_analytics_reports(firmware_id, state=None, limit=100):
                     filter(Report.firmware_id == firmware_id).\
                     order_by(Report.timestamp.desc()).limit(limit).all()
     return render_template('firmware-analytics-reports.html',
+                           category='firmware',
                            fw=fw,
                            state=state,
                            reports=reports)
@@ -538,4 +554,6 @@ def firmware_tests(firmware_id):
     if not fw.check_acl('@view'):
         return _error_permission_denied('Insufficient permissions to view firmwares')
 
-    return render_template('firmware-tests.html', fw=fw)
+    return render_template('firmware-tests.html',
+                           category='firmware',
+                           fw=fw)
