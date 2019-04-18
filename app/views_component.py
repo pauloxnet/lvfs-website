@@ -133,6 +133,7 @@ def firmware_component_checksums(component_id):
     checksum_counts = db.session.query(func.count(ReportAttribute.value),
                                        ReportAttribute.value).\
                                        join(Report).\
+                                       filter(Report.state == 2).\
                                        filter(Report.firmware_id == fw.firmware_id).\
                                        filter(ReportAttribute.key == 'ChecksumDevice').\
                                        group_by(ReportAttribute.value).all()
