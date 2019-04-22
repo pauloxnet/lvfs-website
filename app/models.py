@@ -1113,9 +1113,9 @@ class Component(db.Model):
         seen = []
         for rq in self.requirements:
             if rq.kind == 'firmware':
-                if rq.value not in ['firmware', 'bootloader']:
+                if rq.value not in [None, 'bootloader']:
                     return True
-            key = rq.kind + ':' + rq.value
+            key = rq.kind + ':' + str(rq.value)
             if key in seen:
                 return True
             seen.append(key)
