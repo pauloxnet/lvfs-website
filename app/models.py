@@ -1019,24 +1019,29 @@ class Component(db.Model):
     @property
     def version_display(self):
         if self.version.isdigit():
+            version_format = self.version_format
+            if not version_format:
+                version_format = self.fw.vendor.version_format
+            if not version_format:
+                return self.version
             v = int(self.version)
-            if self.version_format == 'quad':
+            if version_format == 'quad':
                 return '%02i.%02i.%02i.%02i' % ((v & 0xff000000) >> 24,
                                                 (v & 0x00ff0000) >> 16,
                                                 (v & 0x0000ff00) >> 8,
                                                 v & 0x000000ff)
-            if self.version_format == 'triplet':
+            if version_format == 'triplet':
                 return '%02i.%02i.%04i' % ((v & 0xff000000) >> 24,
                                            (v & 0x00ff0000) >> 16,
                                            v & 0x0000ffff)
-            if self.version_format == 'pair':
+            if version_format == 'pair':
                 return '%02i.%02i' % ((v & 0xffff0000) >> 16, v & 0x0000ffff)
-            if self.version_format == 'intel-me':
+            if version_format == 'intel-me':
                 return '%i.%i.%i.%i' % (((v & 0xe0000000) >> 29) + 0x0b,
                                         (v & 0x1f000000) >> 24,
                                         (v & 0x00ff0000) >> 16,
                                         v &  0x0000ffff)
-            if self.version_format == 'intel-me2':
+            if version_format == 'intel-me2':
                 return '%i.%i.%i.%i' % ((v & 0xf0000000) >> 28,
                                         (v & 0x0f000000) >> 24,
                                         (v & 0x00ff0000) >> 16,
