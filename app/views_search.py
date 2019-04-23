@@ -11,7 +11,7 @@ from sqlalchemy import func
 
 from app import app, db
 
-from .models import Guid, Keyword, Vendor, SearchEvent, Component, Firmware
+from .models import Guid, Keyword, Vendor, SearchEvent, Component, Firmware, Remote
 from .models import _split_search_string
 from .hash import _addr_hash
 from .util import _get_client_address, _error_internal, _error_permission_denied
@@ -136,115 +136,64 @@ def search(max_results=19):
                                keywords_good=[],
                                keywords_bad=[])
 
-    # show the user good and bad keyword matches
-    keywords_good = []
-    keywords_bad = []
-
-    # search for each keyword in order
-    kws = {}
-    search_keywords = _split_search_string(request.args['value'])
-    for keyword in search_keywords:
-        kws[keyword] = db.session.query(Keyword).\
-                            filter(Keyword.value == keyword).\
-                            order_by(Keyword.keyword_id.desc()).all()
-
-    # add GUIDs
-    for keyword in search_keywords:
-        guids = db.session.query(Guid).\
-                        filter(Guid.value == keyword).\
-                        order_by(Guid.guid_id.desc()).all()
-        for guid in guids:
-            kws[keyword] = [Keyword(keyword, priority=20, md=guid.md)]
-
-    # get any vendor information
-    vendors = []
-    for vendor in db.session.query(Vendor).all():
-        if not vendor.visible_for_search:
+    # components that match
+    keywords = _split_search_string(request.args['value'])
+    ids = db.session.query(Keyword.component_id).\
+                           filter(Keyword.value.in_(keywords)).\
+                           group_by(Keyword.component_id).\
+                           having(func.count() == len(keywords)).\
+                           subquery()
+    mds = []
+    appstream_ids = []
+    for md in db.session.query(Component).join(ids).\
+                    join(Firmware).join(Remote).filter(Remote.is_public).\
+                    order_by(Component.version.desc()).\
+                    limit(max_results*4).all():
+        if md.appstream_id in appstream_ids:
             continue
-        vendor_keywords = []
-        if vendor.display_name:
-            vendor_keywords.extend(_split_search_string(vendor.display_name))
-        if vendor.keywords:
-            vendor_keywords.extend(_split_search_string(vendor.keywords))
-        for keyword in vendor_keywords:
-            if keyword in search_keywords:
-                if vendor not in vendors:
-                    vendors.append(vendor)
-                if keyword not in keywords_good:
-                    keywords_good.append(keyword)
+        mds.append(md)
+        appstream_ids.append(md.appstream_id)
 
-    # do an AND search
-    md_priority = {}
-    mds_unique = []
-    for keyword in search_keywords:
-        md_priority_for_keyword = _get_md_priority_for_kws(kws[keyword])
-        for md in md_priority_for_keyword:
-            if not md in mds_unique:
-                mds_unique.append(md)
-        md_priority[keyword] = md_priority_for_keyword
-    md_priority_in_all = {}
-    for md in mds_unique:
-        found_in_all = True
-        priority_max = 0
-        for keyword in search_keywords:
-            if md not in md_priority[keyword]:
-                found_in_all = False
-                break
-            if md_priority[keyword][md] > priority_max:
-                priority_max = md_priority[keyword][md]
-        if found_in_all:
-            md_priority_in_all[md] = priority_max
-    if len(md_priority_in_all) > 0:
-        filtered_mds = _order_by_summed_md_priority(md_priority_in_all)
-        for md in filtered_mds:
-            if md.fw.vendor not in vendors:
-                vendors.append(md.fw.vendor)
-        # this seems like we're over-logging but I'd like to see how people are
-        # searching for a few weeks so we can tweak the algorithm used
-        _add_search_event(SearchEvent(value=request.args['value'],
-                                      addr=_addr_hash(_get_client_address()),
-                                      count=len(filtered_mds) + len(vendors),
-                                      method='AND'))
-        return render_template('search.html',
-                               show_vendor_nag=False,
-                               mds=filtered_mds[:max_results],
-                               search_size=len(filtered_mds),
-                               vendors=vendors,
-                               keywords_good=search_keywords,
-                               keywords_bad=[])
-
-    # do an OR search
-    md_priority = {}
-    for keyword in search_keywords:
-        any_match = False
-        for kw in kws[keyword]:
-            md = kw.md
-            if _md_suitable_as_search_result(md):
-                any_match = True
-                if md not in md_priority:
-                    md_priority[md] = kw.priority
-                else:
-                    md_priority[md] += kw.priority
-        if any_match:
-            if keyword not in keywords_good:
-                keywords_good.append(keyword)
-        else:
-            keywords_bad.append(keyword)
+    # get any vendor information as a fallback
+    vendors = []
+    if mds:
+        search_method = 'AND'
+        show_vendor_nag = False
+        keywords_good = keywords
+        keywords_bad = []
+    else:
+        search_method = 'OR'
+        show_vendor_nag = True
+        keywords_good = []
+        keywords_bad = []
+        for vendor in db.session.query(Vendor).\
+                            filter(Vendor.visible_for_search).all():
+            for kw in keywords:
+                if vendor.keywords:
+                    if kw in vendor.keywords:
+                        vendors.append(vendor)
+                        keywords_good.append(kw)
+                        break
+                if vendor.display_name:
+                    if kw in _split_search_string(vendor.display_name):
+                        vendors.append(vendor)
+                        keywords_good.append(kw)
+                        break
+        for kw in keywords:
+            if not kw in keywords_good:
+                keywords_bad.append(kw)
 
     # this seems like we're over-logging but I'd like to see how people are
-    # searching for a few weeks so we can tweak the algorithm used
-    filtered_mds = _order_by_summed_md_priority(md_priority)
-    for md in filtered_mds:
-        if md.fw.vendor not in vendors:
-            vendors.append(md.fw.vendor)
+    # searching so we can tweak the algorithm used
     _add_search_event(SearchEvent(value=request.args['value'],
                                   addr=_addr_hash(_get_client_address()),
-                                  count=len(filtered_mds) + len(vendors),
-                                  method='OR'))
+                                  count=len(mds) + len(vendors),
+                                  method=search_method))
+
     return render_template('search.html',
-                           show_vendor_nag=True,
-                           mds=filtered_mds[:max_results],
-                           search_size=len(filtered_mds),
+                           show_vendor_nag=show_vendor_nag,
+                           mds=mds[:max_results],
+                           search_size=len(mds),
                            vendors=vendors,
                            keywords_good=keywords_good,
                            keywords_bad=keywords_bad)

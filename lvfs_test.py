@@ -1448,7 +1448,7 @@ ma+I7fM5pmgsEL4tkCZAg0+CPTyhHkMV/cWuOZUjqTsYbDq1pZI=
 
         # search for a keyword and a name match
         rv = self.app.get('/lvfs/search?value=Alice+Edward+ColorHug2')
-        assert b'ColorHug2' in rv.data, rv.data
+        assert b'No results found for' in rv.data, rv.data
 
     def test_anon_search_not_promoted(self):
 
