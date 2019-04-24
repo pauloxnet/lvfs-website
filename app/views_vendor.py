@@ -156,7 +156,9 @@ def cmp_to_key(mycmp):
 @app.route('/vendorlist') # deprecated
 @app.route('/lvfs/vendorlist')
 def vendor_list():
-    vendors = db.session.query(Vendor).order_by(Vendor.display_name).all()
+    vendors = db.session.query(Vendor).\
+                    order_by(Vendor.display_name).\
+                    options(joinedload(Vendor.users)).all()
     vendors.sort(key=cmp_to_key(_sort_vendor_func))
     return render_template('vendorlist.html',
                            category='vendors',
