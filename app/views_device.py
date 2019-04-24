@@ -102,7 +102,7 @@ def device_list():
     # get a list of firmwares with a map of components
     fws = db.session.query(Firmware).\
                            join(Remote).filter(Remote.is_public).\
-                           join(Component).group_by(Component.name).\
+                           join(Component).group_by(Component.appstream_id).\
                            order_by(Firmware.timestamp.desc()).\
                            distinct(Component.name).all()
     vendors = []
