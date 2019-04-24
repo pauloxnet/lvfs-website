@@ -741,6 +741,7 @@ class Test(db.Model):
     # link using foreign keys
     waived_user = relationship('User', foreign_keys=[waived_user_id])
     attributes = relationship("TestAttribute",
+                              lazy='joined',
                               back_populates="test",
                               cascade='all,delete-orphan')
 

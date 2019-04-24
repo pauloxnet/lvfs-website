@@ -11,6 +11,8 @@ import shutil
 from flask import request, url_for, redirect, render_template, flash, g
 from flask_login import login_required
 
+from sqlalchemy.orm import joinedload
+
 from app import app, db
 
 from .models import Firmware, Report, Client, FirmwareEvent, FirmwareLimit, Remote, Vendor, AnalyticFirmware
@@ -42,6 +44,7 @@ def firmware(state=None):
         stmt = stmt.filter(Firmware.remote_id == remote.remote_id)
     else:
         return _error_internal('no state of %s' % state)
+    stmt = stmt.options(joinedload('tests'))
     fws = stmt.order_by(Firmware.timestamp.desc()).all()
     return render_template('firmware-search.html',
                            category='firmware',
