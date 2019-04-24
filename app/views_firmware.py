@@ -54,21 +54,15 @@ def firmware(state=None):
 
 @app.route('/lvfs/firmware/new')
 @app.route('/lvfs/firmware/new/<int:limit>')
-def firmware_new(limit=200):
+def firmware_new(limit=50):
 
     # get a sorted list of vendors
-    fwevs = db.session.query(FirmwareEvent).\
+    fwevs_public = db.session.query(FirmwareEvent).\
+                join(Remote).filter(Remote.is_public).\
+                group_by(FirmwareEvent.firmware_id).\
                 order_by(FirmwareEvent.timestamp.desc()).\
+                options(joinedload(FirmwareEvent.fw)).\
                 limit(limit).all()
-    fwevs_public = []
-    fws = []
-    for fwev in fwevs:
-        if not fwev.fw.remote.name == 'stable':
-            continue
-        if fwev.fw in fws:
-            continue
-        fwevs_public.append(fwev)
-        fws.append(fwev.fw)
     return render_template('firmware-new.html',
                            category='firmware',
                            fwevs=fwevs_public,
