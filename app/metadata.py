@@ -99,7 +99,7 @@ def _generate_metadata_kind(filename, fws, firmware_baseuri='', local=False):
         rq_hws = []
         for md in mds:
             for rq in md.requirements:
-                if rq.kind == 'hardware':
+                if rq.kind == 'hardware' and rq.value not in rq_hws:
                     rq_hws.append(rq.value)
         if rq_hws:
             child = ET.Element('hardware')
