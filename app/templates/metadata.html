@@ -98,7 +98,7 @@
 {% if g.user.check_acl('@admin') %}
     <a class="card-link btn btn-primary"
       href={{url_for('metadata_rebuild_remote',
-                     remote_id=remotes['stable'].remote_id)}}>Rebuild</a>
+                     remote_id=remotes['embargo-' + v.group_id].remote_id)}}>Rebuild</a>
 {% endif %}
   </div>
 </div>
