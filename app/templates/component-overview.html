@@ -9,11 +9,33 @@
 <table class="table">
   <tr class="row table-borderless">
     <th class="col-3">ID</th>
+{% if g.user.check_acl('@admin') %}
+    <form class="form-inline" action="{{url_for('.component_modify', component_id=md.component_id)}}" method="POST">
+    <td class="col-7">
+      <textarea class="form-control fixed-width" name="appstream_id" cols="100" rows="1">{{md.appstream_id if md.appstream_id}}</textarea>
+    </td>
+    <td class="col">
+      <input type="submit" class="btn btn-warning btn-block" value="Set"/>
+    </td>
+    </form>
+{% else %}
     <td class="col"><code>{{md.appstream_id}}</code></td>
+{% endif %}
   </tr>
   <tr class="row">
     <th class="col-3">Name</th>
+{% if g.user.check_acl('@admin') %}
+    <form class="form-inline" action="{{url_for('.component_modify', component_id=md.component_id)}}" method="POST">
+    <td class="col-7">
+      <textarea class="form-control fixed-width" name="name" cols="100" rows="1">{{md.name if md.name}}</textarea>
+    </td>
+    <td class="col">
+      <input type="submit" class="btn btn-warning btn-block" value="Set"/>
+    </td>
+    </form>
+{% else %}
     <td class="col"><code>{{md.name_with_category}}</code></td>
+{% endif %}
   </tr>
   <tr class="row">
     <th class="col-3">Summary</th>
@@ -55,7 +77,7 @@
       </select>
     </td>
     <td class="col-2">
-      <input type="submit" class="btn btn-secondary btn-block" value="Set"/>
+      <input type="submit" class="btn btn-primary btn-block" value="Set"/>
     </td>
 {% else %}
     <td class="col-7"><code>{{md.protocol.value}}</code></td>
@@ -72,7 +94,7 @@
       </select>
     </td>
     <td class="col">
-      <input type="submit" class="btn btn-secondary btn-block" value="Set"/>
+      <input type="submit" class="btn btn-primary btn-block" value="Set"/>
     </td>
 {% else %}
     <td class="col-7"><code>{{md.category.value}}</code></td>

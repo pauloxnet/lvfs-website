@@ -102,6 +102,10 @@ def component_modify(component_id):
     if 'source_url' in request.form:
         md.source_url = request.form['source_url']
         page = 'update'
+    if 'appstream_id' in request.form:
+        md.appstream_id = request.form['appstream_id']
+    if 'name' in request.form:
+        md.name = request.form['name']
 
     # ensure the test has been added for the new firmware type
     ploader.ensure_test_for_fw(md.fw)
