@@ -265,7 +265,7 @@ def component_requirement_modify(component_id):
 
     # check we have data
     for key in ['kind', 'value']:
-        if key not in request.form or not request.form[key]:
+        if key not in request.form:
             return _error_internal('No %s specified!' % key)
     if request.form['kind'] not in ['hardware', 'firmware', 'id']:
         return _error_internal('No valid kind specified!')
@@ -287,8 +287,13 @@ def component_requirement_modify(component_id):
                                 component_id=md.component_id,
                                 page='requires'))
 
+    # empty string is None
+    value = request.form['value']
+    if not value:
+        value = None
+
     # check it's not already been added
-    rq = md.find_req(request.form['kind'], request.form['value'])
+    rq = md.find_req(request.form['kind'], value)
     if rq:
         if 'version' in request.form:
             rq.version = request.form['version']
@@ -302,7 +307,10 @@ def component_requirement_modify(component_id):
                                         page='requires'))
             rq.compare = request.form['compare']
         db.session.commit()
-        flash('Modified requirement %s' % rq.value, 'info')
+        if rq.value:
+            flash('Modified requirement %s' % rq.value, 'info')
+        else:
+            flash('Modified requirement firmware', 'info')
         return redirect(url_for('.component_show',
                                 component_id=md.component_id,
                                 page='requires'))
@@ -310,7 +318,7 @@ def component_requirement_modify(component_id):
     # add requirement
     rq = Requirement(md.component_id,
                      request.form['kind'],
-                     request.form['value'],
+                     value,
                      request.form['compare'] if 'compare' in request.form else None,
                      request.form['version'] if 'version' in request.form else None,
                     )

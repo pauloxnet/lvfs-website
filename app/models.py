@@ -1136,12 +1136,12 @@ class Component(db.Model):
                 continue
             self.keywords.append(Keyword(keyword, priority))
 
-    def find_req(self, kind=None, value=None):
+    def find_req(self, kind, value):
         """ Find a Requirement from the kind and/or value """
         for rq in self.requirements:
-            if kind and rq.kind != kind:
+            if rq.kind != kind:
                 continue
-            if value and rq.value != value:
+            if rq.value != value:
                 continue
             return rq
         return None
