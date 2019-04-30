@@ -38,7 +38,17 @@ def _regenerate_and_sign_metadata():
     # get list of dirty remotes
     remotes = []
     for r in db.session.query(Remote).all():
-        if r.is_signed and r.is_dirty:
+        if not r.is_signed:
+            continue
+        # fix up any remotes that are not dirty, but have firmware that is dirty
+        # -- which shouldn't happen, but did...
+        if not r.is_dirty:
+            for fw in r.fws:
+                if not fw.is_dirty:
+                    continue
+                print('Marking remote %s as dirty due to %u' % (r.name, fw.firmware_id))
+                r.is_dirty = True
+        if r.is_dirty:
             remotes.append(r)
 
     # nothing to do

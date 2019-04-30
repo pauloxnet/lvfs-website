@@ -1186,6 +1186,7 @@ class Remote(db.Model):
 
     # link using foreign keys
     vendors = relationship("Vendor", back_populates="remote")
+    fws = relationship("Firmware")
 
     def check_fw(self, fw):
         # remote is specified exactly
