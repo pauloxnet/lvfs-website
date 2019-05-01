@@ -1333,6 +1333,9 @@ class Firmware(db.Model):
     tests = relationship("Test",
                          back_populates="fw",
                          cascade='all,delete-orphan')
+    analytics = relationship("AnalyticFirmware",
+                             back_populates="firmware",
+                             cascade='all,delete-orphan')
 
     # link using foreign keys
     vendor = relationship('Vendor', foreign_keys=[vendor_id])
