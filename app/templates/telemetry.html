@@ -9,9 +9,15 @@
     <div class="card-title">
       Telemetry for group {{group_id}}
     </div>
+{% if age %}
+    <p class="card-text">
+      Only firmware that has been uploaded less than {{age}} days ago and downloaded at least once will be shown here.
+    </p>
+{% else %}
     <p class="card-text">
       Only firmware that has been downloaded at least once will be shown here.
     </p>
+{% endif %}
 {% if sort_direction != 'up' %}
     <a class="card-link btn btn-sm btn-info" href="{{url_for('.telemetry', age=age, sort_key=sort_key, sort_direction='up')}}">
       Sort ▼
@@ -52,9 +58,9 @@
         <th class="col-4">Downloads</th>
         <td class="col">{{fw.download_cnt}}</td>
       </tr>
-{% if fw.success %}
+{% if fw.success != None %}
       <tr class="row">
-        <th class="col-4">Success</th>
+        <th class="col-4">Reported Success</th>
         <td class="col">{{fw.success|round(1)}}%
         ({{fw.report_success_cnt}} <span class="fas fa-check-circle fs--1 text-success"></span>
          {{fw.report_failure_cnt}}  <span class="fas fa-times-circle fs--1 text-danger"></span>)</td>
