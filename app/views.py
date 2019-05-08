@@ -287,6 +287,7 @@ def index():
                             order_by(Vendor.display_name).limit(10).all()
     vendors_quote = db.session.query(Vendor).\
                             filter(Vendor.quote_text != None).\
+                            filter(Vendor.quote_text != '').\
                             order_by(Vendor.display_name).limit(10).all()
     return render_template('index.html',
                            vendors_logo=vendors_logo,
