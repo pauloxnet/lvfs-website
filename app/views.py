@@ -200,7 +200,7 @@ def utility_processor():
                 format_timedelta_approx=format_timedelta_approx,
                 format_html_from_markdown=format_html_from_markdown,
                 format_timestamp=format_timestamp,
-                loader_plugins=ploader.get_all())
+                loader_plugins=sorted(ploader.get_all(), key=lambda x: x.name()))
 
 @lm.unauthorized_handler
 def unauthorized():
