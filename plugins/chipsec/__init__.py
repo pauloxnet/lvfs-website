@@ -11,7 +11,6 @@ import glob
 import hashlib
 import os
 import re
-import shutil
 import subprocess
 
 from app import db
@@ -63,11 +62,11 @@ def _add_component_shards(md, files):
 def _run_chipsec_on_blob(self, test, md):
 
     # write firmware to temp file
-    cwd = tempfile.mkdtemp(prefix='lvfs')
+    cwd = tempfile.TemporaryDirectory(prefix='lvfs')
     src = tempfile.NamedTemporaryFile(mode='wb',
                                       prefix='lvfs_',
                                       suffix=".bin",
-                                      dir=cwd,
+                                      dir=cwd.name,
                                       delete=False)
     src.write(md.blob)
     src.flush()
@@ -76,13 +75,13 @@ def _run_chipsec_on_blob(self, test, md):
     log = tempfile.NamedTemporaryFile(mode='wb',
                                       prefix='lvfs_',
                                       suffix=".log",
-                                      dir=cwd,
+                                      dir=cwd.name,
                                       delete=False)
 
     # run chipsec
     cmd = self.get_setting('chipsec_binary', required=True)
     argv = [cmd, '--no_driver', '--log', log.name, 'uefi', 'decode', src.name]
-    ps = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+    ps = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd.name)
     if ps.wait() != 0:
         raise PluginError('Failed to decode file: %s' % ps.stderr.read())
 
@@ -97,9 +96,6 @@ def _run_chipsec_on_blob(self, test, md):
     # print output
     with open(log.name, 'r') as f:
         test.add_pass('Scanned', f.read())
-
-    # delete output dir
-    shutil.rmtree(cwd)
 
 class Plugin(PluginBase):
     def __init__(self):
