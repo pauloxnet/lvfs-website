@@ -90,13 +90,13 @@ def _run_chipsec_on_blob(self, test, md):
     outdir = src.name + '.dir'
     files = glob.glob(outdir + '/FV/**/*.efi', recursive=True)
     if not files:
-        test.add_pass('Parsed, but no firmware volumes found')
+        test.add_pass('Scanned', 'No firmware volumes found')
         return
     _add_component_shards(md, files)
 
     # print output
     with open(log.name, 'r') as f:
-        test.add_pass('Parsed and extracted', f.read())
+        test.add_pass('Scanned', f.read())
 
     # delete output dir
     shutil.rmtree(cwd)
