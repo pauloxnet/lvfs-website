@@ -60,7 +60,7 @@ def firmware_new(limit=50):
 
     # get a sorted list of vendors
     fwevs_public = db.session.query(FirmwareEvent).\
-                join(Remote).filter(Remote.is_public).\
+                join(Firmware).join(Remote).filter(Remote.is_public).\
                 group_by(FirmwareEvent.firmware_id).\
                 order_by(FirmwareEvent.timestamp.desc()).\
                 options(joinedload(FirmwareEvent.fw)).\
