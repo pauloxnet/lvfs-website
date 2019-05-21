@@ -214,6 +214,8 @@ class Plugin(PluginBase):
 
         # run intelme on the capsule data
         for md in fw.mds:
+            if not md.blob:
+                continue
             if _require_test(md):
                 _run_intelme_on_blob(test, md)
         db.session.commit()
