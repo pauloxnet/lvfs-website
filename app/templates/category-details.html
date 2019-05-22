@@ -15,8 +15,8 @@
     <input type="text" class="form-control" name="name" value="{{cat.name if cat.name}}" required {{'disabled' if not cat.check_acl('@modify')}}>
   </div>
   <div class="form-group">
-    <label for="display_name">Fallbacks:</label>
-    <input type="text" class="form-control" name="name" value="{{cat.fallbacks if cat.fallbacks}}" {{'disabled' if not cat.check_acl('@modify')}}>
+    <label for="fallbacks">Fallbacks:</label>
+    <input type="text" class="form-control" name="fallbacks" value="{{cat.fallbacks if cat.fallbacks}}" {{'disabled' if not cat.check_acl('@modify')}}>
   </div>
   <div class="form-group">
     <label for="expect_device_checksum">
