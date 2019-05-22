@@ -18,39 +18,34 @@
 {% if tests_running[plugin_id]|length > 0 %}
   <tr class="row table-borderless">
     <th class="col col-sm-3">Running</th>
-    <td class="col col-sm-3">{{tests_running[plugin_id]|length}}</td>
-    <td class="col col-sm-2">
-{% endif %}
-{% if tests_running[plugin_id]|length > 0 %}
-      <a class="btn btn-small btn-block btn-outline-danger" href="{{url_for('.test_retry_all', plugin_id=plugin_id)}}">Retry all</a>
-{% endif %}
+    <td class="col">{{tests_running[plugin_id]|length}}</td>
     </td>
   </tr>
+{% endif %}
   <tr class="row table-borderless">
     <th class="col col-sm-3">Success</th>
-    <td class="col col-sm-3">{{tests_success[plugin_id]|length}}</td>
-    <td class="col col-sm-2">
-{% if tests_success[plugin_id]|length > 0 %}
-      <a class="btn btn-small btn-block btn-outline-danger" href="{{url_for('.test_delete_all', plugin_id=plugin_id)}}">Delete all</a>
-{% endif %}
-    </td>
+    <td class="col">{{tests_success[plugin_id]|length}}</td>
   </tr>
   <tr class="row table-borderless">
     <th class="col col-sm-3">Failures</th>
-    <td class="col col-sm-3">{{tests_failed[plugin_id]|length}}</td>
-    <td class="col col-sm-2">
-{% if tests_failed[plugin_id]|length > 0 %}
-      <a class="btn btn-small btn-block btn-outline-danger" href="{{url_for('.test_waive_all', plugin_id=plugin_id)}}">Waive all</a>
-{% endif %}
-    </td>
+    <td class="col">{{tests_failed[plugin_id]|length}}</td>
   </tr>
 {% if tests_waived[plugin_id]|length > 0 %}
   <tr class="row table-borderless">
     <th class="col col-sm-3">Waived</th>
-    <td class="col col-sm-3">{{tests_waived[plugin_id]|length}}</td>
+    <td class="col">{{tests_waived[plugin_id]|length}}</td>
   </tr>
 {% endif %}
 </table>
+{% if tests_running[plugin_id]|length > 0 %}
+    <a class="card-link btn btn-outline-danger" href="{{url_for('.test_retry_all', plugin_id=plugin_id)}}">Retry all</a>
+{% endif %}
+{% if tests_success[plugin_id]|length > 0 %}
+    <a class="card-link btn btn-outline-danger" href="{{url_for('.test_delete_all', plugin_id=plugin_id)}}">Delete all</a>
+{% endif %}
+{% if tests_failed[plugin_id]|length > 0 %}
+    <a class="card-link btn btn-small btn-outline-danger" href="{{url_for('.test_waive_all', plugin_id=plugin_id)}}">Waive all</a>
+{% endif %}
   </div>
 </div>
 {% endfor %}
