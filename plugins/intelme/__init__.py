@@ -57,7 +57,7 @@ class PartitionEntry():
     def guid(self):
         if not self.appstream_id:
             return None
-        return uuid.uuid5(uuid.NAMESPACE_DNS, self.appstream_id)
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, self.appstream_id))
 
     @property
     def sha256(self):
@@ -241,4 +241,4 @@ if __name__ == '__main__':
     for _shard in _md.shards:
         if not _shard.checksums:
             continue
-        print(_shard.checksums[0])
+        print(_shard.info.guid, _shard.checksums[0])
