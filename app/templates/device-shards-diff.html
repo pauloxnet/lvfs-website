@@ -101,15 +101,14 @@
 
     <p class="card-text">
       <table class="table table-borderless">
-{% if shard_old.size %}
+{% if shard_old.size != shard_new.size %}
         <tr class="row">
-          <th class="col-2">Old Size</th>
-          <td class="col">{{format_size(shard_old.size)}}</td>
+          <th class="col-2">Size</th>
+          <td class="col">{{format_size(shard_old.size)}} → {{format_size(shard_new.size)}}</td>
         </tr>
-{% endif %}
-{% if shard_new.size %}
+{% elif shard_new.size %}
         <tr class="row">
-          <th class="col-2">New Size</th>
+          <th class="col-2">Size</th>
           <td class="col">{{format_size(shard_new.size)}}</td>
         </tr>
 {% endif %}
