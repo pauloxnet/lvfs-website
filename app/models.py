@@ -900,7 +900,8 @@ class Category(db.Model):
                 return True
         if self.fallbacks:
             for value in values:
-                return value in self.fallbacks.split(',')
+                if value in self.fallbacks.split(','):
+                    return True
         return False
 
     def check_acl(self, action, user=None):
