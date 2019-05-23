@@ -1031,6 +1031,8 @@ class ComponentShard(db.Model):
 
     @property
     def blob(self):
+        if not hasattr(self, '_blob'):
+            return None
         return self._blob
 
     @blob.setter
