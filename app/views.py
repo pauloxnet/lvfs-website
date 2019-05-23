@@ -181,6 +181,9 @@ def utility_processor():
     def format_iso3166(tmp):
         return iso3166.countries.get(tmp, ['Unknown!'])[0]
 
+    def format_plugin_id(tmp):
+        return ploader.get_by_id(tmp)
+
     def format_html_from_markdown(tmp):
         if not tmp:
             return '<p>None</p>'
@@ -205,6 +208,7 @@ def utility_processor():
                 format_html_from_markdown=format_html_from_markdown,
                 format_timestamp=format_timestamp,
                 format_iso3166=format_iso3166,
+                format_plugin_id=format_plugin_id,
                 loader_plugins=sorted(ploader.get_all(), key=lambda x: x.name()))
 
 @lm.unauthorized_handler

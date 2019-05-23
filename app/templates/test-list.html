@@ -16,7 +16,7 @@
 {% for test in tests %}
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-{{test.color}}">
-    {{test.plugin_id}}
+    {{format_plugin_id(test.plugin_id).name()}}
     <span class="float-right">{{test.timestamp}}</span>
   </div>
   <div class="card-body">
