@@ -98,11 +98,12 @@ class PartitionHeader():
             offset += 0x20
             self.entries.append(entry)
 
-def _add_shards(fpt, md):
+def _add_shards(self, fpt, md):
 
-    # remove any old shards
+    # remove any old shards we added
     for shard in md.shards:
-        db.session.delete(shard)
+        if shard.plugin_id == self.id:
+            db.session.delete(shard)
 
     # add shards
     for entry in fpt.entries:
@@ -110,7 +111,7 @@ def _add_shards(fpt, md):
             continue
         if not entry.sha256:
             continue
-        shard = ComponentShard(component_id=md.component_id)
+        shard = ComponentShard(component_id=md.component_id, plugin_id=self.id)
         shard.blob = entry.blob
         shard.info = db.session.query(ComponentShardInfo).\
                             filter(ComponentShardInfo.guid == entry.guid).first()
@@ -122,7 +123,7 @@ def _add_shards(fpt, md):
         shard.checksums.append(csum)
         md.shards.append(shard)
 
-def _run_intelme_on_blob(test, md):
+def _run_intelme_on_blob(self, test, md):
 
     # find and parse FPT
     offset = md.blob.find(b'$FPT')
@@ -155,7 +156,7 @@ def _run_intelme_on_blob(test, md):
         return
 
     # add shards to component
-    _add_shards(fpt, md)
+    _add_shards(self, fpt, md)
 
     # success
     entries = []
@@ -217,7 +218,7 @@ class Plugin(PluginBase):
             if not md.blob:
                 continue
             if _require_test(md):
-                _run_intelme_on_blob(test, md)
+                _run_intelme_on_blob(self, test, md)
         db.session.commit()
 
 # run with PYTHONPATH=. ./.env3/bin/python3 plugins/intelme/__init__.py ./firmware.bin

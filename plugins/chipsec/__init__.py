@@ -17,11 +17,12 @@ from app import db
 from app.pluginloader import PluginBase, PluginError, PluginSettingBool, PluginSettingText
 from app.models import Test, ComponentShard, ComponentShardChecksum, ComponentShardInfo
 
-def _add_component_shards(md, files):
+def _add_component_shards(self, md, files):
 
-    # remove any old shards
+    # remove any old shards we added
     for shard in md.shards:
-        db.session.delete(shard)
+        if shard.plugin_id == self.id:
+            db.session.delete(shard)
 
     # parse each EFI binary as a shard
     for fn in files:
@@ -38,7 +39,7 @@ def _add_component_shards(md, files):
         if not guid:
             continue
 
-        shard = ComponentShard(component_id=md.component_id)
+        shard = ComponentShard(component_id=md.component_id, plugin_id=self.id)
         shard.info = db.session.query(ComponentShardInfo).\
                             filter(ComponentShardInfo.guid == guid).first()
         if shard.info:
@@ -92,7 +93,7 @@ def _run_chipsec_on_blob(self, test, md):
     if not files:
         test.add_pass('Scanned', 'No firmware volumes found')
         return
-    _add_component_shards(md, files)
+    _add_component_shards(self, md, files)
 
     # print output
     with open(log.name, 'r') as f:

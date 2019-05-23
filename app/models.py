@@ -1010,6 +1010,7 @@ class ComponentShard(db.Model):
     component_shard_info_id = Column(Integer,
                                      ForeignKey('component_shard_infos.component_shard_info_id'),
                                      nullable=False)
+    plugin_id = Column(Text, default=None)
     size = Column(Integer, default=0)
     entropy = Column(Float, default=0.0)
 
@@ -1022,9 +1023,10 @@ class ComponentShard(db.Model):
     # link back to parent
     md = relationship('Component', back_populates="shards")
 
-    def __init__(self, component_id=None):
+    def __init__(self, component_id=None, plugin_id=None):
         """ Constructor for object """
         self.component_id = component_id
+        self.plugin_id = plugin_id
         self._blob = None
 
     @property
