@@ -160,7 +160,7 @@ class Plugin(PluginBase):
                               'Extracted: {} bytes, expected: {} bytes'.format(len(signature), security.Size - 8))
                 return
         except pefile.PEFormatError as _:
-            # not a PE file, which is fine
+            test.add_pass(shard.info.name, 'Not a PE file')
             return
 
         # get all the certificates and signer
