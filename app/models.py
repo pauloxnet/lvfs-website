@@ -1052,13 +1052,17 @@ class ComponentShard(db.Model):
         self.size = len(value)
         self.entropy = _calculate_entropy(value)
 
+        # default fallback
+        if not checksums:
+            checksums = ['SHA1', 'SHA256']
+
         # SHA1 is what's used by researchers, but considered broken
-        if checksums and 'SHA1' in checksums:
+        if 'SHA1' in checksums:
             csum = ComponentShardChecksum(hashlib.sha1(value).hexdigest(), 'SHA1')
             self.checksums.append(csum)
 
         # SHA256 is now the best we have
-        if checksums and 'SHA256' in checksums:
+        if 'SHA256' in checksums:
             csum = ComponentShardChecksum(hashlib.sha256(value).hexdigest(), 'SHA256')
             self.checksums.append(csum)
 
