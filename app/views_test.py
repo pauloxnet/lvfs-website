@@ -79,8 +79,10 @@ def test_recent():
     if not g.user.is_admin:
         return _error_permission_denied('Permission denied')
     tests = db.session.query(Test).\
+                filter(Test.started_ts != None). \
+                filter(Test.ended_ts != None). \
                 options(joinedload('attributes')). \
-                order_by(Test.scheduled_ts.desc()).limit(20).all()
+                order_by(Test.ended_ts.desc()).limit(20).all()
     return render_template('test-list.html', category='tests', tests=tests)
 
 @app.route('/lvfs/test/running')
