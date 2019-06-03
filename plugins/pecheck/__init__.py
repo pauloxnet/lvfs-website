@@ -49,7 +49,7 @@ def _build_rfc2459_description(value):
 def _extract_authenticode_tbscerts(tbscert):
 
     cert = ComponentShardCertificate(kind='Authenticode PKCS7')
-    cert.serial_number = tbscert['serialNumber']
+    cert.serial_number = str(tbscert['serialNumber'])
     if 'validity' in tbscert:
         validity = tbscert['validity']
         cert.not_before = validity['notBefore']['utcTime'].asDateTime.replace(tzinfo=None)
