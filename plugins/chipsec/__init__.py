@@ -115,6 +115,7 @@ class Plugin(PluginBase):
         for shard in md.shards:
             if shard.plugin_id == self.id:
                 db.session.delete(shard)
+        db.session.commit()
 
         # try first with the plain blob (possibly with a capsule header) and
         # then look for a Zlib section (with an optional PFS-prefixed) blob

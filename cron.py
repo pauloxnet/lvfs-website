@@ -352,6 +352,7 @@ def _generate_stats_for_datestr(datestr, kinds=None):
     if 'AnalyticVendor' in kinds:
         for analytic in db.session.query(AnalyticVendor).filter(AnalyticVendor.datestr == datestr).all():
             db.session.delete(analytic)
+        db.session.commit()
         for v in db.session.query(Vendor).all():
             _generate_stats_for_vendor(v, datestr)
         db.session.commit()
@@ -360,6 +361,7 @@ def _generate_stats_for_datestr(datestr, kinds=None):
     if 'AnalyticFirmware' in kinds:
         for analytic in db.session.query(AnalyticFirmware).filter(AnalyticFirmware.datestr == datestr).all():
             db.session.delete(analytic)
+        db.session.commit()
         for fw in db.session.query(Firmware).all():
             _generate_stats_for_firmware(fw, datestr)
         db.session.commit()
@@ -368,6 +370,7 @@ def _generate_stats_for_datestr(datestr, kinds=None):
     if 'Useragent' in kinds:
         for agnt in db.session.query(Useragent).filter(Useragent.datestr == datestr).all():
             db.session.delete(agnt)
+        db.session.commit()
         ua_apps = {}
         ua_fwupds = {}
         ua_distros = {}
@@ -421,6 +424,7 @@ def _generate_stats_for_datestr(datestr, kinds=None):
         analytic = db.session.query(Analytic).filter(Analytic.datestr == datestr).first()
         if analytic:
             db.session.delete(analytic)
+            db.session.commit()
         db.session.add(Analytic(datestr, len(clients)))
         db.session.commit()
 

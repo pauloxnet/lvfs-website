@@ -97,6 +97,7 @@ def _add_shards(self, fpt, md):
     for shard in md.shards:
         if shard.plugin_id == self.id:
             db.session.delete(shard)
+    db.session.commit()
 
     # add shards
     for entry in fpt.entries:

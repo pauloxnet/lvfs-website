@@ -177,6 +177,7 @@ class Plugin(PluginBase):
             for cert in md.certificates:
                 if cert.plugin_id == self.id:
                     db.session.delete(cert)
+            db.session.commit()
             for shard in md.shards:
                 if shard.blob:
                     self._run_test_on_shard(test, shard)
