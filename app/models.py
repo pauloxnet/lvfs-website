@@ -1103,7 +1103,7 @@ class ComponentShard(db.Model):
                 return csum.value
         return None
 
-    def set_blob(self, value, checksums=None, save=False):
+    def set_blob(self, value, checksums=None):
         """ Set data blob and add checksum objects """
         self._blob = value
         self.size = len(value)
@@ -1123,12 +1123,11 @@ class ComponentShard(db.Model):
             csum = ComponentShardChecksum(hashlib.sha256(value).hexdigest(), 'SHA256')
             self.checksums.append(csum)
 
-        # save to disk
-        if save:
-            fn = _get_shard_path(self)
-            os.makedirs(os.path.dirname(fn), exist_ok=True)
-            with open(fn, 'wb') as f:
-                f.write(zlib.compress(self._blob))
+    def save(self):
+        fn = _get_shard_path(self)
+        os.makedirs(os.path.dirname(fn), exist_ok=True)
+        with open(fn, 'wb') as f:
+            f.write(zlib.compress(self._blob))
 
     def ensure_info(self, guid, name):
         """ Find existing info object using the GUID, or create if not found """

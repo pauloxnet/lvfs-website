@@ -62,9 +62,6 @@ class Plugin(PluginBase):
 
     def _convert_files_to_shards(self, files):
 
-        # should we write to disk for later processing
-        save = self.get_setting_bool('chipsec_write_shards')
-
         # parse each EFI binary as a shard
         shards = []
         for fn in files:
@@ -84,7 +81,7 @@ class Plugin(PluginBase):
             shard = ComponentShard(plugin_id=self.id)
             shard.ensure_info(guid, name)
             with open(fn, 'rb') as f:
-                shard.set_blob(f.read(), save=save)
+                shard.set_blob(f.read())
             shards.append(shard)
         return shards
 
@@ -139,6 +136,8 @@ class Plugin(PluginBase):
         # add shard to component
         for shard in shards:
             shard.component_id = md.component_id
+            if self.get_setting_bool('chipsec_write_shards'):
+                shard.save()
             md.shards.append(shard)
 
     def _require_test_for_md(self, md):
@@ -183,6 +182,7 @@ if __name__ == '__main__':
         _test = Test(plugin.id)
         _fw = Firmware()
         _md = Component()
+        _md.component_id = 999999
         _md.filename_contents = 'filename.bin'
         _md.protocol = Protocol('org.uefi.capsule')
         with open(_argv, 'rb') as _f:
