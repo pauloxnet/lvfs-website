@@ -28,7 +28,8 @@ def _write_report_for_plugin_id(writer, plugin_id):
         data = {'plugin': plugin_id,
                 'vendor': fw.vendor.group_id,
                 'model': fw.md_prio.name,
-                'version': fw.md_prio.version_display}
+                'firmware_id': fw.firmware_id,
+                'version': fw.version_display}
         for test in fw.tests:
             if test.success:
                 continue
@@ -43,7 +44,7 @@ def _write_report_for_plugin_id(writer, plugin_id):
 
 def _run_report_for_plugin_ids(filename, plugin_ids):
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['plugin', 'vendor', 'model', 'version', 'shard', 'message']
+        fieldnames = ['plugin', 'vendor', 'model', 'version', 'shard', 'message', 'firmware_id']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for plugin_id in plugin_ids:
