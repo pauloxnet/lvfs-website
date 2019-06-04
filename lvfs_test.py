@@ -726,7 +726,7 @@ class LvfsTestCase(unittest.TestCase):
         assert b'/lvfs/upload' in rv.data, rv.data
         assert b'Caveat Emptor' in rv.data, rv.data
 
-        # ensure the user can change thier own display name
+        # ensure the user can change their own display name
         rv = self.app.post('/lvfs/user/3/modify', data=dict(
             display_name='Something Funky',
         ), follow_redirects=True)
@@ -734,7 +734,7 @@ class LvfsTestCase(unittest.TestCase):
         rv = self.app.get('/lvfs/profile')
         assert b'Something Funky' in rv.data, rv.data
 
-        # ensure the user can change thier own password
+        # ensure the user can change their own password
         rv = self.app.post('/lvfs/user/3/password', data=dict(
             password_old='not-even-close',
             password_new='Hi$$t0ry',
