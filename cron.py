@@ -184,6 +184,10 @@ def _purge_old_deleted_firmware():
     # all done
     db.session.commit()
 
+def _test_priority_sort_func(test):
+    plugin = ploader.get_by_id(test.plugin_id)
+    return plugin.priority
+
 def _check_firmware():
 
     # ensure the test has been added for the firmware type
@@ -213,7 +217,7 @@ def _check_firmware():
 
     # process each test
     for fw in test_fws:
-        for test in test_fws[fw]:
+        for test in sorted(test_fws[fw], key=_test_priority_sort_func):
             plugin = ploader.get_by_id(test.plugin_id)
             if not plugin:
                 _event_log('No plugin %s' % test.plugin_id)
