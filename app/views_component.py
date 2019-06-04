@@ -105,12 +105,17 @@ def component_modify(component_id):
 
     # set new metadata values
     page = 'overview'
+    retry_all_tests = False
     if 'screenshot_url' in request.form:
         md.screenshot_url = request.form['screenshot_url']
     if 'protocol_id' in request.form:
-        md.protocol_id = request.form['protocol_id']
+        if md.protocol_id != request.form['protocol_id']:
+            md.protocol_id = request.form['protocol_id']
+            retry_all_tests = True
     if 'category_id' in request.form:
-        md.category_id = request.form['category_id']
+        if md.category_id != request.form['category_id']:
+            md.category_id = request.form['category_id']
+            retry_all_tests = True
     if 'screenshot_caption' in request.form:
         md.screenshot_caption = _sanitize_markdown_text(request.form['screenshot_caption'])
     if 'install_duration' in request.form:
@@ -135,6 +140,11 @@ def component_modify(component_id):
         md.appstream_id = request.form['appstream_id']
     if 'name' in request.form:
         md.name = request.form['name']
+
+    # the firmware changed protocol
+    if retry_all_tests:
+        for test in md.fw.tests:
+            test.retry()
 
     # ensure the test has been added for the new firmware type
     ploader.ensure_test_for_fw(md.fw)
