@@ -64,9 +64,6 @@ class Plugin(PluginBase):
         except IOError as e:
             raise PluginError(e)
 
-        # success
-        test.add_pass('Uploaded')
-
     def run_test_on_fw(self, test, fw):
 
         # upload each decompressed blob
