@@ -87,9 +87,7 @@ class Plugin(PluginBase):
             return
 
         # parse results
-        if rc == 0:
-            test.add_pass('All OK')
-        else:
+        if rc != 0:
             for ln in stdout.split('\n'):
                 try:
                     fn, status = ln.split(': ', 2)
