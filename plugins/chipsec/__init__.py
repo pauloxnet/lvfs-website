@@ -67,19 +67,35 @@ class Plugin(PluginBase):
         for fn in files:
             sections = fn.rsplit('/')
             name = sections[-1].split('.')[0]
+            kind = None
             guid = None
             for section in reversed(sections[:-1]):
                 if section.find('GUID_DEFINED') != -1:
                     continue
                 if section.find('COMPRESSION') != -1:
                     continue
-                guid = section.split('_')[1].split('.')[0].lower()
+                dirname_sections = section.split('.')
+                guid = dirname_sections[0].split('_')[1].lower()
+                kind = dirname_sections[1]
                 break
             if not guid:
                 continue
-
+            appstream_kinds = {
+                'FV_APPLICATION': 'Application',
+                'FV_DRIVER': 'Driver',
+                'FV_DXE_CORE': 'Dxe',
+                'FV_PEI_CORE': 'Pei',
+                'FV_PEIM': 'Peim',
+                'FV_RAW': 'Raw',
+                'FV_SECURITY_CORE': 'Security',
+                'FV_COMBINED_PEIM_DRIVER': 'PeimDriver',
+            }
+            if kind in appstream_kinds:
+                appstream_id = 'com.intel.Uefi.{}.{}'.format(appstream_kinds[kind], name)
+            else:
+                appstream_id = 'com.intel.Uefi.{}'.format(name)
             shard = ComponentShard(plugin_id=self.id)
-            shard.ensure_info(guid, name)
+            shard.ensure_info(guid, appstream_id)
             with open(fn, 'rb') as f:
                 shard.set_blob(f.read())
             shards.append(shard)

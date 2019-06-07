@@ -1138,6 +1138,10 @@ class ComponentShard(db.Model):
         if not self.info:
             self.info = ComponentShardInfo(guid, name)
 
+        # overwrite just for a bit
+        if self.info.name != name:
+            self.info.name = name
+
     def __repr__(self):
         return "ComponentShard object %s" % self.component_shard_id
 
