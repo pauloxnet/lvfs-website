@@ -27,7 +27,10 @@ def main():
             continue
         if fn.find('.env') != -1:
             continue
-        argv = ['pylint-3', '--rcfile=contrib/pylintrc', fn]
+        cmd = os.path.join(os.path.dirname(sys.executable), 'pylint-3')
+        if not os.path.isfile(cmd):
+            cmd = os.path.join(os.path.dirname(sys.executable), 'pylint')
+        argv = [cmd, '--rcfile=contrib/pylintrc', fn]
         print('Checking %s' % fn)
         ps = subprocess.Popen(argv, env=env_safe)
         if ps.wait() != 0:

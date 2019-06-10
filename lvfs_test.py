@@ -8,6 +8,7 @@
 # pylint: disable=too-many-instance-attributes
 
 import os
+import sys
 import unittest
 import tempfile
 import subprocess
@@ -386,7 +387,7 @@ class LvfsTestCase(unittest.TestCase):
     def run_cron_firmware(self, fn='hughski-colorhug2-2.0.3'):
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', 'firmware'], env=env,
+        ps = subprocess.Popen([sys.executable, './cron.py', 'firmware'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, stderr = ps.communicate()
@@ -397,7 +398,7 @@ class LvfsTestCase(unittest.TestCase):
     def run_cron_stats(self):
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', 'stats', '0'], env=env,
+        ps = subprocess.Popen([sys.executable, './cron.py', 'stats', '0'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, stderr = ps.communicate()
@@ -408,7 +409,7 @@ class LvfsTestCase(unittest.TestCase):
     def run_cron_metadata(self, remote_ids=None):
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', 'metadata'], env=env,
+        ps = subprocess.Popen([sys.executable, './cron.py', 'metadata'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, stderr = ps.communicate()
@@ -421,7 +422,7 @@ class LvfsTestCase(unittest.TestCase):
     def run_cron_fwchecks(self):
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', 'fwchecks'], env=env,
+        ps = subprocess.Popen([sys.executable, './cron.py', 'fwchecks'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, stderr = ps.communicate()
@@ -460,7 +461,7 @@ class LvfsTestCase(unittest.TestCase):
         # run the cron job manually
         env = {}
         env['LVFS_CUSTOM_SETTINGS'] = self.cfg_filename
-        ps = subprocess.Popen(['./cron.py', 'firmware'], env=env,
+        ps = subprocess.Popen([sys.executable, './cron.py', 'firmware'], env=env,
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE)
         stdout, stderr = ps.communicate()
