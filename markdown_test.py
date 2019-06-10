@@ -39,11 +39,11 @@ class MarkdownTest(unittest.TestCase):
         # convert from markdown back to XML
         root = _xml_from_markdown(markdown)
         xml = ET.tostring(root, pretty_print=True)
-        print('`'+xml+'`')
+        print('`'+xml.decode()+'`')
 
         # show problems
         for problem in _get_update_description_problems(root):
-            print(' * %s' % problem)
+            print(' * %s' % problem.description)
 
 if __name__ == '__main__':
     unittest.main()
