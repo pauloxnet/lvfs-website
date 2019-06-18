@@ -45,6 +45,7 @@ class LvfsTestCase(unittest.TestCase):
         with open(self.cfg_filename, 'w') as cfgfile:
             cfgfile.write('\n'.join([
                 "SQLALCHEMY_DATABASE_URI = '%s'" % self.db_uri,
+                "SQLALCHEMY_TRACK_MODIFICATIONS = False",
                 "DEBUG = True",
                 "CERTTOOL = 'flatpak run --command=certtool --filesystem=/tmp:ro org.freedesktop.fwupd'",
                 "RESTORE_DIR = '/tmp'",
