@@ -24,7 +24,7 @@ from .dbutils import drop_db, init_db, anonymize_db
 
 app = Flask(__name__)
 app_config_fn = os.environ.get('LVFS_APP_SETTINGS', 'custom.cfg')
-if os.path.exists(os.path.join('app', app_config_fn)):
+if os.path.exists(os.path.join('lvfs', app_config_fn)):
     app.config.from_pyfile(app_config_fn)
 else:
     app.config.from_pyfile('flaskapp.cfg')
