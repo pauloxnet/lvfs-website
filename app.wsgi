@@ -5,10 +5,10 @@
 #
 # SPDX-License-Identifier: GPL-2.0+
 
-from lvfs import lvfs as application
+from lvfs import app
 
 if __name__ == '__main__':
     from flask import Flask
     server = Flask(__name__)
-    server.wsgi_app = application
-    server.run(host=application.config['IP'], port=application.config['PORT'])
+    server.wsgi_app = app
+    server.run(host=app.config['IP'], port=app.config['PORT'])
