@@ -93,14 +93,14 @@ def detect_encoding_from_bom(b):
     # fallback
     return "cp1252"
 
-def _node_validate_text(node, minlen=3, maxlen=50):
+def _node_validate_text(node, minlen=0, maxlen=0, nourl=False):
     """ Validates the style """
 
     # unwrap description
     if node.tag == 'description':
         text = _markdown_from_root(node)
     else:
-        text = node.text
+        text = node.text.strip()
 
     # invalid length
     if not text:
@@ -112,15 +112,16 @@ def _node_validate_text(node, minlen=3, maxlen=50):
     else:
         textarray = [text]
     for textsplit in textarray:
-        if len(textsplit) < minlen:
+        if minlen and len(textsplit) < minlen:
             raise MetadataInvalid('<{}> is too short: {}/{}'.format(node.tag, len(textsplit), minlen))
-        if len(textsplit) > maxlen:
+        if maxlen and len(textsplit) > maxlen:
             raise MetadataInvalid('<{}> is too long: {}/{}'.format(node.tag, len(textsplit), maxlen))
 
     # contains hyperlink
-    for urlhandler in ['http://', 'https://', 'ftp://']:
-        if text.find(urlhandler) != -1:
-            raise MetadataInvalid('{} cannot contain a hyperlink: {}'.format(node.tag, text))
+    if nourl:
+        for urlhandler in ['http://', 'https://', 'ftp://']:
+            if text.find(urlhandler) != -1:
+                raise MetadataInvalid('{} cannot contain a hyperlink: {}'.format(node.tag, text))
 
     return text
 
@@ -191,9 +192,10 @@ class UploadedFile:
 
         # get description
         try:
-            md.release_description = _node_validate_text(release.xpath('description')[0], maxlen=1000)
-        except AttributeError as _:
-            raise MetadataInvalid('<description> tag not founf')
+            md.release_description = _node_validate_text(release.xpath('description')[0],
+                                                         minlen=3, maxlen=1000, nourl=True)
+        except IndexError as _:
+            pass
 
         md.install_duration = int(release.get('install_duration', '0'))
         md.release_urgency = release.get('urgency')
@@ -210,13 +212,15 @@ class UploadedFile:
 
         # get <url type="details">
         try:
-            md.details_url = release.xpath('url[@type="details"]')[0].text
+            md.details_url = _node_validate_text(release.xpath('url[@type="details"]')[0],
+                                                 minlen=12, maxlen=1000)
         except IndexError as _:
             pass
 
         # get <url type="source">
         try:
-            md.source_url = release.xpath('url[@type="source"]')[0].text
+            md.source_url = _node_validate_text(release.xpath('url[@type="source"]')[0],
+                                                minlen=12, maxlen=1000)
         except IndexError as _:
             pass
 
@@ -237,10 +241,11 @@ class UploadedFile:
 
         # ensure there's always a contents filename
         for csum in release.xpath('checksum[@target="device"]'):
+            text = _node_validate_text(csum, minlen=32, maxlen=128)
             if csum.get('kind') == 'sha1':
-                md.device_checksums.append(Checksum(csum.text, 'SHA1'))
+                md.device_checksums.append(Checksum(text, 'SHA1'))
             elif csum.get('kind') == 'sha256':
-                md.device_checksums.append(Checksum(csum.text, 'SHA256'))
+                md.device_checksums.append(Checksum(text, 'SHA256'))
         if not md.filename_contents:
             md.filename_contents = 'firmware.bin'
 
@@ -256,7 +261,8 @@ class UploadedFile:
 
         # get <id>
         try:
-            md.appstream_id = component.xpath('id')[0].text
+            md.appstream_id = _node_validate_text(component.xpath('id')[0],
+                                                  minlen=10, maxlen=256)
             if not md.appstream_id:
                 raise MetadataInvalid('<id> value invalid')
             for char in md.appstream_id:
@@ -271,27 +277,31 @@ class UploadedFile:
 
         # get <name>
         try:
-            md.name = _node_validate_text(component.xpath('name')[0])
+            md.name = _node_validate_text(component.xpath('name')[0],
+                                          minlen=3, maxlen=500)
             md.add_keywords_from_string(md.name, priority=3)
         except IndexError as _:
             raise MetadataInvalid('<name> tag missing')
 
         # get <summary>
         try:
-            md.summary = _node_validate_text(component.xpath('summary')[0])
+            md.summary = _node_validate_text(component.xpath('summary')[0],
+                                             minlen=10, maxlen=500)
             md.add_keywords_from_string(md.summary, priority=1)
         except IndexError as _:
             raise MetadataInvalid('<summary> tag missing')
 
         # get optional <description}
         try:
-            md.description = _node_validate_text(component.xpath('description')[0], maxlen=1000)
+            md.description = _node_validate_text(component.xpath('description')[0],
+                                                 minlen=25, maxlen=1000, nourl=True)
         except IndexError as _:
             pass
 
         # get <developer_name>
         try:
-            md.developer_name = _node_validate_text(component.xpath('developer_name')[0])
+            md.developer_name = _node_validate_text(component.xpath('developer_name')[0],
+                                                    minlen=3, maxlen=50, nourl=True)
             if md.developer_name == 'LenovoLtd.':
                 md.developer_name = 'Lenovo Ltd.'
             md.add_keywords_from_string(md.developer_name, priority=10)
@@ -302,7 +312,7 @@ class UploadedFile:
 
         # get <metadata_license>
         try:
-            md.metadata_license = component.xpath('metadata_license')[0].text
+            md.metadata_license = _node_validate_text(component.xpath('metadata_license')[0])
             if md.metadata_license not in ['CC0-1.0', 'FSFAP',
                                            'CC-BY-3.0', 'CC-BY-SA-3.0', 'CC-BY-4.0', 'CC-BY-SA-4.0',
                                            'GFDL-1.1', 'GFDL-1.2', 'GFDL-1.3']:
@@ -312,7 +322,8 @@ class UploadedFile:
 
         # get <project_license>
         try:
-            md.project_license = component.xpath('project_license')[0].text
+            md.project_license = _node_validate_text(component.xpath('project_license')[0],
+                                                     minlen=4, maxlen=50, nourl=True)
         except IndexError as _:
             raise MetadataInvalid('<project_license> tag missing')
         if not md.project_license:
@@ -320,7 +331,8 @@ class UploadedFile:
 
         # get <url type="homepage">
         try:
-            md.url_homepage = component.xpath('url[@type="homepage"]')[0].text
+            md.url_homepage = _node_validate_text(component.xpath('url[@type="homepage"]')[0],
+                                                  minlen=7, maxlen=1000)
         except IndexError as _:
             raise MetadataInvalid('<url type="homepage"> tag missing')
         if not md.url_homepage:
@@ -328,13 +340,15 @@ class UploadedFile:
 
         # add manually added keywords
         for keyword in component.xpath('keywords/keyword'):
-            md.add_keywords_from_string(keyword.text, priority=5)
+            text = _node_validate_text(keyword, minlen=3, maxlen=50, nourl=True)
+            md.add_keywords_from_string(text, priority=5)
 
         # add provides
         for prov in component.xpath('provides/firmware[@type="flashed"]'):
-            if not _validate_guid(prov.text):
-                raise MetadataInvalid('The GUID {} was invalid.'.format(prov.text))
-            md.guids.append(Guid(md.component_id, prov.text))
+            text = _node_validate_text(prov, minlen=5, maxlen=1000)
+            if not _validate_guid(text):
+                raise MetadataInvalid('The GUID {} was invalid.'.format(text))
+            md.guids.append(Guid(md.component_id, text))
         if not md.guids:
             raise MetadataInvalid('The metadata file did not provide any GUID.')
 
@@ -347,12 +361,13 @@ class UploadedFile:
         for req in component.xpath('requires/*'):
             if req.tag not in ['firmware', 'id', 'hardware']:
                 raise MetadataInvalid('Requirement \'%s\' was invalid' % req.tag)
-            if req.tag == 'id' and req.text == 'org.freedesktop.fwupd':
+            text = _node_validate_text(req, minlen=3, maxlen=1000)
+            if req.tag == 'id' and text == 'org.freedesktop.fwupd':
                 self.fwupd_min_version = req.get('version')
             if req.tag == 'hardware':
-                req_values = req.text.split('|')
+                req_values = text.split('|')
             else:
-                req_values = [req.text]
+                req_values = [text]
             for req_value in req_values:
                 rq = Requirement(md.component_id,
                                  req.tag, req_value, req.get('compare'),
@@ -377,7 +392,7 @@ class UploadedFile:
 
         # allows OEM to change the triplet (AA.BB.CCDD) to quad (AA.BB.CC.DD)
         try:
-            md.version_format = component.xpath('custom/value[@key="LVFS::VersionFormat"]')[0].text
+            md.version_format = _node_validate_text(component.xpath('custom/value[@key="LVFS::VersionFormat"]')[0])
             if md.version_format not in self.version_formats:
                 raise MetadataInvalid('LVFS::VersionFormat can only be %s' % self.version_formats)
         except IndexError as _:
@@ -385,23 +400,26 @@ class UploadedFile:
 
         # allows OEM to specify protocol
         try:
-            update_protocol = component.xpath('custom/value[@key="LVFS::UpdateProtocol"]')[0].text
-            if update_protocol not in self.protocol_map:
-                raise MetadataInvalid('No valid UpdateProtocol {} found'.format(update_protocol))
-            md.protocol_id = self.protocol_map[update_protocol]
+            text = _node_validate_text(component.xpath('custom/value[@key="LVFS::UpdateProtocol"]')[0])
+            if text not in self.protocol_map:
+                raise MetadataInvalid('No valid UpdateProtocol {} found'.format(text))
+            md.protocol_id = self.protocol_map[text]
         except IndexError as _:
             pass
 
         # allows OEM to set banned country codes
         try:
-            self.fw.banned_country_codes = component.xpath('custom/value[@key="LVFS::BannedCountryCodes"]')[0].text
+            text = _node_validate_text(component.xpath('custom/value[@key="LVFS::BannedCountryCodes"]')[0],
+                                       minlen=2, maxlen=1000, nourl=True)
+            self.fw.banned_country_codes = text
         except IndexError as _:
             pass
 
         # allows OEM to specify category
         for category in component.xpath('categories/category'):
-            if category.text in self.category_map:
-                md.category_id = self.category_map[category.text]
+            text = _node_validate_text(category, minlen=8, maxlen=50, nourl=True)
+            if text in self.category_map:
+                md.category_id = self.category_map[text]
                 break
         # fallback to device -- DROP THIS 2020-01-01
         if not md.category_id:
@@ -415,11 +433,12 @@ class UploadedFile:
         self._parse_release(md, default_release)
 
         # ensure the update description does not refer to a file in the archive
-        for word in md.release_description.split(' '):
-            if word.find('.') == -1: # any word without a dot is not a fn
-                continue
-            if word in self.cabarchive_upload:
-                raise MetadataInvalid('The release description should not reference other files.')
+        if md.release_description:
+            for word in md.release_description.split(' '):
+                if word.find('.') == -1: # any word without a dot is not a fn
+                    continue
+                if word in self.cabarchive_upload:
+                    raise MetadataInvalid('The release description should not reference other files.')
 
         # check the inf file matches up with the .xml file
         if self._version_inf and self._version_inf != md.version:
