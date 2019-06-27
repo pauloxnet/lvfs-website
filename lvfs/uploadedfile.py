@@ -481,6 +481,8 @@ class UploadedFile:
                 raise MetadataInvalid('Multiple <component> tags')
         except UnicodeDecodeError as e:
             raise MetadataInvalid('The metadata file could not be parsed: {}'.format(str(e)))
+        except ET.XMLSyntaxError as e:
+            raise MetadataInvalid('The metadata file could not be parsed: {}'.format(str(e)))
         md = self._parse_component(components[0])
         md.release_download_size = self._data_size
 
