@@ -205,14 +205,19 @@ class UploadedFile:
         md.release_urgency = release.get('urgency')
 
         # date, falling back to timestamp
-        try:
-            dt = datetime.datetime.strptime(release.get('date'), "%Y-%m-%d")
-        except TypeError as _:
-            md.release_timestamp = int(release.get('timestamp', '0'))
+        if 'date' in release.attrib:
+            try:
+                dt = datetime.datetime.strptime(release.get('date'), "%Y-%m-%d")
+                md.release_timestamp = int(dt.timestamp())
+            except ValueError as e:
+                raise MetadataInvalid('<release> has invalid date attribute: {}'.format(str(e)))
+        elif 'timestamp' in release.attrib:
+            try:
+                md.release_timestamp = int(release.get('timestamp'))
+            except ValueError as e:
+                raise MetadataInvalid('<release> has invalid timestamp attribute: {}'.format(str(e)))
         else:
-            md.release_timestamp = dt.fromtimestamp(0)
-        if not md.release_timestamp:
-            raise MetadataInvalid('<release> had no date attribute')
+            raise MetadataInvalid('<release> had no date or timestamp attributes')
 
         # get <url type="details">
         try:

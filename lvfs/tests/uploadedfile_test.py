@@ -54,6 +54,30 @@ def _get_valid_metainfo(release_description='This stable release fixes bugs',
 """ % (release_description, version_format)
     return CabFile(txt.encode('utf-8'))
 
+def _get_alternate_metainfo():
+    txt = """<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019 Richard Hughes <richard@hughsie.com> -->
+<component type="firmware">
+  <id>com.hughski.ColorHug.firmware</id>
+  <name>ColorHug Firmware</name>
+  <summary>Firmware for the ColorHug</summary>
+  <description><p>Updating the firmware improves performance.</p></description>
+  <provides>
+    <firmware type="flashed">84f40464-9272-4ef7-9399-cd95f12da696</firmware>
+  </provides>
+  <url type="homepage">http://www.hughski.com/</url>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>proprietary</project_license>
+  <developer_name>Hughski Limited</developer_name>
+  <releases>
+    <release version="1.2.3" date="2019-07-02">
+      <description><p>This stable release fixes bugs</p></description>
+    </release>
+  </releases>
+</component>
+"""
+    return CabFile(txt.encode('utf-8'))
+
 def _get_generated_metainfo():
     txt = """<?xml version="1.0" encoding="utf-8"?>
 <component type="firmware">
@@ -231,6 +255,15 @@ class TestStringMethods(unittest.TestCase):
         ufile.parse('foo.cab', cabarchive.save())
         self.assertTrue(ufile.fw.mds[0].inhibit_download)
         self.assertTrue(ufile.fw.mds[0].version_format == 'quad')
+
+    # valid metadata
+    def test_release_date(self):
+        cabarchive = CabArchive()
+        cabarchive['firmware.bin'] = _get_valid_firmware()
+        cabarchive['firmware.metainfo.xml'] = _get_alternate_metainfo()
+        ufile = UploadedFile()
+        ufile.parse('foo.cab', cabarchive.save())
+        self.assertEqual(ufile.fw.mds[0].release_timestamp, 1562022000)
 
     # update description references another file
     def test_release_mentions_file(self):
