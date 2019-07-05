@@ -540,7 +540,7 @@ class UploadedFile:
         cabfiles = [cabfile for cabfile in self.cabarchive_upload.values()
                     if fnmatch.fnmatch(cabfile.filename, '*.metainfo.xml')]
         if not cabfiles:
-            raise MetadataInvalid('The firmware file had no .metadata.xml files')
+            raise MetadataInvalid('The firmware file had no .metainfo.xml files')
 
         # parse each MetaInfo file
         for cabfile in cabfiles:
