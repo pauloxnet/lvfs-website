@@ -141,11 +141,13 @@ def _repair():
                     print('repairing checksum from {} to {}'.format(fw.checksum_pulp,
                                                                     checksum_pulp))
                     fw.checksum_pulp = checksum_pulp
+                    fw.mark_dirty()
             for md in fw.mds:
                 sz = os.path.getsize(fw.filename_absolute)
                 if sz != md.release_download_size:
                     print('repairing size from {} to {}'.format(md.release_download_size, sz))
                     md.release_download_size = sz
+                    md.fw.mark_dirty()
         except FileNotFoundError as _:
             pass
 
