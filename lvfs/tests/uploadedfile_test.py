@@ -263,7 +263,7 @@ class TestStringMethods(unittest.TestCase):
         cabarchive['firmware.metainfo.xml'] = _get_alternate_metainfo()
         ufile = UploadedFile()
         ufile.parse('foo.cab', cabarchive.save())
-        self.assertEqual(ufile.fw.mds[0].release_timestamp, 1562022000)
+        self.assertEqual(ufile.fw.mds[0].release_timestamp, 1562025600)
 
     # update description references another file
     def test_release_mentions_file(self):

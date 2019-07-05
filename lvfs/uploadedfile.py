@@ -208,7 +208,8 @@ class UploadedFile:
         if 'date' in release.attrib:
             try:
                 dt = datetime.datetime.strptime(release.get('date'), "%Y-%m-%d")
-                md.release_timestamp = int(dt.timestamp())
+                dt_utc = dt.replace(tzinfo=datetime.timezone.utc)
+                md.release_timestamp = int(dt_utc.timestamp())
             except ValueError as e:
                 raise MetadataInvalid('<release> has invalid date attribute: {}'.format(str(e)))
         elif 'timestamp' in release.attrib:
