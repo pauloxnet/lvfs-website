@@ -131,10 +131,11 @@ def _node_validate_text(node, minlen=0, maxlen=0, nourl=False, allow_none=False)
 
 class UploadedFile:
 
-    def __init__(self):
+    def __init__(self, is_strict=True):
         """ default public attributes """
 
         self.fw = Firmware()
+        self.is_strict = is_strict
         self.fwupd_min_version = '0.8.0'    # a guess, but everyone should have this
         self.version_formats = ['plain', 'pair', 'triplet', 'quad', 'intel-me', 'intel-me2']
         self.category_map = {'X-Device' : 1}
@@ -321,14 +322,15 @@ class UploadedFile:
             raise MetadataInvalid('<developer_name> cannot contain an email address')
 
         # get <metadata_license>
-        try:
-            md.metadata_license = _node_validate_text(component.xpath('metadata_license')[0])
-            if md.metadata_license not in ['CC0-1.0', 'FSFAP',
-                                           'CC-BY-3.0', 'CC-BY-SA-3.0', 'CC-BY-4.0', 'CC-BY-SA-4.0',
-                                           'GFDL-1.1', 'GFDL-1.2', 'GFDL-1.3']:
-                raise MetadataInvalid('Invalid <metadata_license> tag of {}'.format(md.metadata_license))
-        except AttributeError as _:
-            raise MetadataInvalid('<metadata_license> tag')
+        if self.is_strict:
+            try:
+                md.metadata_license = _node_validate_text(component.xpath('metadata_license')[0])
+                if md.metadata_license not in ['CC0-1.0', 'FSFAP',
+                                               'CC-BY-3.0', 'CC-BY-SA-3.0', 'CC-BY-4.0', 'CC-BY-SA-4.0',
+                                               'GFDL-1.1', 'GFDL-1.2', 'GFDL-1.3']:
+                    raise MetadataInvalid('Invalid <metadata_license> tag of {}'.format(md.metadata_license))
+            except AttributeError as _:
+                raise MetadataInvalid('<metadata_license> tag')
 
         # get <project_license>
         try:
