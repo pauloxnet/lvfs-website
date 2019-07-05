@@ -136,9 +136,16 @@ def _repair():
     for fw in db.session.query(Firmware).all():
         try:
             with open(fw.filename_absolute, 'rb') as f:
-                fw.checksum_pulp = hashlib.sha256(f.read()).hexdigest()
+                checksum_pulp = hashlib.sha256(f.read()).hexdigest()
+                if checksum_pulp != fw.checksum_pulp:
+                    print('repairing checksum from {} to {}'.format(fw.checksum_pulp,
+                                                                    checksum_pulp))
+                    fw.checksum_pulp = checksum_pulp
             for md in fw.mds:
-                md.release_download_size = os.path.getsize(fw.filename_absolute)
+                sz = os.path.getsize(fw.filename_absolute)
+                if sz != md.release_download_size:
+                    print('repairing size from {} to {}'.format(md.release_download_size, sz))
+                    md.release_download_size = sz
         except FileNotFoundError as _:
             pass
 
