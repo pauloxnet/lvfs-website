@@ -18,10 +18,11 @@ from lvfs import app, db, ploader
 from lvfs.dbutils import _execute_count_star
 from lvfs.models import Remote, Firmware, Vendor, Client, AnalyticVendor
 from lvfs.models import AnalyticFirmware, Useragent, UseragentKind, Analytic, Report
-from lvfs.models import ComponentShardInfo, Test
+from lvfs.models import ComponentShardInfo, Test, Component, Category, Protocol
 from lvfs.models import _get_datestr_from_datetime
 from lvfs.metadata import _metadata_update_targets, _metadata_update_pulp
-from lvfs.util import _event_log, _get_shard_path
+from lvfs.util import _event_log, _get_shard_path, _get_absolute_path
+from lvfs.uploadedfile import UploadedFile, MetadataInvalid
 
 def _regenerate_and_sign_metadata():
 
@@ -108,6 +109,28 @@ def _sign_fw(fw):
     db.session.commit()
 
 def _repair():
+
+    # fix any timestamps that are incorrect
+    for md in db.session.query(Component).filter(Component.release_timestamp < 1980).all():
+        fn = _get_absolute_path(md.fw)
+        print(fn, md.release_timestamp)
+        try:
+            ufile = UploadedFile(is_strict=False)
+            for cat in db.session.query(Category).all():
+                ufile.category_map[cat.value] = cat.category_id
+            for pro in db.session.query(Protocol).all():
+                ufile.protocol_map[pro.value] = pro.protocol_id
+            with open(fn, 'rb') as f:
+                ufile.parse(os.path.basename(fn), f.read())
+        except MetadataInvalid as e:
+            print('failed to parse file: {}'.format(str(e)))
+            continue
+        for md_local in ufile.fw.mds:
+            if md_local.appstream_id == md.appstream_id:
+                print('repairing timestamp from {} to {}'.format(md.release_timestamp,
+                                                                 md_local.release_timestamp))
+                md.release_timestamp = md_local.release_timestamp
+                md.fw.mark_dirty()
 
     # fix all the checksums and file sizes
     for fw in db.session.query(Firmware).all():
