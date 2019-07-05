@@ -71,6 +71,8 @@ class Problem:
             return 'Firmware has been deleted'
         if self.kind == 'no-release-urgency':
             return 'No update urgency'
+        if self.kind == 'no-release-timestamp':
+            return 'No update timestamp'
         if self.kind == 'no-release-description':
             return 'No update description'
         if self.kind == 'invalid-release-description':
@@ -1318,6 +1320,11 @@ class Component(db.Model):
         if self.release_urgency == 'unknown':
             problems.append(Problem('no-release-urgency',
                                     'Release urgency has not been set'))
+
+        # release timestamp is now a hard requirement
+        if self.release_timestamp == 0:
+            problems.append(Problem('no-release-timestamp',
+                                    'Release timestamp was not set'))
 
         # we are going to be making policy decision on this soon
         if not self.protocol or self.protocol.value == 'unknown':

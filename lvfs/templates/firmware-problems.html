@@ -31,6 +31,16 @@
         <a href="/metainfo"><code>.metainfo.xml</code></a> file.
       </p>
     </td>
+{% elif problem.kind == 'no-release-timestamp' %}
+    <td class="col col-sm-7">
+      <p class="card-text">
+        All components should have an appropriate update timestamp at upload time.
+      </p>
+      <p class="card-text">
+        This can be set easily using <code>&lt;release date="2019-08-05"&gt;</code>
+        in the <a href="/metainfo"><code>.metainfo.xml</code></a> file.
+      </p>
+    </td>
 {% elif problem.kind == 'no-release-description' %}
     <td class="col col-sm-7">
       <p class="card-text">
