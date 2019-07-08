@@ -444,9 +444,6 @@ class UploadedFile:
             if text in self.category_map:
                 md.category_id = self.category_map[text]
                 break
-        # fallback to device -- DROP THIS 2020-01-01
-        if not md.category_id:
-            md.category_id = self.category_map['X-Device']
 
         # parse the default (first) release
         try:

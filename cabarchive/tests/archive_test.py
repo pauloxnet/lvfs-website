@@ -25,10 +25,10 @@ class TestCabArchive(unittest.TestCase):
         results = {
             'firmware.bin' : 'c57c7de8f7029acc44a4bfad6efd6ab0a7092cc6',
             'firmware.inf' : 'b0cb43bfb2f55fd15a8814c5c5c7b9f2ce2f4572',
-            'firmware.metainfo.xml' : 'e69b16c9d6ad67db52029f9db8f4e077d19c2558',
+            'firmware.metainfo.xml' : 'a8fda77f8baa56917ee1201b72747612c49e855b',
         }
         for fn in results:
-            self.assertTrue(hashlib.sha1(cabarchive[fn].buf).hexdigest() == results[fn])
+            self.assertEqual(hashlib.sha1(cabarchive[fn].buf).hexdigest(), results[fn])
 
     def test_missing(self):
         with open('contrib/hughski-colorhug2-2.0.3.cab', 'rb') as f:
