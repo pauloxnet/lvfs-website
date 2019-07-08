@@ -353,6 +353,8 @@ class UploadedFile:
         # add manually added keywords
         for keyword in component.xpath('keywords/keyword'):
             text = _node_validate_text(keyword, minlen=3, maxlen=50, nourl=True)
+            if text.find(' ') != -1:
+                raise MetadataInvalid('<keywords> cannot contain spaces')
             md.add_keywords_from_string(text, priority=5)
 
         # add provides
