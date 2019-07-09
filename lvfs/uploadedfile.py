@@ -183,7 +183,7 @@ class UploadedFile:
 
         # this is optional, but if supplied must match the version in the XML
         # -- also note this will not work with multi-component .cab files
-        if len(self.fw.mds) == 1:
+        if len(self.fw.mds) == 1 and self.fw.mds[0].version.isdigit():
             try:
                 self._version_inf = cfg.get('Firmware_AddReg', 'HKR->FirmwareVersion')
                 if self._version_inf.startswith('0x'):
