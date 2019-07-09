@@ -182,15 +182,16 @@ class UploadedFile:
             pass
 
         # this is optional, but if supplied must match the version in the XML
-        # -- also note this will not work with multi-firmware .cab files
-        try:
-            self._version_inf = cfg.get('Firmware_AddReg', 'HKR->FirmwareVersion')
-            if self._version_inf.startswith('0x'):
-                self._version_inf = str(int(self._version_inf[2:], 16))
-            if self._version_inf == '0':
-                self._version_inf = None
-        except (configparser.NoOptionError, configparser.NoSectionError) as _:
-            pass
+        # -- also note this will not work with multi-component .cab files
+        if len(self.fw.mds) == 1:
+            try:
+                self._version_inf = cfg.get('Firmware_AddReg', 'HKR->FirmwareVersion')
+                if self._version_inf.startswith('0x'):
+                    self._version_inf = str(int(self._version_inf[2:], 16))
+                if self._version_inf == '0':
+                    self._version_inf = None
+            except (configparser.NoOptionError, configparser.NoSectionError) as _:
+                pass
 
     @staticmethod
     def _parse_release(md, release):
@@ -528,13 +529,6 @@ class UploadedFile:
         except NotImplementedError as e:
             raise FileNotSupported('Invalid file type: %s' % str(e))
 
-        # verify .inf files if they exists
-        inffiles = [cabfile for cabfile in self.cabarchive_upload.values()
-                    if fnmatch.fnmatch(cabfile.filename, '*.inf')]
-        for cabfile in inffiles:
-            encoding = detect_encoding_from_bom(cabfile.buf)
-            self._parse_inf(cabfile.buf.decode(encoding))
-
         # load metainfo files
         cabfiles = [cabfile for cabfile in self.cabarchive_upload.values()
                     if fnmatch.fnmatch(cabfile.filename, '*.metainfo.xml')]
@@ -544,3 +538,10 @@ class UploadedFile:
         # parse each MetaInfo file
         for cabfile in cabfiles:
             self._parse_metainfo(cabfile)
+
+        # verify .inf files if they exists
+        inffiles = [cabfile for cabfile in self.cabarchive_upload.values()
+                    if fnmatch.fnmatch(cabfile.filename, '*.inf')]
+        for cabfile in inffiles:
+            encoding = detect_encoding_from_bom(cabfile.buf)
+            self._parse_inf(cabfile.buf.decode(encoding))
