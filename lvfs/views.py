@@ -354,17 +354,15 @@ def _create_user_for_oauth_username(username):
     """ If any oauth wildcard match, create a *un-committed* User object """
 
     # does this username match any globs specified by the vendor
-    user = None
     for v in db.session.query(Vendor).filter(Vendor.oauth_domain_glob != None).all(): # pylint: disable=singleton-comparison
-        if not fnmatch.fnmatch(username.lower(), v.oauth_domain_glob):
-            continue
-        if v.oauth_unknown_user == 'create':
-            user = User(username, vendor_id=v.vendor_id, auth_type='oauth')
-            break
-        if v.oauth_unknown_user == 'disabled':
-            user = User(username, vendor_id=v.vendor_id)
-            break
-    return user
+        for glob in v.oauth_domain_glob.split(','):
+            if not fnmatch.fnmatch(username.lower(), glob):
+                continue
+            if v.oauth_unknown_user == 'create':
+                return User(username, vendor_id=v.vendor_id, auth_type='oauth')
+            if v.oauth_unknown_user == 'disabled':
+                return User(username, vendor_id=v.vendor_id)
+    return None
 
 # unauthenticed
 @app.route('/lvfs/login1')
