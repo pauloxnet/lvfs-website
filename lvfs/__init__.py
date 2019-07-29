@@ -45,10 +45,6 @@ csrf = CSRFProtect(app)
 
 migrate = Migrate(app, db)
 
-# email any admins opting-in to the email notification for a server error
-if not app.debug and app.config['MAIL_SERVER']:
-    _set_up_notify_server_error()
-
 def _set_up_notify_server_error():
     from .models import User
     toaddrs = [user.username for user in db.session.query(User).\
@@ -65,6 +61,10 @@ def _set_up_notify_server_error():
         secure=() if app.config['MAIL_USE_TLS'] else None)
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
+
+# email any admins opting-in to the email notification for a server error
+if not app.debug and app.config['MAIL_SERVER']:
+    _set_up_notify_server_error()
 
 @app.cli.command('initdb')
 def initdb_command():
