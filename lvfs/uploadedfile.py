@@ -103,6 +103,9 @@ def _node_validate_text(node, minlen=0, maxlen=0, nourl=False, allow_none=False)
         text = node.text
         if text:
             text = text.strip()
+            for tag in ['<p>', '<li>', '<ul>', '<ol>']:
+                if text.find(tag) != -1:
+                    raise MetadataInvalid('{} cannot specify markup tag {}'.format(node.tag, tag))
 
     # invalid length
     if not text:
@@ -430,13 +433,13 @@ class UploadedFile:
 
         # from the first screenshot
         try:
-            md.screenshot_caption = component.xpath('screenshots/screenshot/caption')[0]
-            md.screenshot_caption = md.screenshot_caption.replace('<p>', '')
-            md.screenshot_caption = md.screenshot_caption.replace('</p>', '')
+            md.screenshot_caption = _node_validate_text(component.xpath('screenshots/screenshot/caption')[0],
+                                                        minlen=8, maxlen=1000, nourl=True)
         except IndexError as _:
             pass
         try:
-            md.screenshot_url = component.xpath('screenshots/screenshot/image')[0]
+            md.screenshot_url = _node_validate_text(component.xpath('screenshots/screenshot/image')[0],
+                                                    minlen=8, maxlen=1000)
         except IndexError as _:
             pass
 
