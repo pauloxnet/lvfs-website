@@ -290,13 +290,19 @@ def component_requirement_add(component_id):
                                 component_id=md.component_id,
                                 page='requires'))
 
+    # support empty too
+    compare = request.form['compare'] if 'compare' in request.form else None
+    if not compare:
+        compare = None
+    version = request.form['version'] if 'version' in request.form else None
+    if not version:
+        version = None
+
     # add requirement
     rq = Requirement(md.component_id,
                      request.form['kind'],
-                     request.form['value'],
-                     request.form['compare'] if 'compare' in request.form else None,
-                     request.form['version'] if 'version' in request.form else None,
-                    )
+                     request.form['value'].strip(),
+                     compare, version)
     md.requirements.append(rq)
     md.fw.mark_dirty()
     db.session.commit()

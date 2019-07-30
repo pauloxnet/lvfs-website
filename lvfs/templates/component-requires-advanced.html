@@ -61,6 +61,7 @@
           <option value="gt">Greater than</option>
           <option value="le">Less than or equal</option>
           <option value="lt">Less than</option>
+          <option value="">Exists</option>
           <option value="glob">Glob</option>
           <option value="regex">Regular Expression</option>
         </select>
@@ -91,10 +92,10 @@
       <code>{{rq.value}}</code>
     </td>
     <td class="col col-sm-2">
-      <code>{{rq.compare}}</code>
+      <code>{{rq.compare if rq.compare else '-'}}</code>
     </td>
     <td class="col col-sm-2">
-      <code>{{rq.version}}</code>
+      <code>{{rq.version if rq.compare else '-'}}</code>
     </td>
     <td class="col col-sm-2 text-right">
       <a class="btn btn-secondary btn-block"
@@ -120,6 +121,7 @@
           <option value="gt">Greater than</option>
           <option value="le">Less than or equal</option>
           <option value="lt">Less than</option>
+          <option value="">Exists</option>
           <option value="glob">Glob</option>
           <option value="regex">Regular Expression</option>
         </select>
