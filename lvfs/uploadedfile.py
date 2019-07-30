@@ -282,7 +282,7 @@ class UploadedFile:
                 raise MetadataInvalid('<id> value invalid')
             for char in md.appstream_id:
                 if char in ['/', '\\']:
-                    raise MetadataInvalid('<id> Cannot contain {}'.format(char))
+                    raise MetadataInvalid('<id> Cannot contain slashes')
                 if char not in ['-', '_', '.'] and not char.isalnum():
                     raise MetadataInvalid('<id> Cannot contain {}'.format(char))
             if len(md.appstream_id.split('.')) < 4:
