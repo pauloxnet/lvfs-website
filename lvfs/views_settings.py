@@ -108,6 +108,8 @@ def settings_modify(plugin_id='general'):
     # save new values
     settings = _get_settings()
     for key in request.form:
+        if key == 'csrf_token':
+            continue
         if settings[key] == request.form[key]:
             continue
         setting = db.session.query(Setting).filter(Setting.key == key).first()
