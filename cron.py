@@ -207,9 +207,7 @@ def _test_priority_sort_func(test):
 def _check_firmware():
 
     # make a list of all the tests that need running
-    tests = db.session.query(Test).\
-                filter(Test.started_ts == None).\
-                filter(Test.ended_ts == None).all()
+    tests = db.session.query(Test).filter(Test.started_ts == None).all()
 
     # mark all the tests as started
     for test in tests:
