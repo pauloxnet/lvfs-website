@@ -19,7 +19,7 @@ from cabarchive import CabArchive
 from lvfs import app, db, ploader
 from lvfs.dbutils import _execute_count_star
 from lvfs.emails import send_email
-from lvfs.models import Remote, Firmware, Vendor, Client, AnalyticVendor
+from lvfs.models import Remote, Firmware, Vendor, Client, AnalyticVendor, User
 from lvfs.models import AnalyticFirmware, Useragent, UseragentKind, Analytic, Report
 from lvfs.models import ComponentShardInfo, Test, Component, Category, Protocol, FirmwareEvent
 from lvfs.models import _get_datestr_from_datetime
@@ -285,11 +285,16 @@ def _demote_back_to_embargo(fw):
                    render_template('email-firmware-demote.txt',
                                    user=fw.user, fw=fw))
 
+    # from the server admin
+    user = db.session.query(User).filter(User.username == 'sign-test@fwupd.org').first()
+    if not user:
+        return
+
     fw.mark_dirty()
     remote = fw.vendor.remote
     remote.is_dirty = True
     fw.remote_id = remote.remote_id
-    fw.events.append(FirmwareEvent(fw.remote_id))
+    fw.events.append(FirmwareEvent(fw.remote_id, user_id=user.user_id))
     db.session.commit()
     _event_log('Demoted firmware {} as reported success {}%%'.format(fw.firmware_id, fw.success))
 
