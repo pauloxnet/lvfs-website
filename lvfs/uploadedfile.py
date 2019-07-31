@@ -281,6 +281,8 @@ class UploadedFile:
             if not md.appstream_id:
                 raise MetadataInvalid('<id> value invalid')
             for char in md.appstream_id:
+                if char.isspace():
+                    raise MetadataInvalid('<id> Cannot contain spaces')
                 if char in ['/', '\\']:
                     raise MetadataInvalid('<id> Cannot contain slashes')
                 if char not in ['-', '_', '.'] and not char.isalnum():
