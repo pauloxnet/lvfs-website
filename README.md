@@ -43,14 +43,31 @@ The admin user is set as `sign-test@fwupd.org` with password `Pa$$w0rd`.
 
 ## Running locally ##
 
-    python3 -m virtualenv .env3
-    source .env3/bin/activate
+    python3 -m virtualenv env
+    source env/bin/activate
     pip3 install -r requirements.txt
+    pip3 install mysqlclient
     FLASK_DEBUG=1 ./app.wsgi
 
-You may also need to install introspection dependencies.  For example on Ubuntu the following is required:
+You may also need to install introspection dependencies.
+
+For example on Ubuntu the following is required:
 
     sudo apt install -y python3-gi gcab gir1.2-libgcab-1.0
+
+On Fedora:
+
+    sudo dnf install \
+        bsdtar \
+        cairo-gobject-devel \
+        GeoIP-devel \
+        gnutls-utils \
+        gobject-introspection-devel \
+        mariadb-devel \
+        mariadb-server \
+        python36-pip \
+        python36-psutil \
+        python36-virtualenv
 
 ## Generating a SSL certificate ##
 
