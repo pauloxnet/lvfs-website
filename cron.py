@@ -464,42 +464,42 @@ if __name__ == '__main__':
     # regenerate and sign firmware then metadata
     if 'repair' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 _repair()
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
     if 'firmware' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 _regenerate_and_sign_firmware()
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
     if 'metadata' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 _regenerate_and_sign_metadata()
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
     if 'purgedelete' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 _purge_old_deleted_firmware()
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
     if 'fwchecks' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 _check_firmware()
         except NotImplementedError as e:
             print(str(e))
             sys.exit(1)
     if 'stats' in sys.argv:
         try:
-            with app.test_request_context():
+            with app.app_context():
                 # default to yesterday, but also allow specifying the offset
                 days = 1
                 if len(sys.argv) > 2:
@@ -515,7 +515,7 @@ if __name__ == '__main__':
             update_kinds = None
             if len(sys.argv) > 2:
                 update_kinds = sys.argv[2:]
-            with app.test_request_context():
+            with app.app_context():
                 for days in range(1, 720):
                     val = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=days))
                     _generate_stats_for_datestr(val, kinds=update_kinds)
