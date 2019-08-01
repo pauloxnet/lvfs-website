@@ -216,8 +216,8 @@ def init_db(db):
         u.password = "Pa$$w0rd"
         db.session.add(u)
         db.session.commit()
-    if not db.session.query(User).filter(User.username == 'anonymous@fwupd.org').first():
-        db.session.add(User(username='anonymous@fwupd.org',
+    if not db.session.query(User).filter(User.username == 'anon@fwupd.org').first():
+        db.session.add(User(username='anon@fwupd.org',
                             display_name='Anonymous User',
                             vendor_id=1))
         db.session.commit()

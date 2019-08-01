@@ -276,17 +276,17 @@ def _generate_stats_for_firmware(fw, datestr):
 
 def _demote_back_to_embargo(fw):
 
+    # from the server admin
+    user = db.session.query(User).filter(User.username == 'anon@fwupd.org').first()
+    if not user:
+        return
+
     # send email to uploading user
     if fw.user.notify_demote_failures:
         send_email("[LVFS] Firmware has been demoted",
                    fw.user.email_address,
                    render_template('email-firmware-demote.txt',
                                    user=fw.user, fw=fw))
-
-    # from the server admin
-    user = db.session.query(User).filter(User.username == 'sign-test@fwupd.org').first()
-    if not user:
-        return
 
     fw.mark_dirty()
     remote = fw.vendor.remote
