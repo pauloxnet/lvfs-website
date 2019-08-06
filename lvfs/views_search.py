@@ -93,7 +93,7 @@ def search_fw(max_results=100):
 
 @app.route('/lvfs/search', methods=['GET', 'POST'])
 @app.route('/lvfs/search/<int:max_results>', methods=['POST'])
-def search(max_results=19):
+def search(max_results=150):
 
     # no search results
     if 'value' not in request.args:
