@@ -16,8 +16,7 @@ clean:
 	rm -rf ./htmlcov
 
 run:
-	$(VENV)/bin/python ./app.wsgi
-	#FLASK_DEBUG=1
+	FLASK_APP=lvfs/__init__.py $(VENV)/bin/flask run
 
 dbup:
 	FLASK_APP=lvfs/__init__.py $(FLASK) db upgrade
