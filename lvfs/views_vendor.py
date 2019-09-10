@@ -161,7 +161,8 @@ def cmp_to_key(mycmp):
 def vendor_list():
     vendors = db.session.query(Vendor).\
                     order_by(Vendor.display_name).\
-                    options(joinedload(Vendor.users)).all()
+                    options(joinedload(Vendor.users),
+                            joinedload(Vendor.affiliations)).all()
     vendors.sort(key=cmp_to_key(_sort_vendor_func))
     return render_template('vendorlist.html',
                            category='vendors',

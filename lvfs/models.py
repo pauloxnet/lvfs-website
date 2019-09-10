@@ -32,6 +32,7 @@ from lvfs import db
 from cabarchive import CabArchive
 from pkgversion import vercmp
 
+from .dbutils import _execute_count_star
 from .hash import _qa_hash, _password_hash, _otp_hash
 from .util import _generate_password, _xml_from_markdown, _get_update_description_problems
 from .util import _get_absolute_path, _get_shard_path
@@ -497,27 +498,25 @@ class Vendor(db.Model):
             val += 0x20
         if self.is_account_holder:
             val += 0x10
-        if self.protocols:
-            val += 0x1
         return val
 
     @property
     @functools.lru_cache()
     def fws_stable_recent(self):
         now = datetime.datetime.utcnow() - datetime.timedelta(weeks=25)
-        return db.session.query(Firmware).\
+        return _execute_count_star(db.session.query(Firmware.firmware_id).\
                     join(Firmware.remote).\
                     filter(Remote.name == 'stable',
                            Firmware.vendor_id == self.vendor_id,
-                           Firmware.timestamp > now).all()
+                           Firmware.timestamp > now))
 
     @property
     @functools.lru_cache()
     def fws_stable(self):
-        return db.session.query(Firmware).\
+        return _execute_count_star(db.session.query(Firmware.firmware_id).\
                     join(Firmware.remote).\
                     filter(Firmware.vendor_id == self.vendor_id,
-                           Remote.name == 'stable').all()
+                           Remote.name == 'stable'))
 
     @property
     @functools.lru_cache()
