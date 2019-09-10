@@ -1439,7 +1439,7 @@ class Component(db.Model):
             problems.append(problem)
 
         # the OEM doesn't manage this namespace
-        values = [ns.value for ns in self.fw.vendor_odm.namespaces]
+        values = [ns.value for ns in self.fw.vendor.namespaces]
         if not values:
             problem = Problem('no-vendor-namespace',
                               'No AppStream namespace values for '
