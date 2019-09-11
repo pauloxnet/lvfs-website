@@ -1568,7 +1568,7 @@ class Remote(db.Model):
         if self.remote_id == fw.remote.remote_id:
             return True
         # odm uploaded to oem remote, but also include for odm
-        if not self.is_public and fw.user.vendor in self.vendors:
+        if not self.is_public and fw.vendor_odm in self.vendors:
             return True
         return False
 
