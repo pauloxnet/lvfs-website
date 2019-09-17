@@ -13,7 +13,7 @@ from sqlalchemy import func
 from lvfs import app, db, ploader
 
 from .models import Requirement, Component, ComponentIssue, Keyword, Checksum, Category
-from .models import Protocol, Report, ReportAttribute
+from .models import Protocol, Report, ReportAttribute, Firmware, Remote
 from .util import _error_internal, _validate_guid
 from .hash import _is_sha1, _is_sha256
 
@@ -36,6 +36,23 @@ def component_problems():
         if not md.check_acl('@modify-updateinfo'):
             continue
         if md.fw.is_deleted:
+            continue
+        mds.append(md)
+    return render_template('component-problems.html',
+                           category='firmware',
+                           mds=mds)
+
+@app.route('/lvfs/component/problems/<remote_name>')
+@login_required
+def component_problems_remote(remote_name):
+    """
+    Show all components with problems
+    """
+    mds = []
+    for md in db.session.query(Component).join(Firmware).join(Remote).\
+                filter(Remote.name == remote_name).\
+                order_by(Component.release_timestamp.desc()):
+        if not md.problems:
             continue
         mds.append(md)
     return render_template('component-problems.html',
