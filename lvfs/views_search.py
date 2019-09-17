@@ -12,7 +12,7 @@ from sqlalchemy import func
 
 from lvfs import app, db
 
-from .models import Guid, Keyword, Vendor, SearchEvent, Component, Firmware, Remote
+from .models import Guid, Keyword, Vendor, SearchEvent, Component, ComponentIssue, Firmware, Remote
 from .models import _split_search_string
 from .hash import _addr_hash
 from .util import admin_login_required
@@ -83,6 +83,14 @@ def search_fw(max_results=100):
     if not fws:
         fws = db.session.query(Firmware).join(Component).\
                                filter(Component.appstream_id.startswith(keywords[0])).\
+                               group_by(Component.component_id).\
+                               distinct().order_by(Firmware.timestamp.desc()).\
+                               limit(max_results).all()
+
+    # try CVE, e.g. CVE-2018-3646
+    if not fws:
+        fws = db.session.query(Firmware).join(Component).join(ComponentIssue).\
+                               filter(ComponentIssue.value.in_(keywords)).\
                                group_by(Component.component_id).\
                                distinct().order_by(Firmware.timestamp.desc()).\
                                limit(max_results).all()
