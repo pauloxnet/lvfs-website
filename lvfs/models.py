@@ -2065,9 +2065,6 @@ class Firmware(db.Model):
                 return True
             return False
         if action == '@modify-affiliation':
-            if not self.vendor.affiliations:
-                return False
-            # is QA user for the current assigned vendor
             if user.is_qa and self._is_permitted_action(action, user):
                 return True
             return False
