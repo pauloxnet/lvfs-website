@@ -8,9 +8,14 @@
   <div class="card-body">
     <div class="card-title">Issues</div>
     <p class="card-text">
+{% if md.check_acl('@modify-updateinfo') %}
       CVE information about the release can be entered here, or
       <a href="{{url_for('.component_issue_autoimport', component_id=md.component_id)}}">auto-imported</a>
       from the existing update description.
+{% else %}
+      CVE information about the release can be entered here, or auto-imported
+      from the existing update description.
+{% endif %}
     </p>
 <table class="table">
 {% for issue in md.issues %}
