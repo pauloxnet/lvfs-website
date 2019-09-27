@@ -34,6 +34,43 @@
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-info">
     <div class="row">
+      <div class="col col-lg-8 text-truncate">LVFS Version 1.1.4 Released</div>
+      <div class="col">
+        <span class="float-right">2019-09-26</span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      This release adds the following features:
+    </p>
+    <ul>
+      <li>Add component issues such as CVEs in a structured way</li>
+      <li>Add more OEM notification emails for ODM actions</li>
+      <li>Add support for name variant suffixes</li>
+      <li>Add vendor namespaces to enforce ODM relationships</li>
+      <li>Allow searching for CVEs when logged in</li>
+      <li>Allow the OEM to better control what the ODM is able to do</li>
+    </ul>
+    <p class="card-text">This release fixes the following bugs:</p>
+    <ul>
+      <li>Allow vendors to optionally disable the inf parsing</li>
+      <li>Blacklist generic GUIDs like 'main-system-firmware'</li>
+      <li>Check the source and release URLs are valid if provided</li>
+      <li>Do not show deleted firmware on the recent list on the dashboard</li>
+      <li>Don't auto-demote firmware because of old reports</li>
+      <li>Enforce the VersionFormat if the version is an integer</li>
+      <li>Fix a crash if uploading a file with a missing metadata_license tag</li>
+      <li>Provide a way to un-disable users as a vendor manager</li>
+      <li>Regenerate embargo remotes ever 5 minutes</li>
+      <li>Use a sane error message on upload when a component drops a GUID</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header card-title list-group-item-info">
+    <div class="row">
       <div class="col col-lg-8 text-truncate">LVFS Version 1.1.3 Released</div>
       <div class="col">
         <span class="float-right">2019-08-06</span>

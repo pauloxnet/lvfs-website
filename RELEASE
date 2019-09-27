@@ -2,13 +2,13 @@ LVFS Release Notes
 
 1. Write release entries:
 
-git shortlog 1.0.0.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog 1.1.3.. | grep -i -v trivial | grep -v Merge > NEWS.new
 add to lvfs/templates/docs-news.html and lvfs/templates/private.html
 
 2. Commit changes to git:
 
 # MAKE SURE THIS IS CORRECT
-export release_ver="1.0.1"
+export release_ver="1.1.4"
 git commit -a -m "Release LVFS ${release_ver}"
 git tag -s -f -m "Release LVFS ${release_ver}" "${release_ver}"
 <wait>
