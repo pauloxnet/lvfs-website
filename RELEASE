@@ -2,36 +2,13 @@ LVFS Release Notes
 
 1. Write release entries:
 
-git shortlog 1.1.4.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog 1.1.3.. | grep -i -v trivial | grep -v Merge > NEWS.new
 add to lvfs/templates/docs-news.html and lvfs/templates/private.html
-
-<div class="card mb-3">
-  <div class="card-header card-title list-group-item-info">
-    <div class="row">
-      <div class="col col-lg-8 text-truncate">LVFS Version 1.1.5 Released</div>
-      <div class="col">
-        <span class="float-right">2019-xx-xx</span>
-      </div>
-    </div>
-  </div>
-  <div class="card-body">
-    <p class="card-text">
-      This release adds the following features:
-    </p>
-    <ul>
-      <li>xyx</li>
-    </ul>
-    <p class="card-text">This release fixes the following bugs:</p>
-    <ul>
-      <li>xyx</li>
-    </ul>
-  </div>
-</div>
 
 2. Commit changes to git:
 
 # MAKE SURE THIS IS CORRECT
-export release_ver="1.1.5"
+export release_ver="1.1.4"
 git commit -a -m "Release LVFS ${release_ver}"
 git tag -s -f -m "Release LVFS ${release_ver}" "${release_ver}"
 <wait>
