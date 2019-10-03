@@ -1624,9 +1624,13 @@ class Component(db.Model):
             if not self.fw.remote.is_public:
                 if user.is_qa and self.fw._is_permitted_action(action, user):
                     return True
+                if self._is_owner(user):
+                    return True
             return False
         if action in ('@modify-keywords', '@modify-requirements', '@modify-checksums'):
             if user.is_qa and self.fw._is_permitted_action(action, user):
+                return True
+            if self._is_owner(user):
                 return True
             return False
         raise NotImplementedError('unknown security check action: %s:%s' % (self, action))
