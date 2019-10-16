@@ -218,6 +218,9 @@ def _yara_query_shard(query, shard):
                 msg += ': found {}'.format(string[2].decode())
         query.results.append(YaraQueryResult(shard=shard, result=msg))
 
+    # unallocate the cached blob as it's no longer needed
+    shard.blob = None
+
 def _yara_query_all():
 
     # get all pending queries

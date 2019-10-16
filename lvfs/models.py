@@ -1259,6 +1259,10 @@ class ComponentShard(db.Model):
                 self._blob = zlib.decompress(f.read())
         return self._blob
 
+    @blob.setter
+    def blob(self, value):
+        self._blob = value
+
     @property
     def checksum(self):
         for csum in self.checksums:
