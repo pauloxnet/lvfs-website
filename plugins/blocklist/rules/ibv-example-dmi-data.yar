@@ -8,7 +8,6 @@ rule IbvExampleDmi
 
     strings:
         $str1 = "To Be Defined By O.E.M" nocase wide ascii
-        $str2 = "hello world" nocase wide ascii
 
     condition:
        any of them
