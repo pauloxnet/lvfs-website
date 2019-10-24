@@ -215,7 +215,10 @@ def _yara_query_shard(query, shard):
         msg = '{} failed'.format(match.rule)
         for string in match.strings:
             if len(string) == 3:
-                msg += ': found {}'.format(string[2].decode())
+                try:
+                    msg += ': found {}'.format(string[2].decode())
+                except UnicodeDecodeError as _:
+                    pass
         query.results.append(YaraQueryResult(shard=shard, result=msg))
 
     # unallocate the cached blob as it's no longer needed
