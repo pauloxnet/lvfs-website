@@ -22,7 +22,10 @@ def _run_on_blob(self, test, title, blob):
         msg = '{} YARA test failed'.format(match.rule)
         for string in match.strings:
             if len(string) == 3:
-                msg += ': found {}'.format(string[2].decode())
+                try:
+                    msg += ': found {}'.format(string[2].decode())
+                except UnicodeDecodeError as _:
+                    pass
         if 'description' in match.meta:
             msg += ': {}'.format(match.meta['description'])
         test.add_fail(title, msg)
