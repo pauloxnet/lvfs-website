@@ -27,6 +27,15 @@
 {% if query.error %}
     <pre class="mb-3">{{query.error}}</pre>
 {% endif %}
+{% if query.mds %}
+    <ul class="list-group mb-3">
+{% for title in query.mds|sort %}
+      <li class="list-group-item">{{title}}</li>
+{% endfor %}
+    </ul>
+{% else %}
+    <p class="text-muted">No components matched</p>
+{% endif %}
 {% if query.check_acl('@show') and query.ended_ts %}
     <a class="card-link btn btn-info"
        href="{{url_for('.query_show', yara_query_id=query.yara_query_id)}}"

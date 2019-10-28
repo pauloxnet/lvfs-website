@@ -207,22 +207,39 @@ def _test_priority_sort_func(test):
     plugin = ploader.get_by_id(test.plugin_id)
     return plugin.priority
 
-def _yara_query_shard(query, shard):
+def _yara_query_shard(query, md, shard):
     if not shard.blob:
         return
     matches = query.rules.match(data=shard.blob)
     for match in matches:
-        msg = '{} failed'.format(match.rule)
+        msg = match.rule
         for string in match.strings:
             if len(string) == 3:
                 try:
                     msg += ': found {}'.format(string[2].decode())
                 except UnicodeDecodeError as _:
                     pass
-        query.results.append(YaraQueryResult(shard=shard, result=msg))
+        query.results.append(YaraQueryResult(md=md, shard=shard, result=msg))
 
     # unallocate the cached blob as it's no longer needed
     shard.blob = None
+
+def _yara_query_component(query, md):
+    if not md.blob:
+        return
+    matches = query.rules.match(data=md.blob)
+    for match in matches:
+        msg = match.rule
+        for string in match.strings:
+            if len(string) == 3:
+                try:
+                    msg += ': found {}'.format(string[2].decode())
+                except UnicodeDecodeError as _:
+                    pass
+        query.results.append(YaraQueryResult(md=md, result=msg))
+
+    # unallocate the cached blob as it's no longer needed
+    md.blob = None
 
 def _yara_query_all():
 
@@ -249,7 +266,8 @@ def _yara_query_all():
         for fw in firmware:
             for md in fw.mds:
                 for shard in md.shards:
-                    _yara_query_shard(query, shard)
+                    _yara_query_shard(query, md, shard)
+                _yara_query_component(query, md)
                 query.total += len(md.shards)
         query.found = len(query.results)
         query.ended_ts = datetime.datetime.utcnow()

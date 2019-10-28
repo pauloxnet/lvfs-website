@@ -345,11 +345,13 @@ class YaraQueryResult(db.Model):
 
     yara_query_result_id = Column(Integer, primary_key=True, unique=True, nullable=False)
     yara_query_id = Column(Integer, ForeignKey('yara_query.yara_query_id'), nullable=False)
-    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=False)
+    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=True)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
     result = Column(Text, default=None)
 
     query = relationship('YaraQuery', foreign_keys=[yara_query_id])
     shard = relationship('ComponentShard', foreign_keys=[component_shard_id])
+    md = relationship('Component', lazy='joined', foreign_keys=[component_id])
 
     def __repr__(self):
         return "<YaraQueryResult {}>".format(self.yara_query_result_id)
@@ -371,7 +373,7 @@ class YaraQuery(db.Model):
     ended_ts = Column(DateTime, default=None)
 
     user = relationship('User', foreign_keys=[user_id])
-    results = relationship("YaraQueryResult", cascade='all,delete-orphan')
+    results = relationship("YaraQueryResult", lazy='joined', cascade='all,delete-orphan')
 
     @property
     def color(self):
@@ -387,6 +389,16 @@ class YaraQuery(db.Model):
             if line.startswith('rule '):
                 return line[5:]
         return None
+
+    @property
+    @functools.lru_cache()
+    def mds(self):
+        mds = {}
+        for result in self.results:
+            key = '{} {}'.format(result.md.fw.vendor.display_name, result.md.name)
+            if key not in mds:
+                mds[key] = result.md
+        return mds
 
     def check_acl(self, action, user=None):
 

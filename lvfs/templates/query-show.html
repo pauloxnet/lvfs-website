@@ -25,12 +25,13 @@
 {% endif %}
 
 {% for result in query.results %}
+{% set md = result.md %}
 <div class="card mt-3">
   <div class="card-header card-title list-group-item-{{query.color}}">
-    {{result.shard.md.name_with_category}}: {{result.result}}
+    {{md.fw.vendor.display_name}} {{md.name_with_category}}: {{result.result}}
   </div>
+{% if result.shard %}
   <div class="card-body">
-
 {% set shard = result.shard %}
       <table class="table table-borderless">
 {% if shard.info %}
@@ -67,6 +68,27 @@
     <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='checksum', value=result.shard.checksum)}}">Show all</a>
 {% endif %}
   </div>
+{% else %}
+  <div class="card-body">
+      <table class="table table-borderless">
+        <tr class="row">
+          <th class="col-2">Size</th>
+          <td class="col">{{format_size(md.release_download_size)}}</td>
+        </tr>
+{% for guid in md.guids %}
+        <tr class="row">
+          <th class="col-2">GUID</th>
+          <td class="col"><code>{{guid.value}}</code></td>
+        </tr>
+{% endfor %}
+        <tr class="row">
+          <th class="col-2">SHA1</th>
+          <td class="col text-truncate"><code>{{md.checksum_contents}}</code></td>
+        </tr>
+      </table>
+    <a class="card-link btn btn-info" href="{{url_for('.component_download', component_id=md.component_id)}}">Download File</a>
+  </div>
+{% endif %}
 </div>
 {% endfor %}
 
