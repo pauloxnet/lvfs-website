@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0+
 
-from flask import request, url_for, redirect, render_template, flash
+from flask import request, url_for, redirect, render_template, flash, make_response
 from flask_login import login_required
 
 from sqlalchemy import func
@@ -694,3 +694,24 @@ def component_checksum_add(component_id):
     return redirect(url_for('.component_show',
                             component_id=md.component_id,
                             page='checksums'))
+
+@app.route('/lvfs/component/<int:component_id>/download')
+@login_required
+def component_download(component_id):
+
+    # get firmware component
+    md = db.session.query(Component).\
+            filter(Component.component_id == component_id).first()
+    if not md:
+        flash('No component matched!', 'danger')
+        return redirect(url_for('.firmware'))
+    if not md.fw.check_acl('@view'):
+        flash('Permission denied: Unable to download component', 'danger')
+        return redirect(url_for('.dashboard'))
+    if not md.blob:
+        flash('Permission denied: Component has no data', 'warning')
+        return redirect(url_for('.dashboard'))
+    response = make_response(md.blob)
+    response.headers.set('Content-Type', 'application/octet-stream')
+    response.headers.set('Content-Disposition', 'attachment', filename=md.filename_contents)
+    return response
