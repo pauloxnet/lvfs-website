@@ -147,13 +147,20 @@ class Plugin(PluginBase):
         if not shards:
             blob = self._find_dell_pfs(md.blob)
             if blob:
+                shard_zlib = ComponentShard(plugin_id=self.id)
+                shard_zlib.set_blob(blob)
                 if blob.startswith(b'PFS.HDR.'):
+                    shard_zlib.ensure_info('b26f8b5c-2209-5a60-b301-39f837883a14',
+                                           'com.dell.PFS')
                     test.add_pass('Found PFS in Zlib compressed blob')
                     # don't parse the PFS as chipsec just does blob.find('_FVH')
                     # anyway: https://github.com/LongSoft/PFSExtractor
                 else:
+                    shard_zlib.ensure_info('68b8cc0e-4664-5c7a-9ce3-8ed9b4ffbffb',
+                                           'Zlib')
                     test.add_pass('Found Zlib compressed blob')
                 shards = self._get_shards_for_blob(blob)
+                shards.append(shard_zlib)
         if not shards:
             test.add_pass('No firmware volumes found in {}'.format(md.filename_contents))
             return
