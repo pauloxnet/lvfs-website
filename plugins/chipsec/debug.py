@@ -33,4 +33,4 @@ if __name__ == '__main__':
         for attribute in _test.attributes:
             print(attribute)
         for shard in _md.shards:
-            print(shard.info.guid, shard.info.name, shard.checksum)
+            print(shard.guid, shard.name, shard.checksum)

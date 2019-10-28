@@ -1127,28 +1127,10 @@ class ComponentShardInfo(db.Model):
     guid = Column(String(36), default=None, index=True)
     name = Column(Text, default=None)
     description = Column(Text, default=None)
-    cnt = Column(Integer)
+    cnt = Column(Integer, default=0)
 
     # link using foreign keys
     shards = relationship("ComponentShard", cascade='all,delete-orphan')
-
-    def __init__(self, guid=None, name=None, description=None):
-        """ Constructor for object """
-        self.cnt = 1
-        self.guid = guid
-        self.name = name
-        self.description = description
-
-    @property
-    def description_with_fallback(self):
-        if self.description:
-            return self.description
-        if self.name.endswith('Pei'):
-            return 'The Pre-EFI Initialization phase is invoked early in the boot flow.'
-        if self.name.endswith('Dxe'):
-            return 'The Driver Execution Environment phase is where most of the system \
-                    initialization is performed.'
-        return None
 
     def __repr__(self):
         return "ComponentShardInfo object %s" % self.component_shard_info_id
@@ -1237,8 +1219,10 @@ class ComponentShard(db.Model):
     component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
     component_shard_info_id = Column(Integer,
                                      ForeignKey('component_shard_infos.component_shard_info_id'),
-                                     nullable=False)
+                                     default=None)
     plugin_id = Column(Text, default=None)
+    guid = Column(String(36), default=None, index=True)
+    name = Column(Text, default=None)
     size = Column(Integer, default=0)
     entropy = Column(Float, default=0.0)
 
@@ -1250,17 +1234,22 @@ class ComponentShard(db.Model):
                                 order_by="desc(ComponentShardCertificate.component_shard_certificate_id)",
                                 back_populates='shard',
                                 cascade='all,delete-orphan')
-    info = relationship("ComponentShardInfo", lazy='joined')
+    info = relationship('ComponentShardInfo')
     yara_query_results = relationship('YaraQueryResult')
 
     # link back to parent
     md = relationship('Component', back_populates="shards")
 
-    def __init__(self, component_id=None, plugin_id=None):
-        """ Constructor for object """
-        self.component_id = component_id
-        self.plugin_id = plugin_id
-        self._blob = None
+    @property
+    def description(self):
+        if self.info.description:
+            return self.info.description
+        if self.name.endswith('Pei'):
+            return 'The Pre-EFI Initialization phase is invoked early in the boot flow.'
+        if self.name.endswith('Dxe'):
+            return 'The Driver Execution Environment phase is where most of the system \
+                    initialization is performed.'
+        return None
 
     @property
     def blob(self):
@@ -1309,19 +1298,6 @@ class ComponentShard(db.Model):
         os.makedirs(os.path.dirname(fn), exist_ok=True)
         with open(fn, 'wb') as f:
             f.write(zlib.compress(self._blob))
-
-    def ensure_info(self, guid, name):
-        """ Find existing info object using the GUID, or create if not found """
-        if self.info:
-            return
-        self.info = db.session.query(ComponentShardInfo).\
-                            filter(ComponentShardInfo.guid == guid).first()
-        if not self.info:
-            self.info = ComponentShardInfo(guid, name)
-
-        # overwrite just for a bit
-        if self.info.name != name:
-            self.info.name = name
 
     def __repr__(self):
         return "ComponentShard object %s" % self.component_shard_id

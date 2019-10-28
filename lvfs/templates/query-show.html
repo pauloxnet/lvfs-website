@@ -37,7 +37,7 @@
 {% if shard.info %}
         <tr class="row">
           <th class="col-2">Name</th>
-          <td class="col">{{shard.info.name}}</td>
+          <td class="col">{{shard.name}}</td>
         </tr>
 {% endif %}
 {% if shard.size %}
@@ -54,7 +54,7 @@
 {% endif %}
         <tr class="row">
           <th class="col-2">GUID</th>
-          <td class="col"><code>{{shard.info.guid}}</code></td>
+          <td class="col"><code>{{shard.guid}}</code></td>
         </tr>
 {% for csum in shard.checksums %}
         <tr class="row">

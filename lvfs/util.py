@@ -228,7 +228,7 @@ def _get_absolute_path(fw):
 
 def _get_shard_path(shard):
     from lvfs import app
-    return os.path.join(app.config['SHARD_DIR'], str(shard.component_id), shard.info.name)
+    return os.path.join(app.config['SHARD_DIR'], str(shard.component_id), shard.name)
 
 def _get_client_address():
     """ Gets user IP address """

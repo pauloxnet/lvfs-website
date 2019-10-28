@@ -14,7 +14,7 @@ import datetime
 # allows us to run this from the project root
 sys.path.append(os.path.realpath('.'))
 
-from lvfs.models import Test, Firmware, Component, Protocol, ComponentShard, ComponentShardInfo
+from lvfs.models import Test, Firmware, Component, Protocol, ComponentShard
 from plugins.pecheck import Plugin
 
 if __name__ == '__main__':
@@ -26,8 +26,7 @@ if __name__ == '__main__':
         _fw.timestamp = datetime.datetime.utcnow()
         _md = Component()
         _md.protocol = Protocol('org.uefi.capsule')
-        _shard = ComponentShard()
-        _shard.info = ComponentShardInfo(name=os.path.basename(_argv))
+        _shard = ComponentShard(name=os.path.basename(_argv))
         try:
             with open(_argv, 'rb') as f:
                 _shard.set_blob(f.read())

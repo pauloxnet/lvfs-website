@@ -137,7 +137,7 @@ class Plugin(PluginBase):
             # format as a blob
             signature = pe.write()[security.VirtualAddress + 8:security.VirtualAddress + security.Size]
             if len(signature) != security.Size - 8:
-                test.add_fail(shard.info.name,
+                test.add_fail(shard.name,
                               'Unable to extract full signature, file is most likely truncated -- '\
                               'Extracted: {} bytes, expected: {} bytes'.format(len(signature), security.Size - 8))
                 return
@@ -148,18 +148,18 @@ class Plugin(PluginBase):
         # get all the certificates and signer
         certs = _extract_certs_from_authenticode_blob(signature)
         if not certs:
-            test.add_pass(shard.info.name, 'No certificates')
+            test.add_pass(shard.name, 'No certificates')
             return
 
         # check the certs are valid, relaxing the notAfter checks by a good margin
         dtallowable = datetime.timedelta(days=self.get_setting_int('pecheck_allowable') * 365)
         for cert in certs:
             if cert.not_before and cert.not_before > shard.md.fw.timestamp:
-                test.add_fail(shard.info.name,
+                test.add_fail(shard.name,
                               'Authenticode certificate invalid before {}: {}'.\
                               format(cert.not_before, cert.description))
             elif cert.not_after and cert.not_after < shard.md.fw.timestamp - dtallowable:
-                test.add_fail(shard.info.name,
+                test.add_fail(shard.name,
                               'Authenticode certificate invalid after {}: {}'.\
                               format(cert.not_after, cert.description))
 

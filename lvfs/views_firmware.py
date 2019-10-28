@@ -19,7 +19,7 @@ from lvfs import app, db
 from .emails import send_email
 from .models import Firmware, Report, Client, FirmwareEvent, FirmwareLimit
 from .models import Remote, Vendor, AnalyticFirmware, Component
-from .models import ComponentShard, ComponentShardInfo, ComponentShardChecksum
+from .models import ComponentShard, ComponentShardChecksum
 from .models import _get_datestr_from_datetime
 from .util import _error_internal, _event_log
 from .util import _get_chart_labels_months, _get_chart_labels_days, _get_shard_path
@@ -650,8 +650,7 @@ def firmware_shard_search(kind, value):
         fws = db.session.query(Firmware).\
                     join(Component).\
                     join(ComponentShard).\
-                    join(ComponentShardInfo).\
-                    filter(ComponentShardInfo.guid == value).\
+                    filter(ComponentShard.guid == value).\
                     order_by(Firmware.firmware_id.desc()).all()
     elif kind == 'checksum':
         fws = db.session.query(Firmware).\

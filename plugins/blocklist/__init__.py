@@ -88,7 +88,7 @@ class Plugin(PluginBase):
                 _run_on_blob(self, test, md, md.filename_contents, md.blob)
             for shard in md.shards:
                 if shard.blob:
-                    _run_on_blob(self, test, md, shard.info.name, shard.blob)
+                    _run_on_blob(self, test, md, shard.name, shard.blob)
 
 # run with PYTHONPATH=. ./env/bin/python3 plugins/blocklist/__init__.py
 if __name__ == '__main__':

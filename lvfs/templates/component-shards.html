@@ -9,11 +9,11 @@
 <div class="card mb-3">
   <div class="card-body">
     <div class="card-title">
-      {{shard.info.name}}
+      {{shard.name}}
     </div>
     <p class="card-text">
-{% if shard.info.description %}
-      {{shard.info.description}}
+{% if shard.description %}
+      {{shard.description}}
 {% else %}
       We don't know what this module does! Can you tell us?
 {% endif %}
@@ -40,7 +40,7 @@
 {% endif %}
         <tr class="row">
           <th class="col-2">GUID</th>
-          <td class="col"><code>{{shard.info.guid}}</code></td>
+          <td class="col"><code>{{shard.guid}}</code></td>
         </tr>
 {% for csum in shard.checksums %}
         <tr class="row">
@@ -53,8 +53,8 @@
 {% if shard.checksum %}
     <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='checksum', value=shard.checksum)}}">Search checksum</a>
 {% endif %}
-{% if shard.info and shard.info.guid %}
-    <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='guid', value=shard.info.guid)}}">Search GUID</a>
+{% if shard.info and shard.guid %}
+    <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='guid', value=shard.guid)}}">Search GUID</a>
 {% endif %}
     <a class="card-link btn btn-info" href="{{url_for('.shard_download', component_shard_id=shard.component_shard_id)}}">Download File</a>
   </div>

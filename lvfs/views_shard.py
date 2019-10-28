@@ -37,7 +37,7 @@ def shard_modify(component_shard_info_id):
         return redirect(url_for('.shard_all'))
 
     # modify shard
-    for key in ['name', 'description']:
+    for key in ['description']:
         if key in request.form:
             setattr(shard, key, request.form[key])
     db.session.commit()
@@ -82,5 +82,5 @@ def shard_download(component_shard_id):
         return redirect(url_for('.dashboard'))
     response = make_response(shard.blob)
     response.headers.set('Content-Type', 'application/octet-stream')
-    response.headers.set('Content-Disposition', 'attachment', filename=shard.info.guid)
+    response.headers.set('Content-Disposition', 'attachment', filename=shard.guid)
     return response

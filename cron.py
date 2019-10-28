@@ -22,7 +22,7 @@ from lvfs.dbutils import _execute_count_star
 from lvfs.emails import send_email
 from lvfs.models import Remote, Firmware, Vendor, Client, AnalyticVendor, User, YaraQuery, YaraQueryResult
 from lvfs.models import AnalyticFirmware, Useragent, UseragentKind, Analytic, Report
-from lvfs.models import ComponentShardInfo, Test, Component, Category, Protocol, FirmwareEvent
+from lvfs.models import ComponentShard, ComponentShardInfo, Test, Component, Category, Protocol, FirmwareEvent
 from lvfs.models import _get_datestr_from_datetime
 from lvfs.metadata import _metadata_update_targets, _metadata_update_pulp
 from lvfs.util import _event_log, _get_shard_path, _get_absolute_path
@@ -413,12 +413,23 @@ def _get_lang_distro_from_ua(ua):
 
 def _generate_stats_shard_info(info):
     if info.cnt != len(info.shards):
-        print('fixing %s: %i -> %i' % (info.name, info.cnt, len(info.shards)))
+        print('fixing ComponentShardInfo %i: %i -> %i' % (info.component_shard_info_id, info.cnt, len(info.shards)))
         info.cnt = len(info.shards)
 
 def _generate_stats(kinds=None):
     if not kinds:
-        kinds = ['FirmwareReport', 'ShardCount']
+        kinds = ['FirmwareReport', 'ShardCount', 'ShardInfo']
+
+    # Set ComponentShardInfo in ComponentShard if GUID matches
+    if 'ShardInfo' in kinds:
+        for shard in db.session.query(ComponentShard).\
+                            filter(ComponentShard.component_shard_info_id == None):
+            shard.info = db.session.query(ComponentShardInfo).\
+                            filter(ComponentShardInfo.guid == shard.guid).first()
+            if not shard.info:
+                print('creating ComponentShardInfo for {}'.format(shard.guid))
+                shard.info = ComponentShardInfo(guid=shard.guid)
+        db.session.commit()
 
     # update ComponentShardInfo.cnt
     if 'ShardCount' in kinds:

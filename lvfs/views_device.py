@@ -107,19 +107,19 @@ def device_shards_diff(component_id_old, component_id_new):
     # shards added
     shard_guids = {}
     for shard in md_old.shards:
-        shard_guids[shard.info.guid] = shard
+        shard_guids[shard.guid] = shard
     shards_added = []
     for shard in md_new.shards:
-        if shard.info.guid not in shard_guids:
+        if shard.guid not in shard_guids:
             shards_added.append(shard)
 
     # shards removed
     shard_guids = {}
     for shard in md_new.shards:
-        shard_guids[shard.info.guid] = shard
+        shard_guids[shard.guid] = shard
     shards_removed = []
     for shard in md_old.shards:
-        if shard.info.guid not in shard_guids:
+        if shard.guid not in shard_guids:
             shards_removed.append(shard)
 
     # shards changed
@@ -128,8 +128,8 @@ def device_shards_diff(component_id_old, component_id_new):
         shard_checksums[shard.checksum] = shard
     shards_changed = []
     for shard in md_old.shards:
-        if shard.info.guid in shard_guids:
-            shard_old = shard_guids[shard.info.guid]
+        if shard.guid in shard_guids:
+            shard_old = shard_guids[shard.guid]
             if shard.checksum not in shard_checksums:
                 shards_changed.append((shard_old, shard))
 

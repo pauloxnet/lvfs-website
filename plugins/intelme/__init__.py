@@ -110,9 +110,11 @@ def _add_shards(self, fpt, md):
             continue
         if not entry.blob:
             continue
-        shard = ComponentShard(component_id=md.component_id, plugin_id=self.id)
+        shard = ComponentShard(component_id=md.component_id,
+                               plugin_id=self.id,
+                               guid=entry.guid,
+                               name=entry.appstream_id)
         shard.set_blob(entry.blob, checksums='SHA256')
-        shard.ensure_info(entry.guid, entry.appstream_id)
         md.shards.append(shard)
 
 def _run_intelme_on_blob(self, test, md):

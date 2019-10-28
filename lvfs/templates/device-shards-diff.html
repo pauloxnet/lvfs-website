@@ -8,12 +8,12 @@
 {% for shard in shards_added %}
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-danger">
-    {{shard.info.name}} : Added
+    {{shard.name}} : Added
   </div>
   <div class="card-body">
-{% if shard.info.description_with_fallback %}
+{% if shard.description %}
     <p class="card-text">
-      {{shard.info.description_with_fallback}}
+      {{shard.description}}
     </p>
 {% endif %}
     <p class="card-text">
@@ -32,7 +32,7 @@
 {% endif %}
         <tr class="row">
           <th class="col-2">GUID</th>
-          <td class="col"><code>{{shard.info.guid}}</code></td>
+          <td class="col"><code>{{shard.guid}}</code></td>
         </tr>
 {% for csum in shard.checksums %}
         <tr class="row">
@@ -49,12 +49,12 @@
 {% for shard in shards_removed %}
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-success">
-    {{shard.info.name}} : Removed
+    {{shard.name}} : Removed
   </div>
   <div class="card-body">
-{% if shard.info.description_with_fallback %}
+{% if shard.description %}
     <p class="card-text">
-      {{shard.info.description_with_fallback}}
+      {{shard.description}}
     </p>
 {% endif %}
     <p class="card-text">
@@ -73,7 +73,7 @@
 {% endif %}
         <tr class="row">
           <th class="col-2">GUID</th>
-          <td class="col"><code>{{shard.info.guid}}</code></td>
+          <td class="col"><code>{{shard.guid}}</code></td>
         </tr>
 {% for csum in shard.checksums %}
         <tr class="row">
@@ -90,12 +90,12 @@
 {% for shard_new, shard_old in shards_changed %}
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-warning">
-    {{shard_new.info.name}} : Changed
+    {{shard_new.name}} : Changed
   </div>
   <div class="card-body">
-{% if shard_new.info.description_with_fallback %}
+{% if shard_new.description %}
     <p class="card-text">
-      {{shard_new.info.description_with_fallback}}
+      {{shard_new.description}}
     </p>
 {% endif %}
 
@@ -114,7 +114,7 @@
 {% endif %}
         <tr class="row">
           <th class="col-2">GUID</th>
-          <td class="col"><code>{{shard_new.info.guid}}</code></td>
+          <td class="col"><code>{{shard_new.guid}}</code></td>
         </tr>
 {% for csum in shard_old.checksums %}
         <tr class="row">

@@ -231,15 +231,16 @@ class LvfsTestCase(unittest.TestCase):
             return
 
         # CHIPSEC -> Blocklist
-        assert 'Found PFS in Zlib compressed blob' in rv.data.decode('utf-8'), rv.data
+        assert 'Found PFS in Zlib compressed blob' in rv.data.decode('utf-8'), rv.data.decode()
         assert 'IbvExampleCertificate' in rv.data.decode('utf-8'), rv.data.decode()
+
+        # run the cron job to create the ComponentShardInfo's
+        self.run_cron_stats()
 
         # edit a shard description
         rv = self.app.get('/lvfs/shard/all')
-        assert 'com.intel.Uefi.Driver.00_S_PE32' in rv.data.decode('utf-8'), rv.data
-        assert '12345678-1234-5678-1234-567812345678' in rv.data.decode('utf-8'), rv.data
+        assert '12345678-1234-5678-1234-567812345678' in rv.data.decode('utf-8'), rv.data.decode()
         rv = self.app.get('/lvfs/shard/1/details')
-        assert 'com.intel.Uefi.Driver.00_S_PE32' in rv.data.decode('utf-8'), rv.data
         rv = self.app.post('/lvfs/shard/1/modify', data=dict(
             description='Hello Dave',
         ), follow_redirects=True)
