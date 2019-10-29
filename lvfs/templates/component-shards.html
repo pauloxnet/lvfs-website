@@ -56,6 +56,7 @@
 {% if shard.info and shard.info.guid %}
     <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='guid', value=shard.info.guid)}}">Search GUID</a>
 {% endif %}
+    <a class="card-link btn btn-info" href="{{url_for('.shard_download', component_shard_id=shard.component_shard_id)}}">Download File</a>
   </div>
 </div>
 {% endfor %}
