@@ -1125,7 +1125,6 @@ class ComponentShardInfo(db.Model):
 
     component_shard_info_id = Column(Integer, primary_key=True, unique=True, nullable=False)
     guid = Column(String(36), default=None, index=True)
-    name = Column(Text, default=None)
     description = Column(Text, default=None)
     cnt = Column(Integer, default=0)
 
