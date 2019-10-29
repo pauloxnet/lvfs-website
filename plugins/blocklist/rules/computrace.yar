@@ -2,7 +2,7 @@ rule ComputraceAgent
 {
     meta:
         license = "GPL-2.0+"
-        description = "Absolute Computrace Agent Executable"
+        description = "Contains Absolute Computrace Agent"
         fail = false
         claim = "info-computrace"
 
