@@ -383,7 +383,7 @@ class YaraQuery(db.Model):
 
     @property
     def title(self):
-        for line in self.value.split('\n'):
+        for line in  self.value.replace('{', '\n').split('\n'):
             if line.startswith('rule '):
                 return line[5:]
         return None
