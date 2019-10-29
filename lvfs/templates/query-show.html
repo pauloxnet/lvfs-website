@@ -62,9 +62,7 @@
         </tr>
 {% endfor %}
       </table>
-{% if shard.blob %}
     <a class="card-link btn btn-info" href="{{url_for('.shard_download', component_shard_id=shard.component_shard_id)}}">Download File</a>
-{% endif %}
 {% if shard.checksum %}
     <a class="card-link btn btn-info" href="{{url_for('.firmware_shard_search', kind='checksum', value=result.shard.checksum)}}">Show all</a>
 {% endif %}
