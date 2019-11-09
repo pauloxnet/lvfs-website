@@ -101,6 +101,8 @@ class Problem:
             return 'Invalid source URL'
         if self.kind == 'invalid-version-for-format':
             return 'Invalid version format for defined protocol'
+        if self.kind == 'invalid-format-for-protocol':
+            return 'Invalid version format for protocol'
         return 'Problem %s' % self.kind
 
     @property
@@ -1663,6 +1665,17 @@ class Component(db.Model):
                                   'Version number {} incompatible with {}'.\
                                   format(self.version_display,
                                          self.verfmt_with_fallback.value))
+                problem.url = url_for('.component_show',
+                                      component_id=self.component_id)
+                problems.append(problem)
+
+        # if the component and protocol both have verfmt, they must match
+        if self.verfmt and self.protocol and self.protocol.verfmt:
+            if self.verfmt.value != self.protocol.verfmt.value:
+                problem = Problem('invalid-format-for-protocol',
+                                  'Version vormat {} incompatible with protocol-defined {}'.\
+                                  format(self.verfmt.value,
+                                         self.protocol.verfmt.value))
                 problem.url = url_for('.component_show',
                                       component_id=self.component_id)
                 problems.append(problem)
