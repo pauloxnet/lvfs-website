@@ -244,6 +244,11 @@ def component_show(component_id, page='overview'):
         page = 'requires-advanced'
 
     protocols = db.session.query(Protocol).order_by(Protocol.name.asc()).all()
+    for protocol in protocols:
+        if protocol.value == 'unknown':
+            protocols.remove(protocol)
+            protocols.insert(0, protocol)
+            break
     categories = db.session.query(Category).order_by(Category.name.asc()).all()
     return render_template('component-' + page + '.html',
                            category='firmware',
