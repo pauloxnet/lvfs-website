@@ -564,6 +564,8 @@ def component_issue_autoimport(component_id):
     if not issues:
         flash('No issues could be detected', 'info')
     else:
+        for empty in ['()', '( )', '(  )', '(    )']:
+            description_new = description_new.replace(empty, '')
         md.release_description = description_new
         md.issues.extend(issues)
         md.fw.mark_dirty()
