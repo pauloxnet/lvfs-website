@@ -36,7 +36,7 @@ from pkgversion import vercmp
 from .dbutils import _execute_count_star
 from .hash import _qa_hash, _password_hash, _otp_hash
 from .util import _generate_password, _xml_from_markdown, _get_update_description_problems
-from .util import _get_absolute_path, _get_shard_path
+from .util import _get_absolute_path, _get_shard_path, _validate_guid
 
 class SecurityClaim:
 
@@ -103,6 +103,8 @@ class Problem:
             return 'Invalid version format for defined protocol'
         if self.kind == 'invalid-format-for-protocol':
             return 'Invalid version format for protocol'
+        if self.kind == 'invalid-guid':
+            return 'Invalid GUID specified for provide'
         return 'Problem %s' % self.kind
 
     @property
@@ -1657,6 +1659,15 @@ class Component(db.Model):
             problem.url = url_for('.component_show',
                                   component_id=self.component_id)
             problems.append(problem)
+
+        # check the GUIDs are indeed lowercase GUIDs (already done on upload)
+        for guid in self.guids:
+            if not _validate_guid(guid.value):
+                problem = Problem('invalid-guid',
+                                  'GUID {} is not valid'.format(guid.value))
+                problem.url = url_for('.component_show',
+                                      component_id=self.component_id)
+                problems.append(problem)
 
         # check the version matches the expected section count
         if self.verfmt_with_fallback and self.verfmt_with_fallback.sections:
