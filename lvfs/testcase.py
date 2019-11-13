@@ -81,6 +81,7 @@ class LvfsTestCase(unittest.TestCase):
             assert b'Added version format' in rv.data, rv.data
         rv = self.app.post('/lvfs/settings/modify', data=dict(
             clamav_enable='disabled',
+            virustotal_enable='disabled',
             chipsec_size_min='0',
         ), follow_redirects=True)
         assert b'Updated settings' in rv.data, rv.data
