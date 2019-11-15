@@ -34,6 +34,38 @@
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-info">
     <div class="row">
+      <div class="col col-lg-8 text-truncate">LVFS Version 1.1.5 Released</div>
+      <div class="col">
+        <span class="float-right">2019-11-15</span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      This release adds the following features:
+    </p>
+    <ul>
+      <li>Add support for matching firmware requirements on device parents</li>
+      <li>Allow researchers to run YARA queries on the public firmware</li>
+      <li>Allow the blocklist plugin to add persistent claims</li>
+      <li>Use PSPTool to parse the AMD PSP section</li>
+    </ul>
+    <p class="card-text">This release fixes the following bugs:</p>
+    <ul>
+      <li>Add the Dell PFS as a component shard</li>
+      <li>Allow the owner of the firmware to always change update details</li>
+      <li>Convert to Blueprints to improve page loading time</li>
+      <li>Do not hardcode the list of version formats in various places</li>
+      <li>Do not share the shard name between GUIDs</li>
+      <li>Only auto-demote stable-to-testing, not testing-to-embargo or stable-to-embargo</li>
+      <li>Show the version format versions with no trailing zeros</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header card-title list-group-item-info">
+    <div class="row">
       <div class="col col-lg-8 text-truncate">LVFS Version 1.1.4 Released</div>
       <div class="col">
         <span class="float-right">2019-09-26</span>
