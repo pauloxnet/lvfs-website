@@ -443,7 +443,7 @@ def route_modify_by_admin(vendor_id):
                 'url',
                 'keywords']:
         if key in request.form:
-            setattr(vendor, key, request.form[key])
+            setattr(vendor, key, request.form[key] if request.form[key] else None)
             # special case so that the embargo name matches
             if key == 'group_id':
                 vendor.remote.name = 'embargo-{}'.format(vendor.group_id)
