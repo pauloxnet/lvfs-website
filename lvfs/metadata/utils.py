@@ -282,7 +282,7 @@ def _metadata_update_targets(remotes):
     for r in remotes:
         fws_filtered = []
         for fw in fws:
-            if fw.is_deleted:
+            if fw.remote.name in ['private', 'deleted']:
                 continue
             if not fw.signed_timestamp:
                 continue
