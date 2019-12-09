@@ -118,6 +118,10 @@ def route_user_agents(kind='APP', timespan_days=30):
                     filter(and_(Useragent.datestr > datestr_start,
                                 Useragent.datestr <= datestr_end)):
         user_agent_safe = _user_agent_wildcard(ug.value)
+        if kind == 'FWUPD':
+            splt = user_agent_safe.split('.', 3)
+            if len(splt) == 3:
+                user_agent_safe = '{}.{}.x'.format(splt[0], splt[1])
         key = str(ug.datestr) + user_agent_safe
         if key not in cached_cnt:
             cached_cnt[key] = ug.cnt
