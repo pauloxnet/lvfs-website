@@ -146,6 +146,18 @@ new Chart(ctx, {
     </div>
   </div>
 {% endif %}
+{% if g.user.check_acl('@partner') %}
+  <div class="card overflow-hidden" style="min-width: 12rem">
+    <div class="bg-holder bg-card" style="background-image:url(/img/corner-2.png);"></div>
+    <div class="card-body position-relative">
+      <div class="card-title">Howdy partner!</div>
+      <p class="card-text">You can help us by uploading and downloading metadata from the LVFS.</p>
+      <a class="card-link text-nowrap" href="{{url_for('mdsync.route_show', vendor_id=g.user.vendor.vendor_id)}}">
+        Show metadata <span class="font-weight-bold">›</span>
+      </a>
+    </div>
+  </div>
+{% endif %}
   <div class="card overflow-hidden" style="min-width: 12rem">
     <div class="bg-holder bg-card" style="background-image:url(/img/corner-3.png);"></div>
     <div class="card-body position-relative">

@@ -250,13 +250,13 @@ def _has_any_prefix(items, text):
 def route_show(vendor_id):
 
     # security check
-    if not g.user.check_acl('@vendor-manager'):
+    if not g.user.check_acl('@vendor-manager') and not g.user.check_acl('@partner'):
         return redirect(url_for('main.route_dashboard'), 302)
 
     # another security check
     vendor = db.session.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
     if not vendor or not vendor.visible:
-        flash('Failed to get vendor details: No a vendor with that ID', 'warning')
+        flash('Failed to get vendor details: No vendor with that ID', 'warning')
         return redirect(url_for('mdsync.route_list'), 302)
 
     # create filtered list using the namespace
@@ -264,7 +264,7 @@ def route_show(vendor_id):
     md_by_id = {}
     namespaces = [ns.value for ns in g.user.vendor.namespaces]
     for mdref in vendor.mdrefs:
-        if not g.user.check_acl('@admin'):
+        if not g.user.check_acl('@admin') and not g.user.check_acl('@partner'):
             if not _has_any_prefix(namespaces, mdref.appstream_id):
                 continue
         if mdref.appstream_id:
