@@ -725,19 +725,27 @@ class Vendor(db.Model):
                 return True
             return False
         if action == '@manage-users':
+            if user.vendor_id != self.vendor_id:
+                return False
             # manager user can modify any users in his group
-            if user.check_acl('@vendor-manager') and user.vendor_id == self.vendor_id:
+            if user.check_acl('@vendor-manager'):
                 return True
             return False
         if action == '@modify-oauth':
             return False
         if action == '@view-affiliations':
+            if user.vendor_id != self.vendor_id:
+                return False
             return user.check_acl('@vendor-manager')
         if action == '@modify-affiliations':
             return False
         if action == '@modify-affiliation-actions':
+            if user.vendor_id != self.vendor_id:
+                return False
             return user.check_acl('@vendor-manager')
         if action == '@view-exports':
+            if user.vendor_id != self.vendor_id:
+                return False
             return user.check_acl('@qa') or user.check_acl('@vendor-manager')
         if action == '@modify-exports':
             return user.check_acl('@vendor-manager')
