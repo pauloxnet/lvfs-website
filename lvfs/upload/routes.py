@@ -300,11 +300,7 @@ def route_firmware():
             return redirect(url_for('main.route_index'))
         if not _user_can_upload(g.user):
             return redirect(url_for('agreements.route_show'))
-        vendor_ids = []
-        vendor = db.session.query(Vendor).filter(Vendor.vendor_id == g.user.vendor_id).first()
-        if vendor:
-            for res in vendor.restrictions:
-                vendor_ids.append(res.value)
+        vendor_ids = [res.value for res in g.user.vendor.restrictions]
         affiliations = db.session.query(Affiliation).\
                         filter(Affiliation.vendor_id_odm == g.user.vendor_id).all()
         return render_template('upload.html',

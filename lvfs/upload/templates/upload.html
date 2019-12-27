@@ -2,7 +2,7 @@
 {% block title %}Upload{% endblock %}
 
 {% block content %}
-{% if vendor_ids|length > 0 %}
+{% if vendor_ids|length > 0 and '*' not in vendor_ids %}
 <div class="card mt-3">
   <div class="card-body">
     <div class="card-title">Restrictions</div>
