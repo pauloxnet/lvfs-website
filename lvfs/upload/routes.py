@@ -135,8 +135,6 @@ def _upload_firmware():
     fw = db.session.query(Firmware)\
                    .filter(or_(Firmware.checksum_upload_sha1 == ufile.fw.checksum_upload_sha1,
                                Firmware.checksum_upload_sha256 == ufile.fw.checksum_upload_sha256)).first()
-    if not fw:
-        fw = db.session.query(Firmware).filter().first()
     if fw:
         if fw.check_acl('@view'):
             flash('Failed to upload file: A file with hash %s already exists' % fw.checksum_upload_sha1, 'warning')
