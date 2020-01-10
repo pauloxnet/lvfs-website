@@ -30,7 +30,9 @@ try:
 except (subprocess.CalledProcessError, PermissionError, FileNotFoundError):
     release = ''
 master_doc = 'index'
-
+html_favicon = 'img/favicon.png'
+html_copy_source = False
+html_show_sphinx = False
 
 # -- General configuration ---------------------------------------------------
 
