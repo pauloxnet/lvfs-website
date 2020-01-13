@@ -116,7 +116,7 @@ end-to-end test with the embargo remote.
 .. warning::
     It can take a few hours to regenerate the ``testing`` and ``stable`` remotes
     and up to **24 hours** for users to download the new metadata catalog.
-    Most vendors see a large skipe in downloads the day **after** they move a firmware
+    Most vendors see a large spike in downloads the day **after** they move a firmware
     to stable, and then a steady decay the days after.
 
     Consider adding a download limit to prevent deploying a firmware to tens of
