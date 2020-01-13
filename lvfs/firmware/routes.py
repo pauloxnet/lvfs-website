@@ -517,7 +517,7 @@ def route_show(firmware_id):
     graph_data = []
     graph_labels = None
     if fw.check_acl('@view-analytics') and not fw.do_not_track:
-        if fw.timestamp > datetime.datetime.today() - datetime.timedelta(days=30):
+        if fw.timestamp.replace(tzinfo=None) > datetime.datetime.today() - datetime.timedelta(days=30):
             datestr = _get_datestr_from_datetime(datetime.date.today() - datetime.timedelta(days=31))
             data = db.session.query(AnalyticFirmware.cnt).\
                         filter(AnalyticFirmware.firmware_id == fw.firmware_id).\

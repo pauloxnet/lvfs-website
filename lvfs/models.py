@@ -2099,7 +2099,7 @@ class Firmware(db.Model):
     def target_duration(self):
         if not self.events:
             return 0
-        return datetime.datetime.utcnow() - self.events[-1].timestamp
+        return datetime.datetime.utcnow() - self.events[-1].timestamp.replace(tzinfo=None)
 
     @property
     def do_not_track(self):

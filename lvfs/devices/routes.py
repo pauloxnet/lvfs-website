@@ -171,7 +171,7 @@ def route_analytics(appstream_id):
             t2 = _dt_from_quarter(year, quarter + 1)
             cnt = 0
             for fw in fws:
-                if fw.timestamp >= t1 and fw.timestamp < t2:
+                if fw.timestamp.replace(tzinfo=None) >= t1 and fw.timestamp.replace(tzinfo=None) < t2:
                     cnt += 1
             labels.append("%04iQ%i" % (year, quarter + 1))
             data.append(cnt)
