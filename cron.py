@@ -433,14 +433,16 @@ def _generate_stats(kinds=None):
 
     # Set ComponentShardInfo in ComponentShard if GUID matches
     if 'ShardInfo' in kinds:
-        for shard in db.session.query(ComponentShard).\
+        for component_shard_id in db.session.query(ComponentShard.component_shard_id).\
                             filter(ComponentShard.component_shard_info_id == None):
+            shard = db.session.query(ComponentShard).\
+                            filter(ComponentShard.component_shard_id == component_shard_id).one()
             shard.info = db.session.query(ComponentShardInfo).\
                             filter(ComponentShardInfo.guid == shard.guid).first()
             if not shard.info:
                 print('creating ComponentShardInfo for {}'.format(shard.guid))
                 shard.info = ComponentShardInfo(guid=shard.guid)
-        db.session.commit()
+            db.session.commit()
 
     # update ComponentShardInfo.cnt
     if 'ShardCount' in kinds:
