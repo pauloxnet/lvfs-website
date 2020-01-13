@@ -70,6 +70,7 @@ def route_tests(plugin_id, kind):
     tests_by_type = _convert_tests_for_plugin(plugin)
     return render_template('settings-tests.html',
                            category='settings',
+                           kind=kind,
                            tests=tests_by_type[kind][:50],
                            tests_by_type=tests_by_type,
                            plugin=plugin)
