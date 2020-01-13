@@ -188,9 +188,9 @@ def route_list():
     # get a list of firmwares with a map of components
     fws = db.session.query(Firmware).\
                            join(Remote).filter(Remote.is_public).\
-                           join(Component).group_by(Component.appstream_id).\
-                           order_by(Firmware.timestamp.desc()).\
-                           distinct(Component.name).all()
+                           join(Component).distinct(Component.appstream_id).\
+                           order_by(Component.appstream_id, Firmware.timestamp.desc()).\
+                           all()
     vendors = []
     mds_by_vendor = {}
     for fw in fws:
@@ -206,10 +206,14 @@ def route_list():
         mds_by_vendor[vendor].sort(key=lambda obj: obj.name)
 
     # get most recent supported devices
+    stmt = db.session.query(Component.appstream_id).\
+                            group_by(Component.appstream_id).\
+                            having(func.count() == 1).\
+                            subquery()
     fws_recent = db.session.query(Firmware).\
                                   join(Remote).filter(Remote.is_public).\
-                                  join(Component).group_by(Component.name).\
-                                  having(func.count() == 1).\
+                                  join(Component).\
+                                  join(stmt, Component.appstream_id == stmt.c.appstream_id).\
                                   order_by(Firmware.timestamp.desc()).\
                                   limit(6).all()
 
