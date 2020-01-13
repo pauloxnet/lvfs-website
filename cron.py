@@ -374,7 +374,7 @@ def _demote_back_to_testing(fw):
     fw.remote_id = remote.remote_id
     fw.events.append(FirmwareEvent(fw.remote_id, user_id=user.user_id))
     db.session.commit()
-    _event_log('Demoted firmware {} as reported success {}%%'.format(fw.firmware_id, fw.success))
+    _event_log('Demoted firmware {} as reported success {}%'.format(fw.firmware_id, fw.success))
 
 def _generate_stats_firmware_reports(fw):
 
