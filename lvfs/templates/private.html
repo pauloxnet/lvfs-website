@@ -39,9 +39,6 @@
               <a class="nav-link" href="{{url_for('vendors.route_users', vendor_id=g.user.vendor_id)}}">Vendor</a>
             </li>
 {% endif %}
-            <li class="nav-item {{'active' if request.url_rule.endpoint == 'docs.route_news'}}">
-              <a class="nav-link" href="{{url_for('docs.route_news')}}">News</a>
-            </li>
 {% if g.user.check_acl('@view-eventlog') %}
             <li class="nav-item {{'active' if request.url_rule.endpoint == 'main.route_eventlog'}}">
               <a class="nav-link" href="{{url_for('main.route_eventlog')}}">Events</a>
