@@ -423,9 +423,13 @@ def _get_lang_distro_from_ua(ua):
     return (parts[1], parts[2])
 
 def _generate_stats_shard_info(info):
-    if info.cnt != len(info.shards):
-        print('fixing ComponentShardInfo %i: %i -> %i' % (info.component_shard_info_id, info.cnt, len(info.shards)))
-        info.cnt = len(info.shards)
+
+    cnt = db.session.query(ComponentShard.component_shard_id)\
+                    .filter(ComponentShard.guid == info.guid)\
+                    .count()
+    if info.cnt != cnt:
+        print('fixing ComponentShardInfo %i: %i -> %i' % (info.component_shard_info_id, info.cnt, cnt))
+        info.cnt = cnt
 
 def _generate_stats(kinds=None):
     if not kinds:
@@ -433,6 +437,7 @@ def _generate_stats(kinds=None):
 
     # Set ComponentShardInfo in ComponentShard if GUID matches
     if 'ShardInfo' in kinds:
+        print('stats::ShardInfo')
         infos = {}
         for info in db.session.query(ComponentShardInfo):
             infos[info.guid] = info
@@ -451,12 +456,18 @@ def _generate_stats(kinds=None):
 
     # update ComponentShardInfo.cnt
     if 'ShardCount' in kinds:
-        for info in db.session.query(ComponentShardInfo):
+        print('stats::ShardCount')
+        for info_id in db.session.query(ComponentShardInfo.component_shard_info_id)\
+                                 .order_by(ComponentShardInfo.component_shard_info_id.asc()):
+            info = db.session.query(ComponentShardInfo)\
+                             .filter(ComponentShardInfo.component_shard_info_id == info_id)\
+                             .one()
             _generate_stats_shard_info(info)
         db.session.commit()
 
     # update FirmwareReport counts
     if 'FirmwareReport' in kinds:
+        print('stats::FirmwareReport')
         for fw in db.session.query(Firmware):
             _generate_stats_firmware_reports(fw)
         db.session.commit()
