@@ -468,7 +468,8 @@ def _generate_stats(kinds=None):
     # update FirmwareReport counts
     if 'FirmwareReport' in kinds:
         print('stats::FirmwareReport')
-        for fw in db.session.query(Firmware):
+        for fw in db.session.query(Firmware)\
+                            .join(Remote).filter(Remote.name != 'deleted'):
             _generate_stats_firmware_reports(fw)
         db.session.commit()
 
@@ -496,7 +497,8 @@ def _generate_stats_for_datestr(datestr, kinds=None):
         for analytic in db.session.query(AnalyticFirmware).filter(AnalyticFirmware.datestr == datestr):
             db.session.delete(analytic)
         db.session.commit()
-        for fw in db.session.query(Firmware):
+        for fw in db.session.query(Firmware)\
+                            .join(Remote).filter(Remote.name != 'deleted'):
             _generate_stats_for_firmware(fw, datestr)
         db.session.commit()
 
