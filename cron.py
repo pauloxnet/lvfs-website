@@ -441,13 +441,13 @@ def _generate_stats(kinds=None):
         infos = {}
         for info in db.session.query(ComponentShardInfo):
             infos[info.guid] = info
-        for component_shard_id in db.session.query(ComponentShard.component_shard_id).\
+        for component_shard_id, in db.session.query(ComponentShard.component_shard_id).\
                             filter(ComponentShard.component_shard_info_id == None):
             shard = db.session.query(ComponentShard).\
-                            filter(ComponentShard.component_shard_id == component_shard_id[0]).one()
+                            filter(ComponentShard.component_shard_id == component_shard_id).one()
             shard.info = infos.get(shard.guid)
             if shard.info:
-                print('fixing shard {} with {}'.format(component_shard_id[0], shard.guid))
+                print('fixing shard {} with {}'.format(component_shard_id, shard.guid))
             else:
                 print('creating ComponentShardInfo for {}'.format(shard.guid))
                 shard.info = ComponentShardInfo(guid=shard.guid)
@@ -457,7 +457,7 @@ def _generate_stats(kinds=None):
     # update ComponentShardInfo.cnt
     if 'ShardCount' in kinds:
         print('stats::ShardCount')
-        for info_id in db.session.query(ComponentShardInfo.component_shard_info_id)\
+        for info_id, in db.session.query(ComponentShardInfo.component_shard_info_id)\
                                  .order_by(ComponentShardInfo.component_shard_info_id.asc()):
             info = db.session.query(ComponentShardInfo)\
                              .filter(ComponentShardInfo.component_shard_info_id == info_id)\
