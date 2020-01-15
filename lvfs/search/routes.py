@@ -57,9 +57,8 @@ def route_fw(max_results=100):
     fws = db.session.query(Firmware).join(Component).\
                            join(Keyword).\
                            filter(Keyword.value.in_(keywords)).\
-                           group_by(Keyword.component_id).\
-                           having(func.count() == len(keywords)).\
-                           distinct().order_by(Firmware.timestamp.desc()).\
+                           distinct(Keyword.component_id).\
+                           order_by(Keyword.component_id, Firmware.timestamp.desc()).\
                            limit(max_results).all()
 
     # try GUIDs
@@ -67,34 +66,32 @@ def route_fw(max_results=100):
         fws = db.session.query(Firmware).join(Component).\
                                join(Guid).\
                                filter(Guid.value.in_(keywords)).\
-                               group_by(Guid.component_id).\
-                               having(func.count() == len(keywords)).\
-                               distinct().order_by(Firmware.timestamp.desc()).\
+                               distinct(Keyword.component_id).\
+                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try version numbers
     if not fws:
         fws = db.session.query(Firmware).join(Component).\
                                filter(Component.version.in_(keywords)).\
-                               group_by(Component.component_id).\
-                               having(func.count() == len(keywords)).\
-                               distinct().order_by(Firmware.timestamp.desc()).\
+                               distinct(Keyword.component_id).\
+                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try appstream ID
     if not fws:
         fws = db.session.query(Firmware).join(Component).\
                                filter(Component.appstream_id.startswith(keywords[0])).\
-                               group_by(Component.component_id).\
-                               distinct().order_by(Firmware.timestamp.desc()).\
+                               distinct(Keyword.component_id).\
+                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try CVE, e.g. CVE-2018-3646
     if not fws:
         fws = db.session.query(Firmware).join(Component).join(ComponentIssue).\
                                filter(ComponentIssue.value.in_(keywords)).\
-                               group_by(Component.component_id).\
-                               distinct().order_by(Firmware.timestamp.desc()).\
+                               distinct(Keyword.component_id).\
+                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # filter by ACL
