@@ -228,6 +228,15 @@ def route_report():
                        state=report['UpdateState'],
                        checksum=report['Checksum'])
 
+        # update the firmware so that the QA user does not have to wait 24h
+        if r.state == 2:
+            fw.report_success_cnt += 1
+        elif r.state == 3:
+            if r.issue_id:
+                fw.report_issue_cnt += 1
+            else:
+                fw.report_failure_cnt += 1
+
         # update the LVFS user
         if crt:
             r.user_id = crt.user_id
