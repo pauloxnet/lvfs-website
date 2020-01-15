@@ -10,6 +10,7 @@ RUN yum -y install \
 	libgcab1 \
 	GeoIP-devel \
 	gcc \
+	postgresql-devel \
 	python-GeoIP \
 	python36-devel \
 	python36-gobject \
