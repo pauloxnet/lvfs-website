@@ -154,11 +154,11 @@ class Plugin(PluginBase):
         # check the certs are valid, relaxing the notAfter checks by a good margin
         dtallowable = datetime.timedelta(days=self.get_setting_int('pecheck_allowable') * 365)
         for cert in certs:
-            if cert.not_before and cert.not_before > shard.md.fw.timestamp:
+            if cert.not_before and cert.not_before > shard.md.fw.timestamp.replace(tzinfo=None):
                 test.add_fail(shard.name,
                               'Authenticode certificate invalid before {}: {}'.\
                               format(cert.not_before, cert.description))
-            elif cert.not_after and cert.not_after < shard.md.fw.timestamp - dtallowable:
+            elif cert.not_after and cert.not_after < shard.md.fw.timestamp.replace(tzinfo=None) - dtallowable:
                 test.add_fail(shard.name,
                               'Authenticode certificate invalid after {}: {}'.\
                               format(cert.not_after, cert.description))
