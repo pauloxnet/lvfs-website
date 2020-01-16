@@ -75,7 +75,7 @@
 {% set act = aff.get_action(possible_action) %}
       <tr class="row">
         <td class="col">{{possible_actions[possible_action]}}</td>
-        <td class="col">{{act.ctime if act else '—'}}</td>
+        <td class="col">{{act.ctime.strftime('%F %T') if act else '—'}}</td>
         <td class="col"><code>{{act.user.username if act else '—'}}</code></td>
         <td class="col col-2">
 {% if v.check_acl('@modify-affiliation-actions') %}

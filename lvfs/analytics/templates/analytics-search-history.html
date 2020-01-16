@@ -16,7 +16,7 @@
   </tr>
 {% for ev in search_events %}
   <tr class="row">
-    <td class="col col-sm-2">{{ev.timestamp}}</td>
+    <td class="col col-sm-2">{{ev.timestamp.strftime('%F %T')}}</td>
     <td class="col col-sm-2"><code>{{ev.addr|truncate(13, False, '…')}}</code></td>
     <td class="col col-sm-4"><code>{{ev.value}}</code></td>
     <td class="col col-sm-1"><code>{{ev.method}}</code></td>

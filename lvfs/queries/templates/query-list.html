@@ -20,7 +20,7 @@
 
   <div class="card-header card-title list-group-item-{{query.color}}">
     {{query.title}}: {{query.found}} out of {{query.total}}
-    <span class="float-right">{{query.ctime}}</span>
+    <span class="float-right">{{format_humanize_naturaltime(query.ctime)}}</span>
   </div>
 
   <div class="card-body">

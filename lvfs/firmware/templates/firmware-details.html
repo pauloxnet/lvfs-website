@@ -133,7 +133,7 @@ new Chart(ctx, {
       <div class="card-body position-relative">
         <div class="card-title">Details</div>
         <p class="card-text">
-          {{fw.filename[41:]}} was uploaded on {{fw.timestamp}} by {{fw.user.username}}.
+          {{fw.filename[41:]}} was uploaded {{format_humanize_naturaltime(fw.timestamp)}} by {{fw.user.username}}.
         </p>
         <p class="card-text">
           The firmware is now owned by <code>{{fw.vendor.group_id}}</code>.

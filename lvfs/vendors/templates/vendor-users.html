@@ -20,7 +20,7 @@
     <td class="col col-sm-3"><code>{{u.username}}</code></td>
     <td class="col col-sm-2">{{u.display_name}}</td>
     <td class="col col-sm-1">{{u.fws|length}}</td>
-    <td class="col col-sm-2">{{u.atime}}</td>
+    <td class="col col-sm-2">{{format_humanize_naturaltime(u.atime)}}</td>
     <td class="col col-sm-2">
       <code>
       {{ 'me' if u.user_id == g.user.user_id }}
