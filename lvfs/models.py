@@ -252,7 +252,7 @@ class User(db.Model):
             return False
 
         # created in the last 1h...
-        if (datetime.datetime.now() - self.ctime).total_seconds() > 60 * 60:
+        if (datetime.datetime.now() - self.ctime.replace(tzinfo=None)).total_seconds() > 60 * 60:
             return False
 
         # of required userclass
