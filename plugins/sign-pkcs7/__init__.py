@@ -76,7 +76,7 @@ class Plugin(PluginBase):
 
         # write a new file
         fn_p7b = fn + '.asc'
-        with open(fn_p7b, 'w') as f:
+        with open(fn_p7b, 'wb') as f:
             f.write(blob_p7b)
 
         # inform the plugin loader
@@ -99,4 +99,4 @@ class Plugin(PluginBase):
             return
 
         # add it to the archive
-        cabarchive[detached_fn] = CabFile(blob_p7b.encode('utf-8'))
+        cabarchive[detached_fn] = CabFile(blob_p7b)
