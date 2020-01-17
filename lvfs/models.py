@@ -134,7 +134,7 @@ class UserAction(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     user_action_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
     ctime = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     value = Column(Text, default=None)
 
@@ -159,7 +159,7 @@ class User(db.Model):
     password_recovery_ts = Column(DateTime, default=None)
     otp_secret = Column(String(16))
     display_name = Column(Text, default=None)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     auth_type = Column(Text, default='disabled')
     auth_warning = Column(Text, default=None)
     is_otp_enabled = Column(Boolean, default=False)
@@ -378,7 +378,7 @@ class YaraQuery(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     yara_query_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
     value = Column(Text, default=None)
     error = Column(Text, default=None)
     found = Column(Integer, default=0)
@@ -452,7 +452,7 @@ class Restriction(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     restriction_id = Column(Integer, primary_key=True)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     value = Column(Text, nullable=False)
 
     # link back to parent
@@ -472,7 +472,7 @@ class Namespace(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     namespace_id = Column(Integer, primary_key=True)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     value = Column(Text, nullable=False)
     ctime = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
@@ -499,7 +499,7 @@ class AffiliationAction(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     affiliation_action_id = Column(Integer, primary_key=True)
-    affiliation_id = Column(Integer, ForeignKey('affiliations.affiliation_id'), nullable=False)
+    affiliation_id = Column(Integer, ForeignKey('affiliations.affiliation_id'), nullable=False, index=True)
     ctime = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     action = Column(Text, default=None)
@@ -518,8 +518,8 @@ class Affiliation(db.Model):
 
     affiliation_id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
-    vendor_id_odm = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
+    vendor_id_odm = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
 
     # link using foreign keys
     vendor = relationship("Vendor", foreign_keys=[vendor_id], back_populates="affiliations")
@@ -778,8 +778,8 @@ class Event(db.Model):
 
     id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     address = Column('addr', String(40), nullable=False)
     message = Column(Text, default=None)
     is_important = Column(Boolean, default=False)
@@ -809,7 +809,7 @@ class Certificate(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     certificate_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
     ctime = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     serial = Column(String(40), nullable=False)
     text = Column(Text, default=None)
@@ -849,7 +849,7 @@ class Requirement(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     requirement_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     kind = Column(Text, nullable=False)
     value = Column(Text, default=None)
     compare = Column(Text, default=None)
@@ -867,7 +867,7 @@ class Guid(db.Model):
     # sqlalchemy metadata
     __tablename__ = 'guids'
     guid_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     value = Column(Text, nullable=False)
 
     # link back to parent
@@ -889,7 +889,7 @@ class Keyword(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     keyword_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     priority = Column(Integer, default=0)
     value = Column(Text, nullable=False)
 
@@ -950,7 +950,7 @@ class Checksum(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     checksum_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     kind = Column(Text, nullable=False, default=None)
     value = Column(Text, nullable=False, default=None)
 
@@ -970,7 +970,7 @@ class TestAttribute(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     test_attribute_id = Column(Integer, primary_key=True)
-    test_id = Column(Integer, ForeignKey('tests.test_id'), nullable=False)
+    test_id = Column(Integer, ForeignKey('tests.test_id'), nullable=False, index=True)
     title = Column(Text, nullable=False)
     message = Column(Text, default=None)
     success = Column(Boolean, default=False)
@@ -995,7 +995,7 @@ class Test(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     test_id = Column(Integer, primary_key=True)
-    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False)
+    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
     plugin_id = Column(Text, default=None)
     waivable = Column(Boolean, default=False)
     scheduled_ts = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
@@ -1229,7 +1229,7 @@ class ComponentShardChecksum(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     checksum_id = Column(Integer, primary_key=True)
-    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=False)
+    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=False, index=True)
     kind = Column(Text, nullable=False, default=None)
     value = Column(Text, nullable=False, default=None)
 
@@ -1251,7 +1251,7 @@ class ComponentShardCertificate(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     component_shard_certificate_id = Column(Integer, primary_key=True)
-    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=False)
+    component_shard_id = Column(Integer, ForeignKey('component_shards.component_shard_id'), nullable=False, index=True)
     kind = Column(Text, default=None)
     plugin_id = Column(Text, default=None)
     description = Column(Text, default=None)
@@ -1303,7 +1303,7 @@ class ComponentShard(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     component_shard_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     component_shard_info_id = Column(Integer,
                                      ForeignKey('component_shard_infos.component_shard_info_id'),
                                      default=None)
@@ -1396,7 +1396,7 @@ class ComponentIssue(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     component_issue_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     kind = Column(Text, nullable=False)
     value = Column(Text, nullable=False)
 
@@ -1435,7 +1435,7 @@ class ComponentClaim(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     component_claim_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     kind = Column(Text, nullable=False)
     value = Column(Text, nullable=False)
 
@@ -1452,9 +1452,9 @@ class ComponentRef(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     component_ref_id = Column(Integer, primary_key=True)
-    component_id = Column(Integer, ForeignKey('components.component_id'))
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
-    vendor_id_partner = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    component_id = Column(Integer, ForeignKey('components.component_id'), index=True)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
+    vendor_id_partner = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     protocol_id = Column(Integer, ForeignKey('protocol.protocol_id'))
     appstream_id = Column(Text, default=None)
     version = Column(Text, nullable=False)
@@ -1996,7 +1996,7 @@ class FirmwareEvent(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     firmware_event_id = Column(Integer, primary_key=True)
-    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False)
+    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
     user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     remote_id = Column(Integer, ForeignKey('remotes.remote_id'), nullable=False)
@@ -2024,7 +2024,7 @@ class FirmwareLimit(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     firmware_limit_id = Column(Integer, primary_key=True)
-    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False)
+    firmware_id = Column(Integer, ForeignKey('firmware.firmware_id'), nullable=False, index=True)
     value = Column(Integer, nullable=False)
     user_agent_glob = Column(Text, default=None)
     response = Column(Text, default=None)
@@ -2039,7 +2039,7 @@ class Firmware(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     firmware_id = Column(Integer, primary_key=True)
-    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False)
+    vendor_id = Column(Integer, ForeignKey('vendors.vendor_id'), nullable=False, index=True)
     addr = Column(String(40), nullable=False)
     timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
     filename = Column(Text, nullable=False)
@@ -2047,10 +2047,10 @@ class Firmware(db.Model):
     checksum_upload_sha1 = Column(String(40), nullable=False, index=True)
     checksum_upload_sha256 = Column(String(64), nullable=False)
     _version_display = Column('version_display', Text, nullable=True, default=None)
-    remote_id = Column(Integer, ForeignKey('remotes.remote_id'), nullable=False)
+    remote_id = Column(Integer, ForeignKey('remotes.remote_id'), nullable=False, index=True)
     checksum_signed_sha1 = Column(String(40), nullable=False)
     checksum_signed_sha256 = Column(String(64), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
     signed_timestamp = Column(DateTime, default=None)
     is_dirty = Column(Boolean, default=False)           # waiting to be included in metadata
     _banned_country_codes = Column('banned_country_codes', Text, default=None) # ISO 3166, delimiter ','
@@ -2431,7 +2431,7 @@ class Condition(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     condition_id = Column(Integer, primary_key=True)
-    issue_id = Column(Integer, ForeignKey('issues.issue_id'), nullable=False)
+    issue_id = Column(Integer, ForeignKey('issues.issue_id'), nullable=False, index=True)
     key = Column(Text, nullable=False)
     value = Column(Text, nullable=False)
     compare = Column(Text, default='eq', nullable=False)
@@ -2550,7 +2550,7 @@ class ReportAttribute(db.Model):
     __table_args__ = {'mysql_character_set': 'utf8mb4'}
 
     report_attribute_id = Column(Integer, primary_key=True)
-    report_id = Column(Integer, ForeignKey('reports.report_id'), nullable=False)
+    report_id = Column(Integer, ForeignKey('reports.report_id'), nullable=False, index=True)
     key = Column(Text, nullable=False)
     value = Column(Text, default=None)
 
