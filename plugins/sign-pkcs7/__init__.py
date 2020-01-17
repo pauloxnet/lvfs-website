@@ -75,7 +75,7 @@ class Plugin(PluginBase):
             return
 
         # write a new file
-        fn_p7b = fn + '.asc'
+        fn_p7b = fn + '.p7b'
         with open(fn_p7b, 'wb') as f:
             f.write(blob_p7b)
 
