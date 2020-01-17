@@ -12,7 +12,7 @@ import tempfile
 
 from cabarchive import CabFile
 from lvfs.pluginloader import PluginBase, PluginError, PluginSettingText, PluginSettingBool
-from lvfs import ploader
+from lvfs import ploader, app
 
 class Plugin(PluginBase):
     def __init__(self):
@@ -52,11 +52,12 @@ class Plugin(PluginBase):
                                           delete=True)
 
         # sign
-        argv = ['certtool', '--p7-detached-sign', '--p7-time',
-                '--load-privkey', self.get_setting('sign_pkcs7_privkey', required=True),
-                '--load-certificate', self.get_setting('sign_pkcs7_certificate', required=True),
-                '--infile', src.name,
-                '--outfile', dst.name]
+        argv = app.config['CERTTOOL'].split(' ')
+        argv += ['--p7-detached-sign', '--p7-time',
+                 '--load-privkey', self.get_setting('sign_pkcs7_privkey', required=True),
+                 '--load-certificate', self.get_setting('sign_pkcs7_certificate', required=True),
+                 '--infile', src.name,
+                 '--outfile', dst.name]
         ps = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if ps.wait() != 0:
             raise PluginError('Failed to sign: %s' % ps.stderr.read())
