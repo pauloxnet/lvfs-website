@@ -24,8 +24,6 @@
 {% if md.shards %}
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'components.route_shards' else 'default'}}"
         href="{{url_for('components.route_shards', component_id=md.component_id)}}">Shards</a>
-{% endif %}
-{% if md.certificates %}
       <a class="btn btn-falcon-{{'primary' if request.url_rule.endpoint == 'components.route_certificates' else 'default'}}"
         href="{{url_for('components.route_certificates', component_id=md.component_id)}}">Certificates</a>
 {% endif %}

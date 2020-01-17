@@ -5,6 +5,12 @@
 
 {% block content %}
 
+{% if not md.certificates %}
+<div class="alert alert-info mt-1" role="alert">
+  No public key certificates were found.
+</div>
+{% endif %}
+
 {% for cert in md.certificates %}
 <div class="card mb-3">
   <div class="card-header card-title list-group-item-{{cert.color}}">
