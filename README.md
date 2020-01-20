@@ -26,12 +26,14 @@ The official instance is set up using puppet on RHEL 7, on which you could use:
 
 You can set up the development database manually using:
 
-    $ psql -u root
-    > CREATE DATABASE lvfs;
-    > CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';
-    > USE lvfs;
-    > GRANT ALL ON lvfs.* TO 'test'@'localhost';
-    > exit
+    $ su - postgres
+    $ psql
+    > CREATE USER test WITH PASSWORD 'test';
+    > CREATE DATABASE lvfs OWNER test;
+    > quit
+
+Remember to edit `/var/lib/pgsql/data/pg_hba.conf` and add the `md5` auth
+method for localhost.
 
 Then create the schema using:
 
@@ -62,10 +64,12 @@ On Fedora:
         GeoIP-devel \
         gnutls-utils \
         gobject-introspection-devel \
+        postgresql-devel \
         postgresql-server \
-        python36-pip \
-        python36-psutil \
-        python36-virtualenv
+        python3-devel \
+        python3-pip \
+        python3-psutil \
+        python3-virtualenv
 
 ## Generating a SSL certificate ##
 
