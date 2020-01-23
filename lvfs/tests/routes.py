@@ -205,7 +205,7 @@ def route_waive_all(plugin_id):
     tests = db.session.query(Test).\
                 filter(Test.ended_ts != None). \
                 filter(Test.plugin_id == plugin_id). \
-                filter(Test.waivable).all()
+                all()
     tests_failed = []
     for test in tests:
         if not test.success:
