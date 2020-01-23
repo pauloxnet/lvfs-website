@@ -21,3 +21,4 @@ pylint
 pytest-cov
 yara-python
 psptool
+r2pipe
