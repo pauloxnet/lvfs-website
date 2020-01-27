@@ -170,8 +170,6 @@ class Plugin(PluginBase):
             # generate something plausible
             if kind == 'Microcode::Intel':
                 guid = '3f0229ad-0a00-5269-90cf-0a45d8781b72'
-            if kind == 'Padding::Non-empty':
-                guid = '9f1d3aff-5169-57f2-8877-0ec168de2898'
             if not guid:
                 #print('No GUID for', kind, fn)
                 continue
@@ -181,7 +179,7 @@ class Plugin(PluginBase):
                 '00h::Unknown 0': None,
                 '01h::Compressed': None,
                 '01h::Raw': None,
-                '02h::Freeform': 'com.intel.Uefi.Raw',
+                '02h::Freeform': None,
                 '02h::GUID defined': 'com.intel.Uefi.Raw',
                 '03h::SEC core': 'com.intel.Uefi.Security',
                 '04h::PEI core': 'com.intel.Uefi.Pei',
@@ -221,7 +219,7 @@ class Plugin(PluginBase):
                 'Microcode::Intel': 'com.intel.Microcode',
                 'NVAR entry::Full': None,
                 'Padding::Empty (0xFF)': None,
-                'Padding::Non-empty': 'com.intel.Uefi.Raw',
+                'Padding::Non-empty': None,
                 'Region::BIOS': None,
                 'Region::Descriptor': None,
                 'Region::DevExp1': None,
