@@ -58,7 +58,7 @@ def route_fw(max_results=100):
                            join(Keyword).\
                            filter(Keyword.value.in_(keywords)).\
                            distinct(Keyword.component_id).\
-                           order_by(Keyword.component_id, Firmware.timestamp.desc()).\
+                           order_by(Keyword.component_id.desc(), Firmware.timestamp.desc()).\
                            limit(max_results).all()
 
     # try GUIDs
@@ -67,7 +67,7 @@ def route_fw(max_results=100):
                                join(Guid).\
                                filter(Guid.value.in_(keywords)).\
                                distinct(Keyword.component_id).\
-                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
+                               order_by(Keyword.component_id.desc(), Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try version numbers
@@ -75,7 +75,7 @@ def route_fw(max_results=100):
         fws = db.session.query(Firmware).join(Component).\
                                filter(Component.version.in_(keywords)).\
                                distinct(Keyword.component_id).\
-                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
+                               order_by(Keyword.component_id.desc(), Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try appstream ID
@@ -83,7 +83,7 @@ def route_fw(max_results=100):
         fws = db.session.query(Firmware).join(Component).\
                                filter(Component.appstream_id.startswith(keywords[0])).\
                                distinct(Keyword.component_id).\
-                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
+                               order_by(Keyword.component_id.desc(), Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # try CVE, e.g. CVE-2018-3646
@@ -91,7 +91,7 @@ def route_fw(max_results=100):
         fws = db.session.query(Firmware).join(Component).join(ComponentIssue).\
                                filter(ComponentIssue.value.in_(keywords)).\
                                distinct(Keyword.component_id).\
-                               order_by(Keyword.component_id, Firmware.timestamp.desc()).\
+                               order_by(Keyword.component_id.desc(), Firmware.timestamp.desc()).\
                                limit(max_results).all()
 
     # filter by ACL
