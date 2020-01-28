@@ -281,8 +281,11 @@ def route_show(vendor_id_partner, vendor_id):
     if not g.user.check_acl('@vendor-manager') and not g.user.check_acl('@partner'):
         return redirect(url_for('main.route_dashboard'), 302)
     vendor_partner = db.session.query(Vendor).filter(Vendor.vendor_id == vendor_id_partner).first()
-    if not vendor_partner or not vendor_partner.visible:
+    if not vendor_partner:
         flash('Failed to get vendor details: No vendor partner with that ID', 'warning')
+        return redirect(url_for('mdsync.route_list'), 302)
+    if not g.user.check_acl('@admin') and not vendor_partner.visible:
+        flash('Failed to get vendor details: No visible vendor with that ID', 'warning')
         return redirect(url_for('mdsync.route_list'), 302)
     vendor = db.session.query(Vendor).filter(Vendor.vendor_id == vendor_id).first()
     if not vendor or not vendor.visible:
@@ -324,8 +327,11 @@ def route_vendors(vendor_id_partner):
 
     # another security check
     vendor_partner = db.session.query(Vendor).filter(Vendor.vendor_id == vendor_id_partner).first()
-    if not vendor_partner or not vendor_partner.visible:
+    if not vendor_partner:
         flash('Failed to get vendor details: No vendor partner with that ID', 'warning')
+        return redirect(url_for('mdsync.route_list'), 302)
+    if not g.user.check_acl('@admin') and not vendor_partner.visible:
+        flash('Failed to get vendor details: No visible vendor with that ID', 'warning')
         return redirect(url_for('mdsync.route_list'), 302)
 
     # non partner accounts can only see one vendor anyway, so redirect
