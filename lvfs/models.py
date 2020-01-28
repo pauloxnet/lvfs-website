@@ -1350,8 +1350,7 @@ class ComponentShard(db.Model):
 
     checksums = relationship("ComponentShardChecksum",
                              back_populates="shard",
-                             cascade='all,delete-orphan',
-                             lazy='joined')
+                             cascade='all,delete-orphan')
     certificates = relationship("ComponentShardCertificate",
                                 order_by="desc(ComponentShardCertificate.component_shard_certificate_id)",
                                 back_populates='shard',
