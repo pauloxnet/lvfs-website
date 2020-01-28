@@ -1226,8 +1226,6 @@ class ComponentShardInfo(db.Model):
     guid = Column(String(36), default=None, index=True)
     description = Column(Text, default=None)
     cnt = Column(Integer, default=0)
-    _unused_claim_kind = Column('claim_kind', Text, default=None)
-    _unused_claim_value = Column('claim_value', Text, default=None)
     claim_id = Column(Integer, ForeignKey('claims.claim_id'), nullable=True, index=True)
 
     # link using foreign keys
@@ -1320,8 +1318,6 @@ class ComponentShardClaim(db.Model):
     component_shard_claim_id = Column(Integer, primary_key=True)
     component_shard_info_id = Column(Integer, ForeignKey('component_shard_infos.component_shard_info_id'))
     checksum = Column(Text, nullable=False, default=None)
-    _unused_kind = Column('kind', Text, default=None)
-    _unused_value = Column('value', Text, default=None)
     claim_id = Column(Integer, ForeignKey('claims.claim_id'), nullable=True)
 
     info = relationship('ComponentShardInfo')
@@ -1471,8 +1467,6 @@ class ComponentClaim(db.Model):
     component_claim_id = Column(Integer, primary_key=True)
     component_id = Column(Integer, ForeignKey('components.component_id'), nullable=False, index=True)
     claim_id = Column(Integer, ForeignKey('claims.claim_id'), nullable=False, index=True)
-    _unused_kind = Column('kind', Text, nullable=False)
-    _unused_value = Column('value', Text, nullable=False)
 
     # link back to objects
     md = relationship('Component', back_populates='component_claims')
