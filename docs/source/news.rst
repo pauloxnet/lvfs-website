@@ -1,6 +1,38 @@
 LVFS Releases
 #############
 
+1.1.6 (2020-01-28)
+==================
+
+This release adds the following features:
+
+* Add a atom feed to public device page
+* Add a claim for systems supporting Intel BiosGuard and BootGuard
+* Add a ``dell-bios`` version format
+* Add a page to list consultants that can work on the LVFS
+* Add a plugin to add component claims for specific shard GUIDs
+* Add a release tag to store the vendor-specific firmware identifier
+* Allow adding component claims based on the hash of a shard
+* Allow syncing with other firmware databases
+* Move the formal documentation to Sphinx
+
+This release fixes the following bugs:
+
+* Add many more database indexes to improve performance
+* Add some missing vendor checks when proxying to the user ACL
+* Allow vendor managers to see a read-only view of the restrictions page
+* Always use the vendor-id restrictions of the ODM, not the OEM
+* Fix support for multiple ``LVFS::VersionFormat`` tags
+* Include a vendor ID by default for testing accounts
+* Make more queries compatible with PostgreSQL
+* Never include firmware in private in any embargo remote
+* Only show vendors with LVFS users on the vendorlist
+* Reduce the memory consumption when running cron and doing yara queries
+* Update the firmware report count at upload time
+* Use SHA256 when storing the upload checksum
+* Use the correct filename for a PKCS-7 payload signature
+* Use UEFIExtract rather than chipsec to extract shards
+
 1.1.5 (2019-11-15)
 ==================
 
