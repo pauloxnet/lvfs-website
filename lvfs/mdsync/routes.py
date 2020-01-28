@@ -112,11 +112,17 @@ def route_import():
     if not g.user.check_acl('@partner'):
         return _json_error('Permission denied: Unable to import data')
 
+    # manual upload
+    if 'file' in request.files:
+        request_data = request.files['file'].read()
+    else:
+        request_data = request.data
+
     # parse JSON data, which can be optionally compressed
     try:
-        payload = gzip.decompress(request.data)
+        payload = gzip.decompress(request_data)
     except OSError as e:
-        payload = request.data.decode('utf8')
+        payload = request_data.decode('utf8')
     try:
         obj = json.loads(payload)
     except ValueError as e:

@@ -35,4 +35,19 @@
 </div>
 {% endfor %}
 
+{% if g.user.check_acl('@admin') %}
+<form method="post" action="{{url_for('mdsync.route_import')}}" class="form" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{csrf_token()}}"/>
+<div class="card mt-3">
+  <div class="card-body">
+    <div class="card-title">Manual upload</div>
+    <p class="card-text">
+      <input class="form-control mb-3" type="file" name="file" required/>
+      <input class="card-link btn btn-primary" type="submit" value="Add">
+    </p>
+  </div>
+</div>
+</form>
+{% endif %}
+
 {% endblock %}
