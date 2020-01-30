@@ -199,6 +199,9 @@
         <li class="list-group-item">
           <span class="fs-2 {{claim.icon_css|join(' ')}}"></span>
           {{claim.summary}}
+{% if claim.url %}
+          <span class="float-right"><a class="btn btn-sm btn-outline-info" href="{{claim.url}}">More info</a></span>
+{% endif %}
         </li>
 {% endfor %}
       </ul>
