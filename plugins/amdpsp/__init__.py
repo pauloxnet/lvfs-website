@@ -63,7 +63,7 @@ def _run_psptool_on_blob(self, test, md):
                 shard.set_blob(blob, checksums='SHA256')
                 md.shards.append(shard)
         test.add_pass('Found {} directories'.format(len(psp.blob.directories)))
-    except Blob.NoFirmwareEntryTableError as _:
+    except (Blob.NoFirmwareEntryTableError, AssertionError) as _:
         pass
 
 class Plugin(PluginBase):
