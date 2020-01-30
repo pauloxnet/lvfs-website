@@ -38,7 +38,7 @@ def _run_on_blob(self, test, md, title, blob):
             test.add_fail(title, msg)
         elif 'claim' in match.meta:
             claim = db.session.query(Claim)\
-                              .filter(Claim.key == match.meta['claim'])\
+                              .filter(Claim.kind == match.meta['claim'])\
                               .first()
             if not claim:
                 test.add_fail('YARA', 'Failed to find claim: {}'.format(match.meta['claim']))
@@ -105,7 +105,6 @@ if __name__ == '__main__':
     _md = Component()
     _md.blob = b'CN=DO NOT TRUST - AMI Test PK'
     _fw.mds.append(_md)
-    plugin.run_test_on_fw(_test, _fw)
     plugin.run_test_on_md(_test, _md)
     for attribute in _test.attributes:
         print(attribute)
