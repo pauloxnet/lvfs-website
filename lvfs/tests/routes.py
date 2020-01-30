@@ -183,8 +183,9 @@ def route_retry_all(plugin_id):
     # get tests
     tests = db.session.query(Test).\
                 filter(Test.started_ts != None). \
-                filter(Test.ended_ts == None). \
-                filter(Test.plugin_id == plugin_id).all()
+                filter(Test.plugin_id == plugin_id).\
+                order_by(Test.scheduled_ts.desc()).\
+                all()
     if not tests:
         flash('No tests matched', 'warning')
         return redirect(url_for('tests.route_overview'))
@@ -205,6 +206,7 @@ def route_waive_all(plugin_id):
     tests = db.session.query(Test).\
                 filter(Test.ended_ts != None). \
                 filter(Test.plugin_id == plugin_id). \
+                order_by(Test.scheduled_ts.desc()).\
                 all()
     tests_failed = []
     for test in tests:
