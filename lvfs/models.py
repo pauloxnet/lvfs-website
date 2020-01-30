@@ -1635,10 +1635,10 @@ class Component(db.Model):
         self._blob = None
 
     def __lt__(self, other):
-        return vercmp(self.version, other.version) < 0
+        return vercmp(self.version_display, other.version_display) < 0
 
     def __eq__(self, other):
-        return vercmp(self.version, other.version) == 0
+        return vercmp(self.version_display, other.version_display) == 0
 
     @property
     def blob(self):
