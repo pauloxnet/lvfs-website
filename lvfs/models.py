@@ -1753,10 +1753,12 @@ class Component(db.Model):
 
     @property
     def security_level(self):
-        if self._find_autoclaim('signed-firmware', 'success') and \
-           self._find_autoclaim('device-checksum', 'success'):
+        claims = {}
+        for claim in self.autoclaims:
+            claims[claim.kind] = claim
+        if 'signed-firmware' in claims and 'device-checksum' in claims:
             return 2
-        if self._find_autoclaim('signed-firmware', 'success'):
+        if 'signed-firmware' in claims:
             return 1
         return 0
 
