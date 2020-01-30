@@ -1974,10 +1974,10 @@ class Component(db.Model):
         return None
 
     def add_claim(self, claim):
-        for component_claim in self.claims:
+        for component_claim in self.component_claims:
             if component_claim.claim.kind == claim.kind:
                 return
-        self.claims.append(ComponentClaim(claim=claim))
+        self.component_claims.append(ComponentClaim(claim=claim))
 
     def check_acl(self, action, user=None):
 
