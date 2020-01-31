@@ -418,16 +418,17 @@ def route_login_oauth_authorized(plugin_id):
 
     # auth check
     created_account = False
-    user = db.session.query(User).filter(User.username == data['userPrincipalName']).first()
+    username = data['userPrincipalName'].lower()
+    user = db.session.query(User).filter(User.username == username).first()
     if not user:
-        user = _create_user_for_oauth_username(data['userPrincipalName'])
+        user = _create_user_for_oauth_username(username)
         if user:
             db.session.add(user)
             db.session.commit()
             _event_log('Auto created user of type %s for vendor %s' % (user.auth_type, user.vendor.group_id))
             created_account = True
     if not user:
-        flash('Failed to log in: no user for %s' % data['userPrincipalName'], 'danger')
+        flash('Failed to log in: no user for {}'.format(username), 'danger')
         return redirect(url_for('main.route_index'))
     if not user.auth_type:
         flash('Failed to log in: User account %s is disabled' % user.username, 'danger')
