@@ -26,9 +26,9 @@ class Plugin(PluginBase):
 
     def require_test_for_md(self, md):
 
-        if not md.protocol:
-            return True
         if not md.blob:
+            return False
+        if not md.protocol:
             return False
         return md.protocol.value == 'org.usb.dfu'
 
