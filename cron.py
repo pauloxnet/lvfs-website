@@ -197,9 +197,7 @@ def _ensure_tests():
     for fw in db.session.query(Firmware).order_by(Firmware.timestamp):
         if not fw.is_deleted:
             ploader.ensure_test_for_fw(fw)
-
-    # all done
-    db.session.commit()
+            db.session.commit()
 
 def _purge_old_deleted_firmware():
 
