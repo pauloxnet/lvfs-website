@@ -1,0 +1,13 @@
+Hi,
+
+We wanted to tell you an interesting CPU microcode has been uploaded to the LVFS and the firmware has now been made public.
+
+cpuid: {{shard.get_attr_value('cpuid')}}
+platform: {{shard.get_attr_value('platform')}}
+version: {{shard.get_attr_value('version')}}
+
+The microcode can be downloaded here: {{url_for('shards.route_download', component_shard_id=shard.component_shard_id, _external=True)}}
+
+Regards,
+
+The LVFS admins

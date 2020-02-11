@@ -15,6 +15,7 @@ from lvfs import db
 from lvfs.pluginloader import PluginBase, PluginSettingBool, PluginSettingText
 from lvfs.models import Test, Claim
 from lvfs.models import _get_datestr_from_datetime
+from lvfs.util import _get_shard_path
 
 class Plugin(PluginBase):
     def __init__(self):
