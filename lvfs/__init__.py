@@ -17,7 +17,7 @@ from flask import Blueprint, Flask, flash, render_template, message_flashed, req
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
-from authlib.flask.client import OAuth
+from flask_oauthlib.client import OAuth
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from werkzeug.local import LocalProxy

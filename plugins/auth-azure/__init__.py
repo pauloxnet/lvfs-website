@@ -10,7 +10,7 @@
 import uuid
 
 from flask import session, request
-from authlib.oauth2.rfc6749 import OAuth2Error
+from flask_oauthlib.client import OAuthException
 
 from lvfs import oauth
 from lvfs.pluginloader import PluginBase, PluginSettingBool, PluginSettingText, PluginError
@@ -59,7 +59,7 @@ class Plugin(PluginBase):
         # get response success
         try:
             oauth_response = remote_app.authorized_response()
-        except OAuth2Error as e:
+        except OAuthException as e:
             raise PluginError(str(e))
         if oauth_response is None:
             raise PluginError('Access Denied' + str(request))
