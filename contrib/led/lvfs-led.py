@@ -81,7 +81,7 @@ def _led_update(dev):
 
 if __name__ == '__main__':
     try:
-        _dev = '/dev/{}'.format(sys.argv[2])
+        _dev = '/dev/{}'.format(sys.argv[1])
     except IndexError as _:
         _dev = '/dev/ttyUSB0'
     _led_update(_dev)
