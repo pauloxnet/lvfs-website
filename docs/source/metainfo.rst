@@ -238,7 +238,7 @@ with no extra metadata about how it should be formatted.
 This lack of specification precision means that different vendors have chosen
 to convert the large integer number to various different forms.
 
-The latest allowed values for ``LVFS::UpdateProtocol`` can be found 
+The latest allowed values for ``LVFS::VersionFormat`` can be found
 `on the LVFS <https://www.fwupd.org/lvfs/docs/metainfo/version>`_.
 
 To override the default of ``unknown`` vendors should ship extra metadata
