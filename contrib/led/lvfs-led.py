@@ -21,6 +21,7 @@ def _led_update(dev):
     session = requests.Session()
     try:
         ser = serial.Serial(dev, 38400)
+        ser.write_timeout = 5
     except serial.serialutil.SerialException as e:
         print('failed to write: {}'.format(e))
         return 2
@@ -33,8 +34,9 @@ def _led_update(dev):
         # hit the public endpoint
         if idx == 0:
             try:
-                rv = session.get('https://www.fwupd.org/lvfs/metrics')
-            except requests.exceptions.ConnectionError as e:
+                rv = session.get('https://www.fwupd.org/lvfs/metrics', timeout=5)
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.ReadTimeout) as e:
                 print(str(e))
                 cnt_new = 0
                 display = 'Conn Err\n'
