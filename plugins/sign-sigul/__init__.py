@@ -46,7 +46,7 @@ def _sigul_detached_sign_data(contents, config, key):
         raise PluginError('Failed to sign: %s' % ps.stderr.read())
 
     # read back the temp file
-    return open(dst.name, 'rb').read()
+    return open(dst.name, 'r').read()
 
 class Plugin(PluginBase):
     def __init__(self):

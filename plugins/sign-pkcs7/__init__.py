@@ -59,7 +59,7 @@ class Plugin(PluginBase):
             raise PluginError('Failed to sign: %s' % ps.stderr.read())
 
         # read back the temp file
-        with open(dst.name, 'rb') as f:
+        with open(dst.name, 'r') as f:
             return f.read()
 
     def metadata_sign(self, blob):
