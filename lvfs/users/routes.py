@@ -451,7 +451,7 @@ def route_recover_with_secret(secret):
         return redirect(url_for('main.route_index'), 302)
 
     # user waited too long
-    if datetime.datetime.utcnow() > user.password_recovery_ts + datetime.timedelta(hours=24):
+    if datetime.datetime.utcnow() > user.password_recovery_ts.replace(tzinfo=None) + datetime.timedelta(hours=24):
         flash('More than 24 hours elapsed since the recovery email was sent', 'warning')
         return redirect(url_for('main.route_index'), 302)
 
