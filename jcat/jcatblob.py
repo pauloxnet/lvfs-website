@@ -65,13 +65,13 @@ class JcatBlob():
             return 'p7b'
         return None
 
-class JcatBlobSha256(JcatBlob):
-
-    def __init__(self, blob):
-        data = hashlib.sha256(blob).hexdigest().encode()
-        JcatBlob.__init__(self, JcatBlobKind.SHA256, data)
-
 class JcatBlobText(JcatBlob):
 
     def __init__(self, kind, data_str):
         JcatBlob.__init__(self, kind, data_str.encode(), JcatBlobFlags.IS_UTF8)
+
+class JcatBlobSha256(JcatBlobText):
+
+    def __init__(self, blob):
+        data_str = hashlib.sha256(blob).hexdigest()
+        JcatBlobText.__init__(self, JcatBlobKind.SHA256, data_str)
