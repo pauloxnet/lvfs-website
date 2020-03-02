@@ -49,9 +49,18 @@ def route_fw(max_results=100):
     if 'value' not in request.args:
         flash('No search value!', 'danger')
         return redirect(url_for('search.route_search'))
-    keywords = _split_search_string(request.args['value'])
+    keywords_unsafe = _split_search_string(request.args['value'])
+    if not keywords_unsafe:
+        keywords_unsafe = request.args['value'].split(' ')
+
+    # never allow empty keywords
+    keywords = []
+    for keyword in keywords_unsafe:
+        if keyword:
+            keywords.append(keyword)
     if not keywords:
-        keywords = request.args['value'].split(' ')
+        flash('No valid search value!', 'danger')
+        return redirect(url_for('search.route_search'))
 
     # use keywords first
     fws = db.session.query(Firmware).join(Component).\
