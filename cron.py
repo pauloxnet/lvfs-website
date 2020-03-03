@@ -61,9 +61,6 @@ def _regenerate_and_sign_metadata(only_embargo=False):
     if not os.path.exists(download_dir):
         os.mkdir(download_dir)
 
-    # create Jcat file
-    jcatfile = JcatFile()
-
     # update everything required
     invalid_fns = []
     for r in remotes:
@@ -77,6 +74,7 @@ def _regenerate_and_sign_metadata(only_embargo=False):
         invalid_fns.append(fn_xmlgz)
 
         # create Jcat item with SHA256 checksum blob
+        jcatfile = JcatFile()
         jcatitem = jcatfile.get_item(r.filename)
         jcatitem.add_blob(JcatBlobSha256(blob_xmlgz))
 
