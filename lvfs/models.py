@@ -1440,6 +1440,9 @@ class Component(db.Model):
     keywords = relationship("Keyword",
                             back_populates="md",
                             cascade='all,delete-orphan')
+    mdrefs = relationship("ComponentRef",
+                          back_populates="md",
+                          cascade='all,delete-orphan')
     protocol = relationship('Protocol', foreign_keys=[protocol_id])
     category = relationship('Category', foreign_keys=[category_id])
     verfmt = relationship('Verfmt', foreign_keys=[verfmt_id])
