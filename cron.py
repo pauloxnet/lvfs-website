@@ -374,9 +374,7 @@ def _purge_old_deleted_firmware():
                     if os.path.exists(path):
                         os.remove(path)
             db.session.delete(fw)
-
-    # all done
-    db.session.commit()
+            db.session.commit()
 
 def _test_priority_sort_func(test):
     plugin = ploader.get_by_id(test.plugin_id)
