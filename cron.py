@@ -360,8 +360,9 @@ def _delete_embargo_obsoleted_fw():
 def _purge_old_deleted_firmware():
 
     # find all unsigned firmware
-    for fw in db.session.query(Firmware).\
-                    join(Remote).filter(Remote.name == 'deleted'):
+    for fw in db.session.query(Firmware)\
+                        .join(Remote).filter(Remote.name == 'deleted')\
+                        .order_by(Firmware.timestamp.asc()):
         if fw.target_duration > datetime.timedelta(days=30*6):
             print('Deleting %s as age %s' % (fw.filename, fw.target_duration))
             path = os.path.join(app.config['RESTORE_DIR'], fw.filename)
