@@ -1988,6 +1988,7 @@ class Firmware(db.Model):
                        lazy='joined',
                        cascade='all,delete-orphan')
     events = relationship("FirmwareEvent",
+                          order_by="desc(FirmwareEvent.timestamp)",
                           back_populates="fw",
                           cascade='all,delete-orphan')
     reports = relationship("Report",
@@ -2021,7 +2022,7 @@ class Firmware(db.Model):
     def target_duration(self):
         if not self.events:
             return 0
-        return datetime.datetime.utcnow() - self.events[-1].timestamp.replace(tzinfo=None)
+        return datetime.datetime.utcnow() - self.events[0].timestamp.replace(tzinfo=None)
 
     @property
     def do_not_track(self):

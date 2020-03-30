@@ -108,7 +108,7 @@
     <th class="col">User</td>
     <th class="col">Target</td>
   </tr>
-{% for ev in fw.events|sort(attribute='timestamp',reverse=True) %}
+{% for ev in fw.events %}
   <tr class="row">
     <td class="col">{{ev.timestamp.strftime('%F %T')}}</td>
     <td class="col text-truncate">{{ev.user.username}}</td>
