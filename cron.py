@@ -240,6 +240,12 @@ def _repair_ts():
     # all done
     db.session.commit()
 
+def _fsck():
+    for fw in db.session.query(Firmware):
+        fn = _get_absolute_path(fw)
+        if not os.path.isfile(fn):
+            print('firmware {} is missing, expected {}'.format(fw.firmware_id, fn))
+
 def _repair_csum():
 
     # fix all the checksums and file sizes
@@ -799,6 +805,8 @@ def _main_with_app_context():
         _repair_ts()
     if 'repair-csum' in sys.argv:
         _repair_csum()
+    if 'fsck' in sys.argv:
+        _fsck()
     if 'ensure' in sys.argv:
         _ensure_tests()
     if 'firmware' in sys.argv:
