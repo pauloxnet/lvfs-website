@@ -249,8 +249,13 @@ def _fsck():
 def _repair_csum():
 
     # fix all the checksums and file sizes
-    for fw in db.session.query(Firmware):
+    for firmware_id in db.session.query(Firmware.firmware_id)\
+                                 .order_by(Firmware.firmware_id.asc()):
+        fw = db.session.query(Firmware)\
+                       .filter(Firmware.firmware_id == firmware_id)\
+                       .one()
         try:
+            print('checking {}'.format(fw.filename_absolute))
             with open(fw.filename_absolute, 'rb') as f:
                 checksum_signed_sha1 = hashlib.sha1(f.read()).hexdigest()
                 if checksum_signed_sha1 != fw.checksum_signed_sha1:
