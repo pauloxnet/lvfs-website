@@ -273,10 +273,6 @@ def _repair_csum():
         except FileNotFoundError as _:
             pass
 
-        # ensure the test has been added for the firmware type
-        if not fw.is_deleted:
-            ploader.ensure_test_for_fw(fw)
-
     # all done
     db.session.commit()
 
