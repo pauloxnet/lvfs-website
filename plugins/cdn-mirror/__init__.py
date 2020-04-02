@@ -59,7 +59,7 @@ class Plugin(PluginBase):
         except UnidentifiedImageError as e:
             test.add_fail('Parse', str(e))
             return
-        if im.width > 600 or im.height > 400:
+        if im.width > 800 or im.height > 600:
             test.add_fail('Size', '{}x{} is too large'.format(im.width, im.height))
         elif im.width < 300 or im.height < 100:
             test.add_fail('Size', '{}x{} is too small'.format(im.width, im.height))
