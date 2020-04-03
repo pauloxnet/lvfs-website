@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: GPL-2.0+
 
 import datetime
+from collections import defaultdict
 
 from sqlalchemy import and_
 
@@ -261,8 +262,8 @@ def route_vendor(timespan_days=30):
     """ A analytics screen to show information about users """
 
     # get data for this time period
-    cnt_total = {}
-    cached_cnt = {}
+    cnt_total = defaultdict(int)
+    cached_cnt = defaultdict(int)
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     datestr_start = _get_datestr_from_datetime(yesterday - datetime.timedelta(days=timespan_days))
     datestr_end = _get_datestr_from_datetime(yesterday)
@@ -271,11 +272,7 @@ def route_vendor(timespan_days=30):
                                 AnalyticVendor.datestr <= datestr_end)):
         display_name = ug.vendor.display_name
         key = str(ug.datestr) + display_name
-        if key not in cached_cnt:
-            cached_cnt[key] = ug.cnt
-        if not display_name in cnt_total:
-            cnt_total[display_name] = ug.cnt
-            continue
+        cached_cnt[key] += ug.cnt
         cnt_total[display_name] += ug.cnt
 
     # find most popular user agent strings
