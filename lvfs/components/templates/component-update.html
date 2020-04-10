@@ -95,6 +95,13 @@
         The optional URL listed here should refer specifically to this firmware release.
       </p>
   </div>
+  <div class="form-group">
+    <label for="release_message">Update Message</label>
+      <input class="form-control" type="text" name="release_message" value="{{md.release_message if md.release_message}}"/>
+      <p class="text-secondary">
+        The update message may be shown when the firmware update has completed.
+      </p>
+  </div>
 {% if md.requires_source_url or md.source_url %}
   <div class="form-group">
     <label for="source_url">Source URL</label>

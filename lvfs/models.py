@@ -1408,6 +1408,7 @@ class Component(db.Model):
     release_download_size = Column(Integer, default=0)
     release_urgency = Column(Text, default=None)
     release_tag = Column(Text, default=None)
+    release_message = Column(Text, default=None) # LVFS::UpdateMessage
     screenshot_url = Column(Text, default=None)
     screenshot_url_safe = Column(Text, default=None)
     screenshot_caption = Column(Text, default=None)
