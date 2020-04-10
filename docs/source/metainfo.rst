@@ -578,7 +578,7 @@ might only be visible when the user manually visits the software center.
 | ``high``                | High importance, e.g. recommended update           |
 +-------------------------+----------------------------------------------------+
 | ``critical``            | Critical importance, e.g. urgent or security issue |
-+-----------------------------+------------------------------------------------+
++-------------------------+----------------------------------------------------+
 
 Style Guide
 ===========
