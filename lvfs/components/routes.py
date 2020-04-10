@@ -173,6 +173,8 @@ def route_modify(component_id):
         md.name_variant_suffix = request.form['name_variant_suffix']
     if 'release_tag' in request.form:
         md.release_tag = request.form['release_tag']
+    if 'release_message' in request.form:
+        md.release_message = request.form['release_message']
 
     # the firmware changed protocol
     if retry_all_tests:

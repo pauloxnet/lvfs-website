@@ -148,9 +148,11 @@ def _generate_metadata_mds(mds, firmware_baseuri='', local=False, metainfo=False
     elements = []
     for md in mds:
         if md.inhibit_download:
-            child = ET.Element('value')
-            child.set('key', 'LVFS::InhibitDownload')
             elements.append(('LVFS::InhibitDownload', None))
+            break
+    for md in mds:
+        if md.release_message:
+            elements.append(('LVFS::UpdateMessage', md.release_message))
             break
     for md in mds:
         verfmt = md.verfmt_with_fallback
