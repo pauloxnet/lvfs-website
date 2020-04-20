@@ -40,7 +40,8 @@ def route_firmware(state=None):
                                 filter(User.vendor_id == g.user.vendor.vendor_id).\
                                 subquery()
         stmt = db.session.query(Firmware).\
-                    join(subq, Firmware.user_id == subq.c.user_id)
+                    filter((Firmware.vendor_id == g.user.vendor.vendor_id) | \
+                           (Firmware.user_id.in_(subq)))
     else:
         stmt = db.session.query(Firmware).\
                     filter(Firmware.user_id == g.user.user_id)
