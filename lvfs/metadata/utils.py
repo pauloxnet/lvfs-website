@@ -386,7 +386,10 @@ def _generate_metadata_kind(fws, firmware_baseuri='', local=False):
         root.append(component)
 
     # dump to file
-    return gzip.compress(ET.tostring(root, encoding='utf-8', xml_declaration=True))
+    return gzip.compress(ET.tostring(root,
+                                     encoding='utf-8',
+                                     xml_declaration=True,
+                                     pretty_print=True))
 
 def _metadata_update_targets(remotes):
     """ updates metadata for a specific target """
