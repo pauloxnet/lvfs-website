@@ -264,9 +264,11 @@ def route_promote(firmware_id, target):
         flash('Cannot move firmware: Firmware already in that target', 'info')
         return redirect(url_for('firmware.route_target', firmware_id=firmware_id))
 
-    # invalidate both the remote it came from and the one it's going to
+    # invalidate both the remote it "came from", the one it's "going to" and
+    # also the remote of the vendor that uploaded it
     remote.is_dirty = True
     fw.remote.is_dirty = True
+    fw.vendor_odm.remote.is_dirty = True
 
     # invalidate the firmware as we're waiting for the metadata generation
     fw.mark_dirty()
