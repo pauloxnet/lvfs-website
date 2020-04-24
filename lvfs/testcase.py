@@ -42,7 +42,6 @@ class LvfsTestCase(unittest.TestCase):
                 "SQLALCHEMY_DATABASE_URI = '%s'" % self.db_uri,
                 "SQLALCHEMY_TRACK_MODIFICATIONS = False",
                 "DEBUG = True",
-                "CERTTOOL = 'flatpak run --command=certtool --filesystem=/tmp:ro org.freedesktop.fwupd'",
                 "RESTORE_DIR = '/tmp'",
                 "DOWNLOAD_DIR = '/tmp'",
                 "SECRET_PASSWORD_SALT = 'lvfs%%%'",
