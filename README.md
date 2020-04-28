@@ -3,6 +3,8 @@ Linux Vendor Firmware Service
 
 This is the website for the Linux Vendor Firmware Service
 
+[ ~ Dependencies scanned by [pyup.io](https://pyup.io/) ~ ]
+
 Missing firmware at LVFS
 ------------------------
 
