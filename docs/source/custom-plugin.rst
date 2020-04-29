@@ -47,7 +47,7 @@ Building fwupd
     $ git clone https://github.com/hughsie/fwupd.git
     $ cd fwupd
     $ mkdir build && cd build
-    $ meson ../ -Dsystemd=false -Dudevdir=/tmp --prefix=/home/emily/.root
+    $ meson ../ -Dsystemd_root_prefix=/tmp -Dudevdir=/tmp --prefix=/home/emily/.root
     $ ninja
     $ ninja install
     $ ./src/fwupdtool --verbose get-devices
