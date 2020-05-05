@@ -629,7 +629,7 @@ class Vendor(db.Model):
         raise NotImplementedError('unknown security check action: %s:%s' % (self, action))
 
     def __hash__(self):
-        return self.vendor_id
+        return int(self.vendor_id)
 
     def __lt__(self, other):
         return self.vendor_id < other.vendor_id
