@@ -7,7 +7,6 @@
 #
 # pylint: disable=too-few-public-methods,too-many-instance-attributes
 # pylint: disable=too-many-arguments,too-many-lines,protected-access
-# pylint: wrong-import-position,too-many-public-methods
 
 import os
 import datetime

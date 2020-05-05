@@ -2,8 +2,6 @@
 # Copyright (C) 2020 Richard Hughes <richard@hughsie.com>
 #
 # SPDX-License-Identifier: GPL-2.0+
-#
-# pylint: too-many-branches
 
 import sys
 import json
