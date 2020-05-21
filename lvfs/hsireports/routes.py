@@ -108,7 +108,7 @@ def route_view(hsi_report_id):
     if not rpt.check_acl('@view'):
         flash('Permission denied: Unable to view report', 'danger')
         return redirect(url_for('main.route_dashboard'))
-    return Response(response=str(rpt.to_kvs()),
+    return Response(response=rpt.payload,
                     status=400, \
                     mimetype="application/json")
 
