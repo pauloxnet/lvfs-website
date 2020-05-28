@@ -195,7 +195,7 @@ def _issue_fix_report_failures(issue):
     # process each report
     change_cnt = 0
     stmt = _create_query_for_conditions(issue)
-    for report in stmt.filter(Report.issue_id != 0):
+    for report in stmt.filter(Report.issue_id == 0):
 
         # check we can apply changes to this firmware
         fw = db.session.query(Firmware).\
