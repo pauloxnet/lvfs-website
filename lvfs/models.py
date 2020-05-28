@@ -2098,7 +2098,8 @@ class Firmware(db.Model):
     def names(self):
         names = []
         for md in self.mds:
-            names.extend(md.names)
+            if md.names:
+                names.extend(md.names)
         return names
 
     @property
