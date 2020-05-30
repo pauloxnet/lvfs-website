@@ -75,6 +75,7 @@ from lvfs.upload.routes import bp_upload
 from lvfs.users.routes import bp_users
 from lvfs.vendors.routes import bp_vendors
 from lvfs.verfmts.routes import bp_verfmts
+from lvfs.agents.routes import bp_agent
 
 app.register_blueprint(bp_agreements, url_prefix='/lvfs/agreements')
 app.register_blueprint(bp_analytics, url_prefix='/lvfs/analytics')
@@ -101,6 +102,7 @@ app.register_blueprint(bp_users, url_prefix='/lvfs/users')
 app.register_blueprint(bp_vendors, url_prefix='/lvfs/vendors')
 app.register_blueprint(bp_verfmts, url_prefix='/lvfs/verfmts')
 app.register_blueprint(bp_hsireports, url_prefix='/lvfs/hsireports')
+app.register_blueprint(bp_agent, url_prefix='/lvfs/agents')
 
 def _set_up_notify_server_error():
     from lvfs.models import User, UserAction

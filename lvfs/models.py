@@ -109,6 +109,7 @@ class User(db.Model):
     actions = relationship("UserAction",
                            lazy='joined',
                            cascade='all,delete-orphan')
+    approvals = relationship("AgentApproval", cascade='all,delete-orphan')
 
     def get_action(self, value):
         for action in self.actions:
@@ -2725,3 +2726,131 @@ class SearchEvent(db.Model):
 
     def __repr__(self):
         return "SearchEvent object %s" % self.search_event_id
+
+class AgentApproval(db.Model):
+
+    __tablename__ = 'agent_approvals'
+
+    approval_id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False, index=True)
+    timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    checksum = Column(Text, default=None)
+
+    user = relationship('User', foreign_keys=[user_id], back_populates='approvals')
+    agent = relationship('Agent', foreign_keys=[agent_id])
+
+class AgentRelease(db.Model):
+
+    __tablename__ = 'agent_releases'
+
+    agent_release_id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    agent_device_id = Column(Integer, ForeignKey('agent_devices.agent_device_id'), nullable=False, index=True)
+    version = Column(Text, nullable=False)
+    checksum = Column(Text, nullable=False)
+    is_upgrade = Column(Boolean, default=False)
+    blocked_approval = Column(Boolean, default=False)
+
+    device = relationship('AgentDevice', back_populates='releases')
+
+    def from_json(self, item):
+        if 'Version' in item:
+            self.version = item['Version']
+        if 'Checksum' in item:
+            self.checksum = item['Checksum'][0]
+        if 'Flags' in item:
+            for flags in item['Flags']:
+                if flags == 'is-upgrade':
+                    self.is_upgrade = True
+                elif flags == 'blocked-approval':
+                    self.blocked_approval = True
+
+    def __repr__(self):
+        return 'AgentRelease object {}'.format(self.agent_release_id)
+
+class AgentDevice(db.Model):
+
+    __tablename__ = 'agent_devices'
+
+    agent_device_id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    agent_id = Column(Integer, ForeignKey('agents.agent_id'), nullable=False, index=True)
+    fwupd_id = Column(Text, nullable=False)
+    name = Column(Text, nullable=False)
+    icon = Column(Text, nullable=False)
+    version = Column(Text, nullable=False)
+    updatable = Column(Boolean, default=False)
+    needs_reboot = Column(Boolean, default=False)
+
+    agent = relationship('Agent')
+    releases = relationship('AgentRelease',
+                            back_populates='device',
+                            lazy='joined',
+                            cascade='all,delete-orphan')
+
+    @property
+    def state(self):
+        for rel in self.releases:
+            if rel.is_upgrade and rel.blocked_approval:
+                return 'update-blocked'
+            if rel.is_upgrade:
+                return 'update-required'
+        return 'uptodate'
+
+    def from_json(self, item):
+        if 'Name' in item:
+            self.name = item['Name']
+        if 'DeviceId' in item:
+            self.fwupd_id = item['DeviceId']
+        if 'Version' in item:
+            self.version = item['Version']
+        if 'Icons' in item:
+            self.icon = item['Icons'][0]
+        if 'Flags' in item:
+            for flags in item['Flags']:
+                if flags == 'updatable':
+                    self.updatable = True
+                elif flags == 'needs-reboot':
+                    self.needs_reboot = True
+        if 'Releases' in item:
+            for release_item in item['Releases']:
+                rel = AgentRelease()
+                rel.from_json(release_item)
+                self.releases.append(rel)
+
+    def __repr__(self):
+        return 'AgentDevice object {}'.format(self.agent_device_id)
+
+class Agent(db.Model):
+
+    __tablename__ = 'agents'
+
+    agent_id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    addr = Column(String(40), nullable=False)
+    machine_id = Column(String(64), nullable=False)
+    timestamp = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    display_name = Column(Text, default=None)
+    #json = Column(Text, default=None)
+
+    devices = relationship('AgentDevice',
+                           back_populates='agent',
+                           lazy='joined',
+                           cascade='all,delete-orphan')
+    approvals = relationship('AgentApproval', cascade='all,delete-orphan')
+
+    @property
+    def hostname(self):
+        import socket
+        hostnames = socket.gethostbyaddr(self.addr)
+        if not hostnames:
+            return None
+        return hostnames[0]
+
+    @property
+    def state(self):
+        for dev in self.devices:
+            if dev.state != 'uptodate':
+                return dev.state
+        return 'uptodate'
+
+    def __repr__(self):
+        return 'Agent object {}'.format(self.agent_id)

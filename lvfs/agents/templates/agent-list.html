@@ -1,0 +1,47 @@
+{% extends "default.html" %}
+{% block title %}Agents{% endblock %}
+
+{% block content %}
+
+{% if not agents %}
+
+<div class="alert alert-info" role="alert">
+  No agents have registered with this server.
+</div>
+
+{% else %}
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="card-title">Registered Agents</h2>
+<table class="table">
+{% for agent in agents %}
+  <tr class="row">
+    <td class="col-sm-1">
+{% if agent.state == 'update-blocked' %}
+      <span class="fas fa-minus-circle fs-6 text-warning"></span>
+{% elif agent.state == 'update-required' %}
+      <span class="fas fa-times-circle fs-6 text-danger"></span>
+{% else %}
+      <span class="fas fa-check-circle fs-6 text-success"></span>
+{% endif %}
+    </td>
+    <td class="col-sm-9">
+      <h4>{{agent.hostname}}</h4>
+      <p class="text-secondary">
+        Updated from {{agent.addr}} {{format_humanize_naturaltime(agent.timestamp)}}
+      </p>
+    </td>
+    <td class="col-sm-2">
+      <a href="{{url_for('.route_details', agent_id=agent.agent_id)}}"
+         class="btn btn-primary btn-block">Details</a>
+    </td>
+  </tr>
+{% endfor %}
+</table>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
