@@ -265,7 +265,11 @@ def _repair_ts():
     db.session.commit()
 
 def _fsck():
-    for fw in db.session.query(Firmware):
+    for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                  .order_by(Firmware.firmware_id.asc()):
+        fw = db.session.query(Firmware)\
+                       .filter(Firmware.firmware_id == firmware_id)\
+                       .one()
         fn = _get_absolute_path(fw)
         if not os.path.isfile(fn):
             print('firmware {} is missing, expected {}'.format(fw.firmware_id, fn))
@@ -273,8 +277,8 @@ def _fsck():
 def _repair_csum():
 
     # fix all the checksums and file sizes
-    for firmware_id in db.session.query(Firmware.firmware_id)\
-                                 .order_by(Firmware.firmware_id.asc()):
+    for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                  .order_by(Firmware.firmware_id.asc()):
         fw = db.session.query(Firmware)\
                        .filter(Firmware.firmware_id == firmware_id)\
                        .one()
@@ -327,7 +331,11 @@ def _regenerate_and_sign_firmware():
 def _ensure_tests():
 
     # ensure the test has been added for the firmware type
-    for fw in db.session.query(Firmware).order_by(Firmware.timestamp):
+    for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                  .order_by(Firmware.timestamp):
+        fw = db.session.query(Firmware)\
+                       .filter(Firmware.firmware_id == firmware_id)\
+                       .one()
         if not fw.is_deleted:
             ploader.ensure_test_for_fw(fw)
             db.session.commit()
@@ -391,9 +399,12 @@ def _delete_embargo_obsoleted_fw():
 def _purge_old_deleted_firmware():
 
     # find all unsigned firmware
-    for fw in db.session.query(Firmware)\
-                        .join(Remote).filter(Remote.name == 'deleted')\
-                        .order_by(Firmware.timestamp.asc()):
+    for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                  .join(Remote).filter(Remote.name == 'deleted')\
+                                  .order_by(Firmware.timestamp.asc()):
+        fw = db.session.query(Firmware)\
+                       .filter(Firmware.firmware_id == firmware_id)\
+                       .one()
         if fw.target_duration > datetime.timedelta(days=30*6):
             print('Deleting %s as age %s' % (fw.filename, fw.target_duration))
             path = os.path.join(app.config['RESTORE_DIR'], fw.filename)
@@ -726,8 +737,12 @@ def _generate_stats(kinds=None):
     # update FirmwareReport counts
     if 'FirmwareReport' in kinds:
         print('stats::FirmwareReport')
-        for fw in db.session.query(Firmware)\
-                            .join(Remote).filter(Remote.name != 'deleted'):
+        for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                      .join(Remote).filter(Remote.name != 'deleted')\
+                                      .order_by(Firmware.firmware_id.asc()):
+            fw = db.session.query(Firmware)\
+                           .filter(Firmware.firmware_id == firmware_id)\
+                           .one()
             _generate_stats_firmware_reports(fw)
         db.session.commit()
 
@@ -755,8 +770,12 @@ def _generate_stats_for_datestr(datestr, kinds=None):
         for analytic in db.session.query(AnalyticFirmware).filter(AnalyticFirmware.datestr == datestr):
             db.session.delete(analytic)
         db.session.commit()
-        for fw in db.session.query(Firmware)\
-                            .join(Remote).filter(Remote.name != 'deleted'):
+        for firmware_id, in db.session.query(Firmware.firmware_id)\
+                                      .join(Remote)\
+                                      .filter(Remote.name != 'deleted'):
+            fw = db.session.query(Firmware)\
+                           .filter(Firmware.firmware_id == firmware_id)\
+                           .one()
             _generate_stats_for_firmware(fw, datestr)
         db.session.commit()
 
