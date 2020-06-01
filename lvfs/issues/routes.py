@@ -10,7 +10,7 @@ from flask_login import login_required
 
 from lvfs import db
 
-from lvfs.models import Issue, Condition, Report, ReportAttribute, Firmware
+from lvfs.models import Issue, Condition, Report, ReportAttribute
 from lvfs.util import _error_internal
 
 bp_issues = Blueprint('issues', __name__, template_folder='templates')
@@ -198,9 +198,7 @@ def _issue_fix_report_failures(issue):
     for report in stmt.filter(Report.issue_id == 0):
 
         # check we can apply changes to this firmware
-        fw = db.session.query(Firmware).\
-                filter(Firmware.firmware_id == report.firmware_id).first()
-        if not fw.check_acl('@delete'):
+        if not report.fw.check_acl('@delete'):
             continue
 
         # fix issue ID so we look better in the analytics pages
