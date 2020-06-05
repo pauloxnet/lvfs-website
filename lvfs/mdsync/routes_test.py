@@ -46,21 +46,24 @@ class LocalTestCase(LvfsTestCase):
                           follow_redirects=True)
         assert b'>stable<' in rv.data, rv.data.decode()
 
+        # success
+        self._report()
+
         # get the LVFS world-view
         rv = self.app.get('/lvfs/mdsync/export')
 
         test_protocol = 'com.hughski.colorhug'
         test_version = '2.0.3'
         test_appstream_id = 'com.hughski.ColorHug2.firmware'
-        test_failure_percentage = 70
+        test_success = 100
 
         parsed_export = json.loads(rv.data)
         device = parsed_export['devices'][0]
         assert device['appstream_id'] == test_appstream_id, f'appstream_id {test_appstream_id} not found in JSON'
         assert device['protocol'] == 'com.hughski.colorhug', f'protocol {test_protocol} not found in JSON'
         assert test_version in device['versions'], f'Version {test_version} not found in exported JSON'
-        failure_percentage = device['versions'][test_version]['failure_percentage']
-        assert failure_percentage == test_failure_percentage, f'Failure percentage not {test_failure_percentage}'
+        success = device['versions'][test_version]['success']
+        assert success == test_success, f'success not {test_success}'
 
         # import another world-view
         payload = """

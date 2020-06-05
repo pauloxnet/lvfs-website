@@ -32,8 +32,8 @@ def _md_to_mdsync_dict(md):
             obj['release_tag'] = md.release_tag
         if md.details_url:
             obj['changelog_url'] = md.details_url
-        if md.fw.failure_percentage:
-            obj['failure_percentage'] = md.fw.failure_percentage
+        if md.fw.success:
+            obj['success'] = md.fw.success
     return obj
 
 def _mds_to_mdsync_dict(mds):
