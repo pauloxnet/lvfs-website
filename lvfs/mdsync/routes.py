@@ -124,7 +124,7 @@ def route_import():
     # parse JSON data, which can be optionally compressed
     try:
         payload = gzip.decompress(request_data)
-    except (OSError, UnicodeDecodeError, gzip.BadGzipFile) as _:
+    except (OSError, UnicodeDecodeError) as _:
         payload = request_data.decode('utf8')
     try:
         obj = json.loads(payload)
