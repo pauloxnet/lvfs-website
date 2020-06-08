@@ -445,6 +445,7 @@ def _regenerate_and_sign_metadata_remote(r):
                 continue
             print('Marking remote %s as dirty due to %u' % (r.name, fw.firmware_id))
             r.is_dirty = True
+            fw.is_dirty = False
 
     # not needed
     if not r.is_dirty:
