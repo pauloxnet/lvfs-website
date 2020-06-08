@@ -7,7 +7,7 @@ A firmware you uploaded to the Linux Vendor Firmware Service has been promoted t
 
 You can log into the LVFS and view the firmware: {{url_for('firmware.route_show', firmware_id=fw.firmware_id, _external=True)}}
 
-If you believe this action should not have been allowed please contact the LVFS administrator by forwarding the email to info@fwupd.org with details.
+If you believe this action should not have been allowed please contact the LVFS administrator by forwarding the email to {{admin_email}} with details.
 
 Regards,
 

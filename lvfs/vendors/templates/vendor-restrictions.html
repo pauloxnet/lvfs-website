@@ -8,7 +8,7 @@
   Due to the sensitive nature of providing firmware only vendors can install
   firmware on their own devices.
 {% if not g.user.check_acl('@admin') %}
-  Please contact the <a href="mailto:info@fwupd.org">LVFS administrator</a>
+  Please contact the <a href="mailto:{{admin_email}}">LVFS administrator</a>
   if you would like to add new <code>DMI:</code>, <code>PCI:0x</code> or
   <code>USB:0x</code> vendor IDs to your account.
 {% endif %}

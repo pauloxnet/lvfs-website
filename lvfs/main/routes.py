@@ -216,6 +216,7 @@ def utility_processor():
         return txt
 
     return dict(format_size=format_size,
+                admin_email=app.config['ADMIN_EMAIL'],
                 format_humanize_naturalday=format_humanize_naturalday,
                 format_humanize_naturaltime=format_humanize_naturaltime,
                 format_humanize_intchar=format_humanize_intchar,

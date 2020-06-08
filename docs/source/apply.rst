@@ -2,7 +2,7 @@ Getting an Account
 ##################
 
 There is no charge to vendors for the hosting or distribution of content.
-You can start the process by emailing info@fwupd.org with as much information you
+You can start the process by emailing richard@hughsie.com with as much information you
 have, or just with questions or for more details.
 
 Information to Supply
