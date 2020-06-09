@@ -1,6 +1,58 @@
 LVFS Releases
 #############
 
+1.2.0 (2020-06-09)
+==================
+
+This release adds the following features:
+
+* Add a filter view for user uploaded firmware
+* Add a plugin to identify old microcode versions
+* Add cached public stats of useful metrics
+* Add support for LVFS::UpdateMessage
+* Allow clients to upload anonymous HSI attrs
+* Allow re-signing binaries
+* Create Jcat files in archives and for metadata
+* Delete firmware in embargo with newer public versions
+* Disable unused user accounts for GDPR compliance
+* Export the success confidence to the mdsync vendor
+* Include LVFS::UpdateProtocol in the metadata
+* Rewrite the AppStream screenshot URL to use the server CDN
+* Rewrite the metainfo when signing the firmware
+* Save metadata about Intel microcode blobs
+* Support Lenovo, Dell and Intel specific security tags
+* Use celery to process async operations
+
+This release fixes the following bugs:
+
+* Allow all users to view the profile page
+* Allow a protocol to have no defined version format
+* Allow QA users to see all ODM firmware uploaded
+* Allow setting the category to 'Unknown'
+* Allow specifying firmware versions when using the advanced requires editor
+* Do not allow component modification when in testing and stable
+* Do not backtrace if a component does not have a <name>
+* Do not include a CSRF for public search queries
+* Do not include the VersionFormat fallbacks if the fw requries a new enough fwupd
+* Do not make the database server explode with a query like 'value=+foo'
+* Do not save duplicate <requires>vendor-id</> tags to the metadata
+* Ensure firmware again when it changes state
+* Fix a regression when component claims were not being added
+* Fix regression when getting security level of component
+* Improve the report query speed by several orders of magnitude
+* Include the vendor tag in the rewritten metainfo and AppStream XML
+* Invalidate ODM remotes when a firmware is demoted back to private
+* List <id> requires first in the metadata
+* Make it more obvious that the firmware is waiting to be signed
+* Make the LVFS username case insensitive
+* Make the markdown to root function more robust
+* Parse the <metadata_license> even when not in strict mode
+* Set the SHA256 content checksum in the metadata
+* Show a disabled button when the user has no ACL to move the firmware
+
+LVFS Releases
+#############
+
 1.1.6 (2020-01-28)
 ==================
 
