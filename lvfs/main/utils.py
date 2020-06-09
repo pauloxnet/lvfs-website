@@ -62,6 +62,6 @@ def _regenerate_metrics():
         print('{}={}'.format(metric.key, metric.value))
     db.session.commit()
 
-@celery.task(task_time_limit=600)
+@celery.task(max_retries=3, default_retry_delay=60, task_time_limit=600)
 def _async_regenerate_metrics():
     _regenerate_metrics()

@@ -84,6 +84,6 @@ def _regenerate_reports():
         _generate_stats_firmware_reports(fw)
     db.session.commit()
 
-@celery.task(task_time_limit=600)
+@celery.task(max_retries=3, default_retry_delay=60, task_time_limit=600)
 def _async_regenerate_reports():
     _regenerate_reports()

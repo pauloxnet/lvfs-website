@@ -11,7 +11,7 @@ from lvfs import app, mail, celery
 
 from .util import _event_log
 
-@celery.task(task_time_limit=10)
+@celery.task(max_retries=3, default_retry_delay=5, task_time_limit=10)
 def _async_send_email(subject, recipient, text_body):
     msg = Message(subject, recipients=[recipient])
     msg.body = text_body

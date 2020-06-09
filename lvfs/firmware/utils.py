@@ -130,7 +130,7 @@ def _purge_old_deleted_firmware():
             db.session.delete(fw)
             db.session.commit()
 
-@celery.task(task_time_limit=60)
+@celery.task(max_retries=3, default_retry_delay=360, task_time_limit=60)
 def _async_autodelete():
     _delete_embargo_obsoleted_fw()
     _purge_old_deleted_firmware()
@@ -141,7 +141,7 @@ def _show_diff(blob_old, blob_new):
     diff = difflib.unified_diff(fromlines, tolines)
     print('\n'.join(list(diff)[3:]))
 
-@celery.task(task_time_limit=60)
+@celery.task(max_retries=3, default_retry_delay=5, task_time_limit=60)
 def _async_sign_fw(firmware_id):
     fw = db.session.query(Firmware)\
                    .filter(Firmware.firmware_id == firmware_id)\

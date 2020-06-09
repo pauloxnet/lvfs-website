@@ -65,7 +65,7 @@ def _test_run_all(tests=None):
     # all done
     db.session.commit()
 
-@celery.task(task_time_limit=600)
+@celery.task(max_retries=3, default_retry_delay=5, task_time_limit=600)
 def _async_test_run(test_id):
     tests = db.session.query(Test)\
                       .filter(Test.started_ts == None)\
@@ -75,7 +75,7 @@ def _async_test_run(test_id):
         return
     _test_run_all(tests)
 
-@celery.task(task_time_limit=600)
+@celery.task(max_retries=3, default_retry_delay=60, task_time_limit=600)
 def _async_test_run_for_firmware(firmware_id):
     tests = db.session.query(Test)\
                       .filter(Test.started_ts == None)\

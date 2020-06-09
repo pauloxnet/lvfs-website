@@ -50,7 +50,7 @@ def _user_disable_actual():
         user.display_name = 'Disabled User {}'.format(user.user_id)
         db.session.commit()
 
-@celery.task(task_time_limit=120)
+@celery.task(max_retries=3, default_retry_delay=60, task_time_limit=120)
 def _async_user_disable():
     _user_disable_notify()
     _user_disable_actual()

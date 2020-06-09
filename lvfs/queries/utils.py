@@ -15,7 +15,7 @@ from lvfs import db, celery
 
 from lvfs.models import Remote, Firmware, Component, YaraQuery, YaraQueryResult
 
-@celery.task(task_time_limit=6000)
+@celery.task(max_retries=3, default_retry_delay=60, task_time_limit=6000)
 def _async_query_run(yara_query_id):
     query = db.session.query(YaraQuery)\
                       .filter(YaraQuery.yara_query_id == yara_query_id)\
