@@ -132,7 +132,7 @@ new Chart(ctx, {
 {% if fw.is_deleted and fw.check_acl('@nuke') %}
         <button type="button" class="btn btn-danger card-link" data-toggle="modal" data-target="#nukeModal">☠ Nuke ☠</button>
 {% endif %}
-{% if fw.signed_timestamp and fw.check_acl('@resign') %}
+{% if (fw.signed_timestamp and fw.check_acl('@resign')) or g.user.check_acl('@admin')  %}
         <button type="button" class="btn btn-warning card-link" data-toggle="modal" data-target="#resignModal">Re-sign</button>
 {% endif %}
       </div>
