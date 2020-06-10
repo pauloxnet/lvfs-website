@@ -217,7 +217,7 @@ def route_resign(firmware_id):
         return redirect(url_for('firmware.route_firmware'))
 
     # firmware is not signed yet
-    if not fw.signed_timestamp:
+    if not g.user.check_acl('@admin') and not fw.signed_timestamp:
         flash('Cannot resign unsigned file', 'danger')
         return redirect(url_for('firmware.route_show', firmware_id=firmware_id))
 
