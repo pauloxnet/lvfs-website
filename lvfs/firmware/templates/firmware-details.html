@@ -79,7 +79,7 @@ new Chart(ctx, {
 <div class="row no-gutters">
   <div class="col-xl-6">
     <div class="card overflow-hidden" style="min-width: 12rem">
-      <div class="bg-holder bg-card" style="background-image:url(/img/corner-1.png);"></div>
+      <div class="bg-holder bg-card" style="background-image:url({{url_for('static', filename='img/corner-1.png')}});"></div>
       <div class="card-body position-relative">
         <h2 class="card-title">
           Overview
@@ -140,7 +140,7 @@ new Chart(ctx, {
   </div>
   <div class="col-xl-6 pl-xl-3">
     <div class="card overflow-hidden mt-3 mt-xl-0" style="min-width: 12rem">
-      <div class="bg-holder bg-card" style="background-image:url(/img/corner-2.png);"></div>
+      <div class="bg-holder bg-card" style="background-image:url({{url_for('static', filename='img/corner-2.png')}});"></div>
       <div class="card-body position-relative">
         <h2 class="card-title">Details</h2>
         <p class="card-text">
@@ -153,7 +153,7 @@ new Chart(ctx, {
     </div>
 {% if fw.success != None %}
     <div class="card overflow-hidden mt-3" style="min-width: 12rem">
-      <div class="bg-holder bg-card" style="background-image:url(/img/corner-3.png);"></div>
+      <div class="bg-holder bg-card" style="background-image:url({{url_for('static', filename='img/corner-3.png')}});"></div>
       <h2 class="card-header card-title list-group-item-{{fw.color}}">
         {{fw.success|round(1)}}% Reported Success
       </h2>
@@ -175,7 +175,7 @@ new Chart(ctx, {
 {% endif %}
 {% if fw.banned_country_codes %}
     <div class="card overflow-hidden mt-3" style="min-width: 12rem">
-      <div class="bg-holder bg-card" style="background-image:url(/img/corner-1.png);"></div>
+      <div class="bg-holder bg-card" style="background-image:url({{url_for('static', filename='img/corner-1.png')}});"></div>
       <div class="card-body position-relative">
         <h2 class="card-title">
           Banned Countries
