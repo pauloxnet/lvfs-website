@@ -44,6 +44,7 @@ class FlaskCelery(Celery):
     def init_app(self, app):
         self.app = app
         self.config_from_object(app.config)
+        self.conf.update(enable_utc=True, timezone='UTC')
 
 @task_postrun.connect
 def close_session(*args, **kwargs):
