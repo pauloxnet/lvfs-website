@@ -27,7 +27,7 @@ from .utils import _async_generate_stats
 
 bp_analytics = Blueprint('analytics', __name__, template_folder='templates')
 
-@celery.on_after_configure.connect
+@celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **_):
     sender.add_periodic_task(
         crontab(hour=0, minute=0),

@@ -28,7 +28,7 @@ from .utils import _async_user_disable
 
 bp_users = Blueprint('users', __name__, template_folder='templates')
 
-@celery.on_after_configure.connect
+@celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **_):
     sender.add_periodic_task(
         crontab(hour=1, minute=0),
