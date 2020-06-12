@@ -22,6 +22,7 @@ from lvfs.emails import send_email
 from lvfs.hash import _otp_hash
 from lvfs.util import admin_login_required
 from lvfs.util import _error_internal, _email_check
+from lvfs.metadata.utils import _async_regenerate_remote
 from lvfs.models import Vendor, Restriction, Namespace, User, Remote, Affiliation, AffiliationAction, Verfmt, Firmware
 from lvfs.util import _generate_password
 
@@ -192,6 +193,10 @@ def route_create():
     db.session.add(v)
     db.session.commit()
     flash('Added vendor %s' % request.form['group_id'], 'info')
+
+    # asynchronously rebuilt
+    _async_regenerate_remote.apply_async(args=(r.remote_id,), queue='metadata')
+
     return redirect(url_for('vendors.route_show', vendor_id=v.vendor_id), 302)
 
 @bp_vendors.route('/<int:vendor_id>/delete')
@@ -373,6 +378,10 @@ def route_restriction_create(vendor_id):
     vendor.restrictions.append(Restriction(value=request.form['value']))
     db.session.commit()
     flash('Added restriction', 'info')
+
+    # asynchronously rebuilt
+    _async_regenerate_remote.apply_async(args=(vendor.remote.remote_id,), queue='metadata')
+
     return redirect(url_for('vendors.route_restrictions', vendor_id=vendor_id), 302)
 
 @bp_vendors.route('/<int:vendor_id>/restriction/<int:restriction_id>/delete')
@@ -392,6 +401,10 @@ def route_restriction_delete(vendor_id, restriction_id):
             db.session.commit()
             break
     flash('Deleted restriction', 'info')
+
+    # asynchronously rebuilt
+    _async_regenerate_remote.apply_async(args=(vendor.remote.remote_id,), queue='metadata')
+
     return redirect(url_for('vendors.route_restrictions', vendor_id=vendor_id), 302)
 
 @bp_vendors.route('/<int:vendor_id>/namespace/create', methods=['POST', 'GET'])
